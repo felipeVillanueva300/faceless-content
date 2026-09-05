@@ -1,0 +1,39 @@
+name: Publicar Reel diario
+
+on:
+  schedule:
+    # 15:00 UTC ≈ 9:00 en el centro de México. Ajusta a tu gusto.
+    - cron: '0 15 * * *'
+  workflow_dispatch:   # permite correrlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write       # necesario para crear el Release con el video
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar ffmpeg y fuentes
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Generar y publicar
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRAPH_VERSION: v23.0
+          NICHE: "tecnología y finanzas"
+          TTS_VOICE: es-MX-JorgeNeural
+          # BG_VIDEO: assets/fondo.mp4   # opcional: fondo en loop
+        run: python main.py

@@ -1,0 +1,9 @@
+# NO subir la API key: run_test.ps1 contiene tu clave de Gemini
+run_test.ps1
+
+# Entorno y temporales
+.venv/
+build/
+.env
+__pycache__/
+*.pyc
