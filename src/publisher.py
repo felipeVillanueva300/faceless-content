@@ -52,14 +52,35 @@ def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
     return p.json().get("id", "")
 
 
+def _page_token(page_id: str) -> str:
+    """Obtiene el token de la PÁGINA a partir del token de usuario/System User.
+ 
+    Publicar en /{page}/videos requiere un Page Access Token, no el de usuario.
+    Este paso lo consigue automáticamente con el token que ya tenemos.
+    """
+    r = requests.get(
+        f"{BASE}/{page_id}",
+        params={"fields": "access_token", "access_token": _token()},
+        timeout=30,
+    )
+    r.raise_for_status()
+    tok = r.json().get("access_token")
+    if not tok:
+        raise RuntimeError(
+            "No se pudo obtener el token de la Página. Revisa que el System User "
+            "tenga la Página asignada con control total y el permiso pages_show_list."
+        )
+    return tok
+
 def publish_facebook(page_id: str, video_url: str, description: str) -> str:
-    # Sube un video a la Página usando la URL pública (file_url).
+
+    page_tok = _page_token(page_id)
     r = requests.post(
         f"{BASE}/{page_id}/videos",
         data={
             "file_url": video_url,
             "description": description,
-            "access_token": _token(),
+            "access_token": page_tok,
         },
         timeout=120,
     )
