@@ -22,7 +22,7 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
-def generate_script(niche: str = "tecnología y finanzas", max_retries: int = 4) -> dict:
+def generate_script(niche: str = "tecnología y finanzas", max_retries: int = 6) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today().isoformat()
 
@@ -55,7 +55,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con esta 
             code = getattr(e, "code", None) or getattr(e, "status_code", None)
             last_err = e
             if code in (429, 500, 502, 503) and attempt < max_retries - 1:
-                wait = 8 * (attempt + 1)
+                wait = 10 * (attempt + 1)
                 print(f"Gemini respondió {code} (saturado). Reintento en {wait}s...")
                 time.sleep(wait)
                 continue

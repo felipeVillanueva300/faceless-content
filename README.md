@@ -5,19 +5,6 @@ crea subtítulos sincronizados → arma un video vertical con FFmpeg → lo sube
 URL pública → lo publica en tu Página de Facebook y tu Instagram. Corre solo con
 **GitHub Actions** (cron diario). Costo: ~$0.
 
----
-
-## ⚠️ Importante: mantenlo separado de tu empresa
-
-Todo este proyecto debe nacer de identidad **personal**:
-
-- Repo bajo tu **cuenta personal de GitHub** (no la de la empresa).
-- API key de Gemini con un **Google account personal** (no tu correo de trabajo).
-- Una **cuenta de Facebook** propia del proyecto (puede ser nueva).
-
-No se usa GCP ni nada de la organización de tu empresa.
-
----
 
 ## Parte 1 — Cuentas (esto toma más tiempo que el código)
 
