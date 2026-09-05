@@ -25,9 +25,16 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Generar y publicar
+      - name: Generar y publicar (con reintentos del job completo)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3          # reintenta hasta 3 veces si algo falla
+          retry_wait_seconds: 60   # espera 1 min entre intentos
+          command: python main.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
@@ -36,4 +43,3 @@ jobs:
           NICHE: "tecnología y finanzas"
           TTS_VOICE: es-MX-JorgeNeural
           # BG_VIDEO: assets/fondo.mp4   # opcional: fondo en loop
-        run: python main.py
