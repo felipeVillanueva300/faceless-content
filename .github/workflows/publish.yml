@@ -39,6 +39,8 @@ jobs:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          WATERMARK_TEXT: "@villanuevagallegosf"
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"
           TTS_VOICE: es-MX-JorgeNeural
