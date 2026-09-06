@@ -3,7 +3,7 @@ name: Publicar Reel diario
 on:
   schedule:
     # 15:00 UTC ≈ 9:00 en el centro de México. Ajusta a tu gusto.
-    - cron: '30 10 * * *'
+    - cron: '30 16 * * *'
   workflow_dispatch:   # permite correrlo a mano desde la pestaña Actions
 
 permissions:
