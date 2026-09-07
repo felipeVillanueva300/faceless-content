@@ -14,7 +14,6 @@ def _headers():
 
 
 def _cleanup_old_releases(repo: str, keep: int):
-
     try:
         r = requests.get(
             f"https://api.github.com/repos/{repo}/releases",
@@ -22,7 +21,6 @@ def _cleanup_old_releases(repo: str, keep: int):
         )
         r.raise_for_status()
         releases = r.json()
-
         daily = [rel for rel in releases if str(rel.get("tag_name", "")).startswith("daily-")]
         daily.sort(key=lambda x: x.get("created_at", ""), reverse=True)
         for rel in daily[keep:]:
@@ -70,4 +68,17 @@ def upload_public(video_path: str) -> str:
     url = up.json()["browser_download_url"]
 
     _cleanup_old_releases(repo, KEEP_RELEASES)
-    return url
+    return url, tag
+
+
+def get_release_video_url(repo: str, tag: str) -> str:
+    """Devuelve la URL pública del mp4 de un release existente (por su tag/ID)."""
+    r = requests.get(
+        f"https://api.github.com/repos/{repo}/releases/tags/{tag}",
+        headers=_headers(), timeout=30,
+    )
+    r.raise_for_status()
+    for asset in r.json().get("assets", []):
+        if asset.get("name", "").endswith(".mp4"):
+            return asset["browser_download_url"]
+    raise RuntimeError(f"No se encontró un .mp4 en el release '{tag}'.")
