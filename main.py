@@ -1,9 +1,8 @@
 """Pipeline diario: guion -> voz -> subtítulos -> b-roll -> video -> subir -> publicar."""
-
 import os
 import sys
 
-from src import script_gen, tts, subtitles, video, uploader, publisher, broll
+from src import script_gen, tts, subtitles, video, uploader, publisher, broll, notify
 
 BUILD = "build"
 
@@ -13,7 +12,7 @@ def _write_summary(url, data, caption, publicado):
     path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not path:
         return
-    estado = "PUBLICADO " if publicado else "BORRADOR (no publicado) "
+    estado = "PUBLICADO " if publicado else "BORRADOR (no publicado)"
     try:
         with open(path, "a", encoding="utf-8") as f:
             f.write(f"## {estado}\n\n")
@@ -39,7 +38,6 @@ def _place_cards(cards, duration):
     cards = (cards or [])[:2]
     if not cards:
         return placed
-    
     tramos = [(0.25, 0.45), (0.60, 0.80)]
     for card, (a, b) in zip(cards, tramos):
         placed.append({
@@ -82,7 +80,6 @@ def main():
     url = uploader.upload_public(out)
     print("    URL:", url)
 
-
     publicar = os.environ.get("PUBLISH", "true").strip().lower() not in ("false", "0", "no")
     if not publicar:
         print("=" * 60)
@@ -94,6 +91,7 @@ def main():
         print("Si te gusta, lanza el workflow con PUBLISH=true para publicarlo.")
         print("=" * 60)
         _write_summary(url, data, caption, publicado=False)
+        notify.notify_telegram(data.get("title", ""), caption, url, publicado=False)
         return
 
     print("[7/7] Publicando")
@@ -124,6 +122,7 @@ def main():
     if errores:
         print("Con errores:", errores)
     _write_summary(url, data, caption, publicado=bool(results))
+    notify.notify_telegram(data.get("title", ""), caption, url, publicado=bool(results))
 
     if (ig or pg) and not results:
         sys.exit(1)
