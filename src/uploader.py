@@ -1,5 +1,5 @@
-
 import os
+import json
 import datetime
 import requests
 
@@ -31,7 +31,6 @@ def _cleanup_old_releases(repo: str, keep: int):
                     f"https://api.github.com/repos/{repo}/releases/{rid}",
                     headers=_headers(), timeout=30,
                 )
-                # borrar también el tag para no dejar basura
                 requests.delete(
                     f"https://api.github.com/repos/{repo}/git/refs/tags/{tag}",
                     headers=_headers(), timeout=30,
@@ -43,14 +42,21 @@ def _cleanup_old_releases(repo: str, keep: int):
         print(f"    (limpieza de releases omitida: {e})")
 
 
-def upload_public(video_path: str) -> str:
-    repo = os.environ["GITHUB_REPOSITORY"] 
+def upload_public(video_path: str, caption: str = "", title: str = ""):
+    """Sube el mp4 a un Release y GUARDA el caption/título en el cuerpo del release.
+
+    Así, cuando después publiques por ID, el texto viaja con el video y no se pierde.
+    Devuelve (url, tag).
+    """
+    repo = os.environ["GITHUB_REPOSITORY"]
     tag = "daily-" + datetime.datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+
+    body = json.dumps({"title": title or "", "caption": caption or ""}, ensure_ascii=False)
 
     r = requests.post(
         f"https://api.github.com/repos/{repo}/releases",
         headers=_headers(),
-        json={"tag_name": tag, "name": tag, "body": "Auto-generado"},
+        json={"tag_name": tag, "name": tag, "body": body},
         timeout=60,
     )
     r.raise_for_status()
@@ -71,14 +77,40 @@ def upload_public(video_path: str) -> str:
     return url, tag
 
 
-def get_release_video_url(repo: str, tag: str) -> str:
-    """Devuelve la URL pública del mp4 de un release existente (por su tag/ID)."""
+def get_release_info(repo: str, tag: str):
+    """Devuelve (url_mp4, caption, title) de un release existente (por su tag/ID).
+
+    El caption/title se leen del body (JSON). Si el body es viejo (no-JSON),
+    caen a texto plano por compatibilidad.
+    """
     r = requests.get(
         f"https://api.github.com/repos/{repo}/releases/tags/{tag}",
         headers=_headers(), timeout=30,
     )
     r.raise_for_status()
-    for asset in r.json().get("assets", []):
+    rel = r.json()
+
+    url = None
+    for asset in rel.get("assets", []):
         if asset.get("name", "").endswith(".mp4"):
-            return asset["browser_download_url"]
-    raise RuntimeError(f"No se encontró un .mp4 en el release '{tag}'.")
+            url = asset["browser_download_url"]
+            break
+    if not url:
+        raise RuntimeError(f"No se encontró un .mp4 en el release '{tag}'.")
+
+    caption, title = "", ""
+    body = (rel.get("body") or "").strip()
+    if body:
+        try:
+            meta = json.loads(body)
+            caption = (meta.get("caption") or "").strip()
+            title = (meta.get("title") or "").strip()
+        except Exception:
+            caption = body if body != "Auto-generado" else ""
+    return url, caption, title
+
+
+def get_release_video_url(repo: str, tag: str) -> str:
+    """Compat: solo la URL del mp4."""
+    url, _caption, _title = get_release_info(repo, tag)
+    return url

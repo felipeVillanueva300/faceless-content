@@ -1,11 +1,4 @@
-"""Arma el video vertical 1080x1920 con FFmpeg: fondo + subtítulos quemados + audio.
-
-Fondo por defecto: degradado azul marino (se ve bien y el texto blanco resalta).
-- Colores configurables con BG_C0 (arriba-izq) y BG_C1 (abajo-der), formato 0xRRGGBB.
-- Si defines BG_VIDEO con la ruta a un video loop, lo usa como fondo recortado a 9:16.
-
-Si FFmpeg no está en el PATH, apunta al ejecutable con FFMPEG_BIN.
-"""
+"""Arma el video vertical 1080x1920 con FFmpeg: fondo + subtítulos quemados + audio."""
 import os
 import shutil
 import subprocess
@@ -13,16 +6,53 @@ import subprocess
 FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
 WATERMARK = os.environ.get("WATERMARK_TEXT", "@villanuevagallegosf")
 SUB_FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
- 
- 
+
+BG_TARGET_LUMA = float(os.environ.get("BG_TARGET_LUMA", "105"))
+BG_VIGNETTE = os.environ.get("BG_VIGNETTE", "PI/5").strip()
+
 
 def _escape_drawtext(txt: str) -> str:
     return (txt.replace("\\", "\\\\")
                .replace(":", "\\:")
                .replace("'", "\\'")
                .replace("%", "\\\\%"))
- 
- 
+
+
+def _measure_luma(path: str):
+    """Devuelve el brillo promedio (0-255) de los primeros ~2s del clip, o None."""
+    try:
+        p = subprocess.run(
+            [FFMPEG, "-hide_banner", "-i", path,
+             "-vf", "select='lt(t\\,2)',signalstats,metadata=print",
+             "-an", "-f", "null", "-"],
+            capture_output=True, text=True, timeout=90,
+        )
+        salida = (p.stderr or "") + (p.stdout or "")
+        vals = []
+        for line in salida.splitlines():
+            if "signalstats.YAVG=" in line:
+                try:
+                    vals.append(float(line.split("signalstats.YAVG=")[1].split()[0]))
+                except Exception:
+                    pass
+        if vals:
+            return sum(vals) / len(vals)
+    except Exception as e:
+        print(f"    (no se pudo medir brillo del b-roll: {e})")
+    return None
+
+
+def _brightness_delta(bg_video: str) -> float:
+    """Calcula el ajuste de brillo (rango eq: -1..1) para acercar el clip al objetivo."""
+    yavg = _measure_luma(bg_video)
+    if yavg is None:
+        return -0.06
+    delta = (BG_TARGET_LUMA - yavg) / 255.0
+    delta = max(-0.15, min(0.22, delta))
+    print(f"    brillo b-roll YAVG={yavg:.0f} -> eq brightness={delta:+.3f}")
+    return delta
+
+
 def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
     """cards: lista opcional de dicts {'big': '70%', 'small': 'texto', 'start': s, 'end': s}."""
     if shutil.which(FFMPEG) is None and not os.path.isfile(FFMPEG):
@@ -30,18 +60,21 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
             "No se encontró FFmpeg. Instálalo con 'winget install -e --id Gyan.FFmpeg' "
             "y abre una terminal NUEVA, o define FFMPEG_BIN con la ruta completa a ffmpeg.exe."
         )
- 
+
     work_dir = os.path.dirname(os.path.abspath(ass_path)) or "."
     audio = os.path.basename(audio_path)
     subs = os.path.basename(ass_path)
     out = os.path.basename(out_path)
- 
+
     if bg_video:
         bg = os.path.basename(bg_video)
         inputs = ["-stream_loop", "-1", "-i", bg, "-i", audio]
+        delta = _brightness_delta(bg_video)
+        vig = f",vignette={BG_VIGNETTE}" if BG_VIGNETTE and BG_VIGNETTE != "0" else ""
         base = (
             "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-            "crop=1080:1920,eq=brightness=-0.12:saturation=1.05,setsar=1[bg]"
+            f"crop=1080:1920,eq=brightness={delta:.3f}:contrast=1.06:saturation=1.12"
+            f"{vig},setsar=1[bg]"
         )
     else:
         c0 = os.environ.get("BG_C0", "0x1B3A5C")
@@ -50,15 +83,15 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
                 ":x0=0:y0=0:x1=1080:y1=1920:speed=0.008:rate=30")
         inputs = ["-f", "lavfi", "-i", grad, "-i", audio]
         base = "[0:v]setsar=1[bg]"
- 
+
     chain = [base]
     last = "bg"
- 
+
     for i, card in enumerate(cards or []):
         big = _escape_drawtext(str(card.get("big", "")))
         small = _escape_drawtext(str(card.get("small", "")))
         st, en = float(card["start"]), float(card["end"])
-      
+
         chain.append(
             f"[{last}]drawtext=font='{SUB_FONT}':text='{big}':fontcolor=0x00E5FF:"
             f"fontsize=170:borderw=6:bordercolor=black:x=(w-tw)/2:y=h*0.20:"
@@ -70,18 +103,18 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
             f"enable='between(t,{st},{en})'[c{i}b]"
         )
         last = f"c{i}b"
- 
+
     chain.append(f"[{last}]subtitles={subs}[subd]")
     last = "subd"
- 
+
     wm = _escape_drawtext(WATERMARK)
     chain.append(
         f"[{last}]drawtext=font='{SUB_FONT}':text='{wm}':fontcolor=white@0.75:"
         f"fontsize=40:borderw=3:bordercolor=black@0.6:x=40:y=h-90[v]"
     )
- 
+
     vf = ";".join(chain)
- 
+
     cmd = [
         FFMPEG, "-y",
         *inputs,

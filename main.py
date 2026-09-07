@@ -49,13 +49,19 @@ def _publicar(url, caption):
 
 def publicar_por_id(publish_id: str):
     repo = os.environ["GITHUB_REPOSITORY"]
-    caption = os.environ.get("PUBLISH_CAPTION", "").strip()
     print(f"[Publicar por ID] Buscando video del release: {publish_id}")
-    url = uploader.get_release_video_url(repo, publish_id)
+    url, caption, titulo = uploader.get_release_info(repo, publish_id)
+
+    override = os.environ.get("PUBLISH_CAPTION", "").strip()
+    if override:
+        caption = override
+    if not titulo:
+        titulo = f"(publicación manual de {publish_id})"
+
     print("    URL:", url)
+    print("    Caption:", (caption[:80] + "…") if len(caption) > 80 else caption or "(vacío)")
     print("[Publicar por ID] Publicando en redes")
     results = _publicar(url, caption)
-    titulo = f"(publicación manual de {publish_id})"
     _write_summary(url, titulo, caption, publicado=bool(results))
     notify.notify_telegram(titulo, caption or "(sin caption)", url, publicado=bool(results))
     if (os.environ.get("IG_USER_ID") or os.environ.get("FB_PAGE_ID")) and not results:
@@ -70,6 +76,7 @@ def generar_borrador():
     data = script_gen.generate_script(niche)
     narration = f"{data['hook']} {data['script']}"
     caption = data.get("caption") or data.get("title", "")
+    title = data.get("title", "")
 
     print("[2/7] Sintetizando voz")
     audio = os.path.join(BUILD, "audio.mp3")
@@ -96,7 +103,7 @@ def generar_borrador():
     video.build_video(audio, ass, out, bg_video=bg, cards=cards)
 
     print("[6/7] Subiendo video a URL pública")
-    url, tag = uploader.upload_public(out)
+    url, tag = uploader.upload_public(out, caption=caption, title=title)
     print("    URL:", url)
     print("    ID :", tag)
 
@@ -108,15 +115,15 @@ def generar_borrador():
         print("ID para publicar:", tag)
         print("Video:", url)
         print("=" * 60)
-        _write_summary(url, data.get("title", ""), caption, publicado=False)
-        notify.notify_telegram(data.get("title", ""), caption, url,
+        _write_summary(url, title, caption, publicado=False)
+        notify.notify_telegram(title, caption, url,
                                publicado=False, publish_id=tag)
         return
 
     print("[7/7] Publicando (cron directo)")
     results = _publicar(url, caption)
-    _write_summary(url, data.get("title", ""), caption, publicado=bool(results))
-    notify.notify_telegram(data.get("title", ""), caption, url, publicado=bool(results))
+    _write_summary(url, title, caption, publicado=bool(results))
+    notify.notify_telegram(title, caption, url, publicado=bool(results))
     if (os.environ.get("IG_USER_ID") or os.environ.get("FB_PAGE_ID")) and not results:
         sys.exit(1)
 
