@@ -2,12 +2,17 @@ name: Publicar Reel diario
 
 on:
   schedule:
-    # 15:00 UTC ≈ 9:00 en el centro de México. Ajusta a tu gusto.
     - cron: '30 16 * * *'
-  workflow_dispatch:   # permite correrlo a mano desde la pestaña Actions
+  workflow_dispatch:  
+    inputs:
+      publicar:
+        description: "¿Publicar en redes? (false = solo borrador para revisar)"
+        type: choice
+        default: "false"
+        options: ["false", "true"]
 
 permissions:
-  contents: write       # necesario para crear el Release con el video
+  contents: write  
 
 jobs:
   publish:
@@ -29,8 +34,8 @@ jobs:
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 15
-          max_attempts: 3          # reintenta hasta 3 veces si algo falla
-          retry_wait_seconds: 60   # espera 1 min entre intentos
+          max_attempts: 3   
+          retry_wait_seconds: 60  
           command: python main.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -41,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           WATERMARK_TEXT: "@villanuevagallegosf"
+          PUBLISH: ${{ github.event_name == 'schedule' && 'true' || inputs.publicar }}
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"
           TTS_VOICE: es-MX-JorgeNeural
-          # BG_VIDEO: assets/fondo.mp4   # opcional: fondo en loop
