@@ -1,9 +1,3 @@
-"""Genera el contenido de un post de IMAGEN con Gemini.
-
-Devuelve un dict: big (cifra/idea corta), small (frase que la explica),
-caption (para el post), title (corto) e image_prompt (para el fondo IA, en inglés
-y SIN texto). Reintenta si Google satura (503/429).
-"""
 import os
 import json
 import time
@@ -14,6 +8,25 @@ from google.genai import errors
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
+# Los 5 formatos que rota. Cada uno dice qué poner en 'big' y en 'small'.
+FORMATOS = [
+    ("El dato que sorprende",
+     "'big' = la cifra impactante (ej: '$3,200 AL AÑO'). "
+     "'small' = frase clara que explica qué significa para la persona (8-12 palabras)."),
+    ("El error común",
+     "'big' = 'EL ERROR #1' (o #2, #3). "
+     "'small' = el error concreto que comete la gente, en una frase clara (8-12 palabras)."),
+    ("El tip accionable",
+     "'big' = una acción corta en mayúsculas (ej: 'REVISA ESTO HOY'). "
+     "'small' = cómo hacerlo y para qué, en una frase clara (8-12 palabras)."),
+    ("Mito vs. realidad",
+     "'big' = 'MITO'. "
+     "'small' = la creencia falsa entre comillas + la verdad corta (8-12 palabras)."),
+    ("Comparativa simple",
+     "'big' = 'A vs B' con dos conceptos cortos (ej: 'AHORRAR vs INVERTIR'). "
+     "'small' = cuál conviene y por qué, en una frase clara (8-12 palabras)."),
+]
+
 
 def _extract_json(text: str) -> dict:
     text = text.strip()
@@ -23,39 +36,42 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
+def _formato_del_dia(today: datetime.date):
+    # Elige el formato por el día del año, así rota parejo y es reproducible.
+    return FORMATOS[today.toordinal() % len(FORMATOS)]
+
+
 def generate_image_post(niche: str = "tecnología y finanzas", max_retries: int = 6) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    today = datetime.date.today().isoformat()
+    today = datetime.date.today()
+    nombre_formato, reglas_formato = _formato_del_dia(today)
 
     prompt = f"""Eres redactor de una cuenta mexicana de finanzas y tecnología llamada "Dinero Simple".
 Tu público: personas normales en México, SIN conocimientos financieros. Escribes claro y directo,
 como si le explicaras a un amigo. Nada de jerga (evita "portafolio", "diversificar", "rendimiento",
-"activos"), nada de frases motivacionales vacías ni clichés.
+"activos"). Nada de frases motivacionales vacías.
 
-Genera UN post de UNA imagen sobre {niche}. UN SOLO mensaje, claro y corto, con UNA idea útil y
-concreta que la gente pueda aplicar HOY (un truco, un dato o un error común que cometen).
-Usa la fecha como semilla para variar el tema cada día: {today}.
+FORMATO DE HOY: "{nombre_formato}".
+Instrucciones de este formato:
+{reglas_formato}
 
-Reglas de longitud (ESTRICTAS):
-- "big": máximo ~10 caracteres. Una cifra o 1-2 palabras de golpe (ej: "70%", "$240", "3 ERRORES").
-- "small": MÁXIMO 4 palabras. Explica el "big" con un beneficio claro.
-- "caption": 1 gancho + 1 idea concreta accionable + 1 llamado a la acción corto + 3-4 hashtags.
-  Máximo ~40 palabras antes de los hashtags.
+Genera UN post de UNA imagen sobre {niche}, siguiendo EXACTAMENTE el formato de hoy.
+Debe tener UNA idea útil y concreta que la gente entienda al instante y pueda aplicar.
+Usa la fecha como semilla para variar el tema: {today.isoformat()}.
+
+Reglas de longitud:
+- "big": máximo ~14 caracteres. Es el gancho grande de la imagen.
+- "small": una FRASE CLARA Y COMPLETA de 8 a 12 palabras (que se entienda sola, no palabras sueltas).
+- "caption": 1 gancho + explicación útil en 2-3 frases + 1 llamado a la acción + 3-4 hashtags.
 - "title": 3-5 palabras.
-- "image_prompt": 1-2 frases EN INGLÉS para un fondo profesional y cinematográfico del tema,
-  SIN texto ni números.
+- "image_prompt": 1-2 frases EN INGLÉS para un fondo profesional del tema, SIN texto ni números.
 
 Reglas de contenido:
-- Que se entienda en 2 segundos. Si dudas si es claro, hazlo más simple.
-- NO inventes estadísticas. Si no hay un dato sólido y verificable, usa un truco o error común en "big".
+- Que cualquier persona lo entienda en 3 segundos.
+- NO inventes estadísticas falsas. Usa cifras realistas y sensatas, o habla en términos generales.
 - Ortografía correcta en español de México, CON acentos y ñ.
 
-Ejemplos SOLO del tono (no los copies, inspírate):
-{{"big":"$0","small":"comisiones que evitas","caption":"...","title":"Adiós comisiones","image_prompt":"..."}}
-{{"big":"3 APPS","small":"para ahorrar solo","caption":"...","title":"Ahorro automático","image_prompt":"..."}}
-{{"big":"-40%","small":"en tu recibo de luz","caption":"...","title":"Baja tu luz","image_prompt":"..."}}
-
-Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves exactas:
+Devuelve SOLO un objeto JSON válido, sin markdown, con estas claves exactas:
 "big", "small", "caption", "title", "image_prompt"."""
 
     last_err = None
