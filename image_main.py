@@ -1,4 +1,3 @@
-
 import os
 import sys
 
@@ -44,7 +43,7 @@ def _avisar(url, titulo, caption, publicado, publish_id=None):
         except Exception:
             pass
     notify.notify_telegram(titulo, caption or "(sin caption)", url,
-                           publicado=publicado, publish_id=publish_id)
+                           publicado=publicado, publish_id=publish_id, tipo="imagen")
 
 
 def publicar_por_id(publish_id: str):
