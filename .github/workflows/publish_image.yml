@@ -46,6 +46,7 @@ jobs:
           IMAGE_BACKEND: ${{ vars.IMAGE_BACKEND || 'gemini' }}
           IMAGE_MODEL: ${{ vars.IMAGE_MODEL }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
