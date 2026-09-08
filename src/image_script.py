@@ -1,3 +1,9 @@
+"""Genera el contenido de un post de IMAGEN con Gemini.
+
+Devuelve un dict: big (cifra/idea corta), small (frase que la explica),
+caption (para el post), title (corto) e image_prompt (para el fondo IA, en inglés
+y SIN texto). Reintenta si Google satura (503/429).
+"""
 import os
 import json
 import time
@@ -21,20 +27,36 @@ def generate_image_post(niche: str = "tecnología y finanzas", max_retries: int 
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today().isoformat()
 
-    prompt = f"""Eres creador de posts de imagen para redes en español de México sobre {niche}.
-Genera UN post de UNA sola imagen (no video), con un ángulo fresco y concreto.
-Usa la fecha como semilla para variar el tema: {today}.
+    prompt = f"""Eres redactor de una cuenta mexicana de finanzas y tecnología llamada "Dinero Simple".
+Tu público: personas normales en México, SIN conocimientos financieros. Escribes claro y directo,
+como si le explicaras a un amigo. Nada de jerga (evita "portafolio", "diversificar", "rendimiento",
+"activos"), nada de frases motivacionales vacías ni clichés.
 
-Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con esta forma:
-{{
-  "big": "cifra o idea MUY corta y llamativa (ej: 70%, $240, 3x, AHORRA YA) — pocas letras",
-  "small": "frase de máximo 6 palabras que explica el 'big'",
-  "caption": "descripción para el post, con un gancho y 3-5 hashtags relevantes",
-  "title": "título corto de 3-6 palabras",
-  "image_prompt": "1-2 frases EN INGLÉS para el fondo: profesional y cinematográfico, relacionado al tema, SIN texto ni números (ej: 'cinematic dark blue finance background with abstract growth charts and coins')"
-}}
-Reglas: NO inventes estadísticas falsas; si no hay un dato sólido, usa una idea corta
-en 'big'. 'small' debe ser muy breve para que quepa en la imagen."""
+Genera UN post de UNA imagen sobre {niche}. UN SOLO mensaje, claro y corto, con UNA idea útil y
+concreta que la gente pueda aplicar HOY (un truco, un dato o un error común que cometen).
+Usa la fecha como semilla para variar el tema cada día: {today}.
+
+Reglas de longitud (ESTRICTAS):
+- "big": máximo ~10 caracteres. Una cifra o 1-2 palabras de golpe (ej: "70%", "$240", "3 ERRORES").
+- "small": MÁXIMO 4 palabras. Explica el "big" con un beneficio claro.
+- "caption": 1 gancho + 1 idea concreta accionable + 1 llamado a la acción corto + 3-4 hashtags.
+  Máximo ~40 palabras antes de los hashtags.
+- "title": 3-5 palabras.
+- "image_prompt": 1-2 frases EN INGLÉS para un fondo profesional y cinematográfico del tema,
+  SIN texto ni números.
+
+Reglas de contenido:
+- Que se entienda en 2 segundos. Si dudas si es claro, hazlo más simple.
+- NO inventes estadísticas. Si no hay un dato sólido y verificable, usa un truco o error común en "big".
+- Ortografía correcta en español de México, CON acentos y ñ.
+
+Ejemplos SOLO del tono (no los copies, inspírate):
+{{"big":"$0","small":"comisiones que evitas","caption":"...","title":"Adiós comisiones","image_prompt":"..."}}
+{{"big":"3 APPS","small":"para ahorrar solo","caption":"...","title":"Ahorro automático","image_prompt":"..."}}
+{{"big":"-40%","small":"en tu recibo de luz","caption":"...","title":"Baja tu luz","image_prompt":"..."}}
+
+Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves exactas:
+"big", "small", "caption", "title", "image_prompt"."""
 
     last_err = None
     for attempt in range(max_retries):
