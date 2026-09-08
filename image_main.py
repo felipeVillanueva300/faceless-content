@@ -1,7 +1,7 @@
 import os
 import sys
 
-from src import image_script, image_gen, image_render, image_post, uploader, notify
+from src import image_script, image_gen, image_render, image_post, uploader, notify, history
 
 BUILD = "build"
 
@@ -69,9 +69,13 @@ def generar_borrador():
     niche = os.environ.get("NICHE", "tecnología y finanzas")
 
     print(f"[1/4] Generando guion de imagen sobre: {niche}")
-    data = image_script.generate_image_post(niche)
+    recientes = history.load_recent(60)
+    if recientes:
+        print(f"    ({len(recientes)} temas recientes a evitar)")
+    data = image_script.generate_image_post(niche, avoid=recientes)
     caption = data.get("caption") or data.get("title", "")
     title = data.get("title", "")
+    topic = data.get("topic") or title
 
     print("[2/4] Generando fondo con IA")
     bg = image_gen.fetch_background(data.get("image_prompt", ""), os.path.join(BUILD, "bg.png"))
@@ -85,6 +89,8 @@ def generar_borrador():
                                       content_type="image/jpeg", prefix="img-")
     print("    URL:", url)
     print("    ID :", tag)
+
+    history.add(topic)
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
     if not publicar:
