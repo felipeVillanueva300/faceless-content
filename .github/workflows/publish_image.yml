@@ -1,0 +1,59 @@
+name: Publicar Imagen diaria
+
+on:
+  schedule:
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+    inputs:
+      publicar_id:
+        description: "ID de la imagen a PUBLICAR (ej: img-20260908-231500). Vacío = generar un borrador nuevo."
+        type: string
+        default: ""
+      publicar_caption:
+        description: "Caption opcional (vacío = usa el del borrador)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  publish-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar fuentes (para el texto de la imagen)
+        run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Generar o publicar imagen (con reintentos del job completo)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 60
+          command: python image_main.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
+          IMAGE_BACKEND: ${{ vars.IMAGE_BACKEND || 'gemini' }}
+          IMAGE_MODEL: ${{ vars.IMAGE_MODEL }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WATERMARK_TEXT: "@villanuevagallegosf"
+          PUBLISH_ID: ${{ inputs.publicar_id }}
+          PUBLISH_CAPTION: ${{ inputs.publicar_caption }}
+          PUBLISH: "false"
+          GRAPH_VERSION: v23.0
+          NICHE: "tecnología y finanzas"

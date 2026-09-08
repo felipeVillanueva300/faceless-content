@@ -9,3 +9,5 @@ __pycache__/
 *.pyc
 
 docs/
+run_test.ps1
+run_image_test.ps1
