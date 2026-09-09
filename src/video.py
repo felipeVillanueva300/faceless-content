@@ -52,8 +52,11 @@ def _brightness_delta(bg_video: str) -> float:
     return delta
 
 
-def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
-    """cards: lista opcional de dicts {'big': '70%', 'small': 'texto', 'start': s, 'end': s}."""
+def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
+                graphics=None, duration=None):
+    """cards: lista opcional de dicts {'big': '70%', 'small': 'texto', 'start': s, 'end': s}.
+    graphics: lista opcional de dicts {'pattern': ruta_%05d.png, 'start': s, 'end': s, 'fps': n}.
+    duration: si se pasa, corta la salida a esos segundos (en vez de -shortest)."""
     if shutil.which(FFMPEG) is None and not os.path.isfile(FFMPEG):
         raise FileNotFoundError(
             "No se encontró FFmpeg. Instálalo con 'winget install -e --id Gyan.FFmpeg' "
@@ -103,6 +106,18 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
         )
         last = f"c{i}b"
 
+    graphics = graphics or []
+    for gi, g in enumerate(graphics):
+        inputs += ["-itsoffset", f"{g['start']}", "-framerate", str(g.get("fps", 30)),
+                   "-i", g["pattern"]]
+    for gi, g in enumerate(graphics):
+        idx = 2 + gi  # 0=fondo, 1=audio, 2..=gráficos
+        chain.append(
+            f"[{last}][{idx}:v]overlay=0:0:"
+            f"enable='between(t,{g['start']},{g['end']})':eof_action=pass[g{gi}]"
+        )
+        last = f"g{gi}"
+
     chain.append(f"[{last}]subtitles={subs}[subd]")
     last = "subd"
 
@@ -114,6 +129,7 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
 
     vf = ";".join(chain)
 
+    tail = ["-t", f"{duration:.2f}"] if duration else ["-shortest"]
     cmd = [
         FFMPEG, "-y",
         *inputs,
@@ -121,7 +137,7 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
         "-map", "[v]", "-map", "1:a",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "20",
         "-c:a", "aac", "-b:a", "192k",
-        "-shortest", "-movflags", "+faststart",
+        *tail, "-movflags", "+faststart",
         out,
     ]
     subprocess.run(cmd, check=True, cwd=work_dir)

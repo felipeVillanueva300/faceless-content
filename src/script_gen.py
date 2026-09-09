@@ -56,14 +56,23 @@ Devuelve SOLO un objeto JSON válido, sin markdown, con esta forma:
   "script": "texto corrido para narrar, 90-120 palabras, frases cortas y claras",
   "caption": "descripción para el post, con gancho y 3-5 hashtags relevantes",
   "title": "título corto de 3-6 palabras",
-  "broll_keywords": "2-4 palabras EN INGLÉS para buscar video de fondo (ej: 'credit card payment')",
+  "broll_keywords": "2-4 palabras EN INGLÉS de algo VISUAL y CONCRETO de finanzas/tecnología para buscar video de fondo (ej: 'credit card payment', 'mexican pesos cash', 'person using phone banking', 'calculator and money'). Evita términos abstractos o que traigan resultados sin relación (nada de gente genérica, niños, oficinas vacías)",
   "cards": [
     {{"big": "cifra o palabra corta (ej: '70%')", "small": "frase de máximo 4 palabras"}}
+  ],
+  "graphics": [
+    {{"type": "countup", "value": 74000, "prefix": "$", "label": "de más en 5 años"}},
+    {{"type": "bars", "title": "pagar solo el mínimo", "a_label": "Pago mínimo", "a_value": 74000, "b_label": "Pago mayor", "b_value": 18000, "a_color": "red", "b_color": "green"}}
   ],
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'cancelar-suscripciones')"
 }}
 Reglas: NO inventes estadísticas falsas. Ortografía correcta en español de México, CON acentos y ñ.
-'cards': 1 o 2 como máximo. 'topic' debe ser específico al ángulo de hoy."""
+'cards': 1 o 2 como máximo. 'topic' debe ser específico al ángulo de hoy.
+'graphics': 1 o 2 elementos que APOYEN el dato principal del video. Tipos permitidos SOLO:
+"countup" (un número que sube: usa value numérico, prefix como "$" o "", label corta) y
+"bars" (comparación de dos: a_label/a_value y b_label/b_value numéricos, title corto, colores
+"red"/"green"). Usa cifras realistas y sensatas. Si el video no tiene un número claro, deja
+"graphics": []."""
 
     last_err = None
     for attempt in range(max_retries):

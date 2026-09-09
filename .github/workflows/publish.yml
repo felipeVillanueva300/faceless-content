@@ -46,7 +46,7 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          WATERMARK_TEXT: "@villanuevagallegosf"
+          WATERMARK_TEXT: "@dinerosimple.mx"
           PUBLISH_ID: ${{ inputs.publicar_id }}
           PUBLISH: "false"
           GRAPH_VERSION: v23.0

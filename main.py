@@ -2,7 +2,7 @@
 import os
 import sys
 
-from src import script_gen, tts, subtitles, video, uploader, publisher, broll, notify, history
+from src import script_gen, tts, subtitles, video, uploader, publisher, broll, notify, history, graphics
 
 BUILD = "build"
 
@@ -52,6 +52,7 @@ def publicar_por_id(publish_id: str):
     print(f"[Publicar por ID] Buscando video del release: {publish_id}")
     url, caption, titulo = uploader.get_release_info(repo, publish_id)
 
+    # Permite sobreescribir el caption a mano desde el workflow (opcional).
     override = os.environ.get("PUBLISH_CAPTION", "").strip()
     if override:
         caption = override
@@ -103,8 +104,23 @@ def generar_borrador():
     for c, (a, b) in zip((data.get("cards") or [])[:2], [(0.25, 0.45), (0.60, 0.80)]):
         cards.append({"big": c.get("big", ""), "small": c.get("small", ""),
                       "start": round(dur * a, 2), "end": round(dur * b, 2)})
+
+    graphic_overlays = []
+    for gi, g in enumerate((data.get("graphics") or [])[:2]):
+        st = round(dur * (0.28 if gi == 0 else 0.62), 2)
+        en = round(min(st + 4.0, dur - 0.5), 2)
+        if en - st < 1.5:
+            continue
+        gdir = os.path.join(BUILD, f"g{gi}")
+        pattern, _n, fps = graphics.render_frames(g, en - st, gdir)
+        graphic_overlays.append({"pattern": pattern, "start": st, "end": en, "fps": fps})
+
+    if graphic_overlays:
+        cards = []
+
     out = os.path.join(BUILD, "reel.mp4")
-    video.build_video(audio, ass, out, bg_video=bg, cards=cards)
+    video.build_video(audio, ass, out, bg_video=bg, cards=cards,
+                      graphics=graphic_overlays, duration=dur)
 
     print("[6/7] Subiendo video a URL pública")
     url, tag = uploader.upload_public(out, caption=caption, title=title)

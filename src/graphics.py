@@ -58,8 +58,8 @@ def render_bars_frame(spec, progress, out_path):
     a_col = RED if spec.get("a_color", "red") == "red" else GREEN
     b_col = GREEN if spec.get("b_color", "green") == "green" else RED
 
-    base_y = 1180 
-    max_h = 560  
+    base_y = 1180
+    max_h = 560
     bar_w = 300
     gap = 120
     cx = W // 2
@@ -105,3 +105,24 @@ def render_countup_frame(spec, progress, out_path):
 
     img.save(out_path)
     return out_path
+
+
+def render_frames(spec, seconds, out_dir, fps=30):
+    """Renderiza la animación completa como secuencia de PNG transparentes.
+
+    Anima en los primeros ~1.2s (progreso 0->1) y sostiene el resto. Devuelve
+    (patrón_absoluto, num_frames, fps) para que video.py lo superponga.
+    """
+    os.makedirs(out_dir, exist_ok=True)
+    n = max(1, int(round(seconds * fps)))
+    anim = max(1, int(fps * 1.2))
+    typ = (spec.get("type") or "countup").lower()
+    for i in range(n):
+        progress = 1.0 if i >= anim else (i / anim)
+        path = os.path.join(out_dir, f"f_{i:05d}.png")
+        if typ == "bars":
+            render_bars_frame(spec, progress, path)
+        else:
+            render_countup_frame(spec, progress, path)
+    pattern = os.path.join(os.path.abspath(out_dir), "f_%05d.png")
+    return pattern, n, fps
