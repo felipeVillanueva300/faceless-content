@@ -1,4 +1,4 @@
-"""Publica el video en Instagram (Reels) y en una Página de Facebook vía Graph API."""
+"""Publica el video en Instagram (Reels) y en una Página de Facebook (Reels)."""
 import os
 import time
 import requests
@@ -53,11 +53,8 @@ def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
 
 
 def _page_token(page_id: str) -> str:
-    """Obtiene el token de la PÁGINA a partir del token de usuario/System User.
- 
-    Publicar en /{page}/videos requiere un Page Access Token, no el de usuario.
-    Este paso lo consigue automáticamente con el token que ya tenemos.
-    """
+    """Obtiene el Page Access Token a partir del token de usuario/System User.
+    Publicar Reels en la Página lo requiere."""
     r = requests.get(
         f"{BASE}/{page_id}",
         params={"fields": "access_token", "access_token": _token()},
@@ -72,17 +69,67 @@ def _page_token(page_id: str) -> str:
         )
     return tok
 
-def publish_facebook(page_id: str, video_url: str, description: str) -> str:
 
+def publish_facebook(page_id: str, video_url: str, description: str) -> str:
+    """Publica como REEL de Facebook (endpoint video_reels, 3 pasos).
+
+    Ventaja vs /videos: aparece en la pestaña Reels de la Página y entra al feed
+    de Reels (mucho mejor alcance). Requiere 9:16 y 5-90s (tu reel cumple).
+    """
     page_tok = _page_token(page_id)
+
+    # 1) Iniciar sesión de subida
+    print("    FB Reel: iniciando subida...")
     r = requests.post(
-        f"{BASE}/{page_id}/videos",
+        f"{BASE}/{page_id}/video_reels",
+        data={"upload_phase": "start", "access_token": page_tok},
+        timeout=60,
+    )
+    r.raise_for_status()
+    j = r.json()
+    video_id = j["video_id"]
+    upload_url = j["upload_url"]
+
+    # 2) Transferir el video (archivo hosteado: le pasamos la URL pública)
+    print(f"    FB Reel: transfiriendo (video_id={video_id})...")
+    up = requests.post(
+        upload_url,
+        headers={"Authorization": f"OAuth {page_tok}", "file_url": video_url},
+        timeout=180,
+    )
+    up.raise_for_status()
+
+    # 3) Finalizar y publicar
+    print("    FB Reel: publicando...")
+    fin = requests.post(
+        f"{BASE}/{page_id}/video_reels",
         data={
-            "file_url": video_url,
+            "upload_phase": "finish",
+            "video_id": video_id,
+            "video_state": "PUBLISHED",
             "description": description,
             "access_token": page_tok,
         },
-        timeout=120,
+        timeout=60,
     )
-    r.raise_for_status()
-    return r.json().get("id", "")
+    fin.raise_for_status()
+
+    # Esperar el procesamiento/publicación (hasta ~2.5 min). Si no confirma, igual
+    # devolvemos el id: el paso 3 ya lo mandó a publicar.
+    for _ in range(30):
+        s = requests.get(
+            f"{BASE}/{video_id}",
+            params={"fields": "status", "access_token": page_tok},
+            timeout=30,
+        ).json()
+        status = s.get("status", {}) or {}
+        pub = (status.get("publishing_phase") or {}).get("status")
+        proc = (status.get("processing_phase") or {}).get("status")
+        vstatus = status.get("video_status")
+        if pub in ("complete", "published") or vstatus in ("ready", "published", "complete"):
+            break
+        if pub == "error" or proc == "error":
+            raise RuntimeError(f"Facebook falló al procesar el Reel: {status}")
+        time.sleep(5)
+
+    return video_id
