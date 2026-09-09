@@ -70,10 +70,7 @@ def _animated_lines_from_boundaries(boundaries):
             partes = []
             for k, palabra in enumerate(words):
                 if k == j:
-                    partes.append(
-                        f"{{\\c{COL_HL}\\fscx112\\fscy112}}{palabra}"
-                        f"{{\\c{COL_BASE}\\fscx100\\fscy100}}"
-                    )
+                    partes.append(f"{{\\1c{COL_HL}&}}{palabra}{{\\1c{COL_BASE}&}}")
                 else:
                     partes.append(palabra)
             texto = " ".join(partes)
@@ -84,13 +81,23 @@ def _animated_lines_from_boundaries(boundaries):
 
 
 def _static_lines_from_text(text, duration):
-    """Fallback sin timing por palabra: grupos fijos repartidos parejo."""
-    words = text.split()
-    groups = [words[i:i + WORDS_PER_CUE] for i in range(0, len(words), WORDS_PER_CUE)]
-    total = sum(len(" ".join(g)) for g in groups) or 1
+    import re
+    oraciones = [s for s in re.split(r'(?<=[\.\?\!])\s+', text.strip()) if s]
+    groups = []
+    for s in oraciones:
+        pals = s.split()
+        for i in range(0, len(pals), WORDS_PER_CUE):
+            groups.append(pals[i:i + WORDS_PER_CUE])
+
+    def peso(g):
+        base = len(" ".join(g))
+        pausa = 6 if g and g[-1][-1:] in ".,;:?!" else 0
+        return base + pausa
+
+    total = sum(peso(g) for g in groups) or 1
     lines, t = [], 0.0
     for g in groups:
-        span = duration * (len(" ".join(g)) / total)
+        span = duration * (peso(g) / total)
         txt = " ".join(g).upper()
         lines.append(
             f"Dialogue: 0,{_ass_time(t)},{_ass_time(t + span)},Default,,0,0,0,,{txt}"
