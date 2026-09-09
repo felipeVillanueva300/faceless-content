@@ -12,7 +12,6 @@ def _token() -> str:
 
 
 def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
-    # 1) Crear el contenedor (media container) de tipo REELS
     r = requests.post(
         f"{BASE}/{ig_user_id}/media",
         data={
@@ -26,18 +25,19 @@ def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
     r.raise_for_status()
     container_id = r.json()["id"]
 
-    # 2) Esperar a que Meta procese el video (hasta ~5 min)
     for _ in range(60):
         s = requests.get(
             f"{BASE}/{container_id}",
-            params={"fields": "status_code", "access_token": _token()},
+            params={"fields": "status_code,status", "access_token": _token()},
             timeout=30,
         ).json()
         code = s.get("status_code")
         if code == "FINISHED":
             break
         if code == "ERROR":
-            raise RuntimeError(f"Instagram falló al procesar el video: {s}")
+            raise RuntimeError(
+                f"Instagram falló al procesar el video. Detalle: {s.get('status')} | {s}"
+            )
         time.sleep(5)
     else:
         raise TimeoutError("El contenedor de Instagram no quedó listo a tiempo.")
@@ -78,7 +78,6 @@ def publish_facebook(page_id: str, video_url: str, description: str) -> str:
     """
     page_tok = _page_token(page_id)
 
-    # 1) Iniciar sesión de subida
     print("    FB Reel: iniciando subida...")
     r = requests.post(
         f"{BASE}/{page_id}/video_reels",
@@ -90,7 +89,6 @@ def publish_facebook(page_id: str, video_url: str, description: str) -> str:
     video_id = j["video_id"]
     upload_url = j["upload_url"]
 
-    # 2) Transferir el video (archivo hosteado: le pasamos la URL pública)
     print(f"    FB Reel: transfiriendo (video_id={video_id})...")
     up = requests.post(
         upload_url,
@@ -99,7 +97,6 @@ def publish_facebook(page_id: str, video_url: str, description: str) -> str:
     )
     up.raise_for_status()
 
-    # 3) Finalizar y publicar
     print("    FB Reel: publicando...")
     fin = requests.post(
         f"{BASE}/{page_id}/video_reels",
@@ -114,8 +111,6 @@ def publish_facebook(page_id: str, video_url: str, description: str) -> str:
     )
     fin.raise_for_status()
 
-    # Esperar el procesamiento/publicación (hasta ~2.5 min). Si no confirma, igual
-    # devolvemos el id: el paso 3 ya lo mandó a publicar.
     for _ in range(30):
         s = requests.get(
             f"{BASE}/{video_id}",
