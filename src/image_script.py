@@ -6,24 +6,9 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+from src import content_plan
 
-PILARES = [
-    "comisiones bancarias que puedes evitar",
-    "suscripciones y cobros automáticos olvidados",
-    "cómo empezar a ahorrar (metas y fondo de emergencia)",
-    "manejo de deudas y tarjetas de crédito",
-    "buró de crédito: cómo funciona y cómo mejorarlo",
-    "inversión para principiantes (CETES, fondos, sin jerga)",
-    "cómo hacer un presupuesto personal simple",
-    "fraudes y seguridad digital con tu dinero",
-    "apps y fintech mexicanas útiles",
-    "compras inteligentes y no caer en descuentos falsos",
-    "impuestos y SAT básico para personas normales",
-    "seguros básicos (auto, gastos médicos) explicados fácil",
-    "cómo bajar tus recibos (luz, celular, internet)",
-    "herramientas de IA para cuidar tus finanzas",
-]
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
 FORMATOS = [
     ("El dato que sorprende",
@@ -52,10 +37,6 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
-def _pilar_del_dia(today):
-    return PILARES[today.toordinal() % len(PILARES)]
-
-
 def _formato_del_dia(today):
     return FORMATOS[today.toordinal() % len(FORMATOS)]
 
@@ -63,14 +44,9 @@ def _formato_del_dia(today):
 def generate_image_post(niche="tecnología y finanzas", avoid=None, max_retries=6) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today()
-    pilar = _pilar_del_dia(today)
+    pilar = content_plan.pilar_del_dia(today)          # imagen usa offset 0
     nombre_formato, reglas_formato = _formato_del_dia(today)
-
-    evitar = ""
-    if avoid:
-        lista = "; ".join(avoid[-40:])
-        evitar = (f"\nTEMAS YA PUBLICADOS RECIENTEMENTE (está PROHIBIDO repetirlos; "
-                  f"elige un ángulo o subtema claramente distinto):\n{lista}\n")
+    evitar = content_plan.avoid_text(avoid)
 
     prompt = f"""Eres redactor de una cuenta mexicana de finanzas y tecnología llamada "Dinero Simple".
 Tu público: personas normales en México, SIN conocimientos financieros. Escribes claro y directo,
@@ -90,8 +66,8 @@ Reglas de longitud:
 - "caption": 1 gancho + explicación útil en 2-3 frases + 1 llamado a la acción + 3-4 hashtags.
 - "title": 3-5 palabras.
 - "image_prompt": 1-2 frases EN INGLÉS para un fondo profesional del tema, SIN texto ni números.
-- "topic": un identificador corto del tema en minúsculas con guiones (ej: "cancelar-suscripciones",
-  "cetes-para-principiantes"). Sirve para no repetir; hazlo específico al ángulo de HOY.
+- "topic": identificador corto del tema en minúsculas con guiones (ej: "cancelar-suscripciones").
+  Sirve para no repetir; hazlo específico al ángulo de HOY.
 
 Reglas de contenido:
 - Que cualquier persona lo entienda en 3 segundos.

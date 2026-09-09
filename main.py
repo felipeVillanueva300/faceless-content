@@ -2,7 +2,7 @@
 import os
 import sys
 
-from src import script_gen, tts, subtitles, video, uploader, publisher, broll, notify
+from src import script_gen, tts, subtitles, video, uploader, publisher, broll, notify, history
 
 BUILD = "build"
 
@@ -73,10 +73,14 @@ def generar_borrador():
     niche = os.environ.get("NICHE", "tecnología y finanzas")
 
     print(f"[1/7] Generando guion sobre: {niche}")
-    data = script_gen.generate_script(niche)
+    recientes = history.load_recent(60)
+    if recientes:
+        print(f"    ({len(recientes)} temas recientes a evitar)")
+    data = script_gen.generate_script(niche, avoid=recientes)
     narration = f"{data['hook']} {data['script']}"
     caption = data.get("caption") or data.get("title", "")
     title = data.get("title", "")
+    topic = data.get("topic") or title
 
     print("[2/7] Sintetizando voz")
     audio = os.path.join(BUILD, "audio.mp3")
@@ -106,6 +110,8 @@ def generar_borrador():
     url, tag = uploader.upload_public(out, caption=caption, title=title)
     print("    URL:", url)
     print("    ID :", tag)
+
+    history.add(topic)
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
