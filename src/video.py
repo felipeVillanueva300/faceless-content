@@ -1,10 +1,9 @@
-"""Arma el video vertical 1080x1920 con FFmpeg: fondo + subtítulos quemados + audio."""
 import os
 import shutil
 import subprocess
 
 FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
-WATERMARK = os.environ.get("WATERMARK_TEXT", "@villanuevagallegosf")
+WATERMARK = os.environ.get("WATERMARK_TEXT", "@dinerosimple.mx")
 SUB_FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
 
 BG_TARGET_LUMA = float(os.environ.get("BG_TARGET_LUMA", "105"))
@@ -72,9 +71,9 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None):
         delta = _brightness_delta(bg_video)
         vig = f",vignette={BG_VIGNETTE}" if BG_VIGNETTE and BG_VIGNETTE != "0" else ""
         base = (
-            "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-            f"crop=1080:1920,eq=brightness={delta:.3f}:contrast=1.06:saturation=1.12"
-            f"{vig},setsar=1[bg]"
+            "[0:v]scale=1188:2112:force_original_aspect_ratio=increase,crop=1188:2112,"
+            f"eq=brightness={delta:.3f}:contrast=1.06:saturation=1.12{vig},setsar=1,"
+            "crop=1080:1920:x='(in_w-out_w)/2+40*sin(t/5)':y='(in_h-out_h)/2+50*sin(t/7)'[bg]"
         )
     else:
         c0 = os.environ.get("BG_C0", "0x1B3A5C")

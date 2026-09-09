@@ -8,10 +8,9 @@ WHITE = (255, 255, 255)
 NAVY0 = (27, 58, 92)              # 0x1B3A5C  (arriba)
 NAVY1 = (7, 11, 18)               # 0x070B12  (abajo)
 
-WATERMARK = os.environ.get("WATERMARK_TEXT", "@villanuevagallegosf")
+WATERMARK = os.environ.get("WATERMARK_TEXT", "@dinerosimple.mx")
 BG_DIM = float(os.environ.get("IMG_BG_DIM", "0.55"))
 
-# Fuentes candidatas: Actions (Linux) trae DejaVu; en Windows local usa Arial.
 _FONT_CANDIDATES = [
     os.environ.get("IMG_FONT_FILE", ""),
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -58,8 +57,8 @@ def _prepare_bg(bg_path) -> Image.Image:
         try:
             img = Image.open(bg_path).convert("RGB")
             img = _cover(img)
-            img = ImageEnhance.Brightness(img).enhance(BG_DIM)   # oscurecer para legibilidad
-            img = ImageEnhance.Color(img).enhance(1.08)          # un pelín más de color
+            img = ImageEnhance.Brightness(img).enhance(BG_DIM)   
+            img = ImageEnhance.Color(img).enhance(1.08)        
             return img
         except Exception as e:
             print(f"    (no se pudo usar el fondo IA: {e}; uso degradado)")
