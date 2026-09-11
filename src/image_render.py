@@ -1,15 +1,16 @@
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
-W, H = 1080, 1350       
+W, H = 1080, 1350                 
 MARGIN = 90
-ACCENT = (0, 229, 255)  
+ACCENT = (0, 229, 255)            
 WHITE = (255, 255, 255)
-NAVY0 = (27, 58, 92)    
-NAVY1 = (7, 11, 18)     
+NAVY0 = (27, 58, 92)              
+NAVY1 = (7, 11, 18)               
 
 WATERMARK = os.environ.get("WATERMARK_TEXT", "@dinerosimple.mx")
 BG_DIM = float(os.environ.get("IMG_BG_DIM", "0.55"))
+
 _FONT_CANDIDATES = [
     os.environ.get("IMG_FONT_FILE", ""),
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -56,8 +57,8 @@ def _prepare_bg(bg_path) -> Image.Image:
         try:
             img = Image.open(bg_path).convert("RGB")
             img = _cover(img)
-            img = ImageEnhance.Brightness(img).enhance(BG_DIM)  
-            img = ImageEnhance.Color(img).enhance(1.08)        
+            img = ImageEnhance.Brightness(img).enhance(BG_DIM)   
+            img = ImageEnhance.Color(img).enhance(1.08)          
             return img
         except Exception as e:
             print(f"    (no se pudo usar el fondo IA: {e}; uso degradado)")
@@ -101,8 +102,25 @@ def _text_h(font, sample):
     return box[3] - box[1]
 
 
+def _apply_scrim(img):
+    """Sombra suave (gradiente) detrás de la zona del texto, para que SIEMPRE
+    resalte aunque la foto sea clara. Se concentra en la banda central."""
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    cy = int(H * 0.50)
+    half = int(H * 0.32)
+    max_a = 165
+    for yy in range(H):
+        d = abs(yy - cy)
+        a = int(max_a * (1 - d / half)) if d < half else 0
+        if a > 0:
+            od.line([(0, yy), (W, yy)], fill=(5, 8, 15, a))
+    return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
+
+
 def _render_photo(big: str, small: str, out_path: str, bg_path=None) -> str:
     img = _prepare_bg(bg_path)
+    img = _apply_scrim(img)
     draw = ImageDraw.Draw(img)
     max_w = W - 2 * MARGIN
 
@@ -136,6 +154,7 @@ def _render_photo(big: str, small: str, out_path: str, bg_path=None) -> str:
     img.save(out_path, "JPEG", quality=90)
     return out_path
 
+
 GOLD = (245, 197, 66)
 
 
@@ -144,7 +163,6 @@ def _poster_bg():
     base = _gradient_bg().convert("RGBA")
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
-    # círculo cian arriba-derecha (semi) y círculo dorado abajo-izquierda
     od.ellipse([W - 380, -220, W + 240, 400], fill=(0, 229, 255, 46))
     od.ellipse([-260, H - 360, 360, H + 240], fill=(245, 197, 66, 34))
     base = Image.alpha_composite(base, overlay)
