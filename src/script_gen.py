@@ -59,7 +59,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
   "caption": "descripción para el post: 1 gancho + explicación útil + 1 llamado a la acción + 3-5 hashtags",
   "title": "título corto de 3-7 palabras",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
-  "broll_keywords": "2-4 palabras EN INGLÉS para buscar video de fondo en Pexels. REGLAS: escenas neutrales o mexicanas de finanzas/tecnología (ej: 'smartphone banking app', 'coins jar savings', 'laptop stock charts', 'mexico city street'). PROHIBIDO close-ups de billetes o monedas de un país específico (evita 'cash', 'dollar bills', 'banknotes') para no mostrar dinero extranjero",
+  "broll_keywords": "2-4 palabras EN INGLÉS para el video de fondo (Pexels). Debe ser una escena CONCRETA de finanzas o tecnología RELACIONADA con el tema de hoy, y variar entre videos. Ejemplos válidos: 'person budgeting notebook', 'counting coins table', 'online banking smartphone', 'paying bills laptop', 'shopping receipts hands', 'stock charts screen', 'atm withdrawal', 'saving money jar', 'calculator spreadsheet desk'. PROHIBIDO: (a) escenas genéricas sin relación con dinero (nada de 'texting', 'messaging', 'chatting', 'person walking', 'cafe coffee'); (b) close-ups de billetes o monedas de un país específico (evita 'cash', 'dollar bills', 'banknotes') para no mostrar dinero extranjero",
   "cards": [
     {{"big": "texto grande, máx ~14 caracteres", "small": "frase corta que lo explica"}}
   ],

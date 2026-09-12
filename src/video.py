@@ -53,7 +53,7 @@ def _brightness_delta(bg_video: str) -> float:
 
 
 MUSIC_DIR = os.environ.get("MUSIC_DIR", "assets/music")
-MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.18")
+MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.17")
 
 
 def _pick_music():
