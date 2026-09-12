@@ -10,6 +10,14 @@ from src import content_plan
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
+_DAILY_QUOTA_MARKS = ("PerDay", "GenerateRequestsPerDay", "free_tier_requests",
+                      "RequestsPerDay")
+
+
+def _is_daily_quota(err) -> bool:
+    msg = str(err)
+    return any(mark in msg for mark in _DAILY_QUOTA_MARKS)
+
 
 def _extract_json(text: str) -> dict:
     text = text.strip()
@@ -93,9 +101,19 @@ No uses otros tipos ni omitas claves de estos formatos."""
         except errors.APIError as e:
             code = getattr(e, "code", None) or getattr(e, "status_code", None)
             last_err = e
+
+            if code == 429 and _is_daily_quota(e):
+                raise RuntimeError(
+                    f"Cuota DIARIA del free tier de Gemini agotada para el modelo "
+                    f"'{MODEL}'. No se recupera reintentando; se resetea a medianoche "
+                    f"hora del Pacífico (~08:00 UTC / ~01:00 CDMX). Opciones: cambiar "
+                    f"GEMINI_MODEL a un modelo con más cuota (p. ej. gemini-2.5-flash o "
+                    f"gemini-2.0-flash-lite) o habilitar billing."
+                ) from e
+            
             if code in (429, 500, 502, 503) and attempt < max_retries - 1:
                 wait = 8 * (attempt + 1)
-                print(f"Gemini respondió {code} (saturado). Reintento en {wait}s...")
+                print(f"Gemini respondió {code} (transitorio). Reintento en {wait}s...")
                 time.sleep(wait)
                 continue
             raise
