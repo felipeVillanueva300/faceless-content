@@ -6,6 +6,8 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
+from src import content_plan
+
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
 
@@ -18,14 +20,22 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
-def generate_script(niche: str = "tecnología y finanzas", max_retries: int = 4) -> dict:
+def generate_script(niche: str = "tecnología y finanzas",
+                    avoid=None, max_retries: int = 4) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    today = datetime.date.today().isoformat()
+    today = datetime.date.today()
+    pilar = content_plan.pilar_del_dia(today, offset=7)   # video usa offset 7
+    evitar = content_plan.avoid_text(avoid)
 
-    prompt = f"""Eres guionista de Reels/Shorts en español de México sobre {niche}.
-Genera UN guion para un video vertical de 30 a 45 segundos, con un ángulo fresco,
-concreto y poco obvio (evita frases genéricas y clichés). Usa la fecha como semilla
-para variar el tema cada día: {today}.
+    prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
+de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
+México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
+Nada de jerga, nada de frases motivacionales vacías.
+
+PILAR DE HOY (el tema base): {pilar}.
+{evitar}
+Genera UN guion para un video vertical de 30 a 45 segundos sobre el PILAR de hoy,
+con un ángulo fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
 
 MUY IMPORTANTE — cómo se usa el guion:
 El "hook" y el "script" se CONCATENAN y se narran JUNTOS, en ese orden, como una
@@ -36,20 +46,37 @@ sola voz continua. Por eso:
   al inicio. Debe sonar natural, como si una persona hablara de corrido.
 
 Ejemplo de lo que NO se debe hacer:
-  hook:   "El error más grande al empezar a invertir es dejar tu dinero en el banco."
+  hook:   "El error más grande al invertir es dejar tu dinero en el banco."
   script: "El error más grande al invertir es dejarlo en el banco. Los bancos..."  <-- MAL, repite el hook
+Ejemplo correcto:
+  hook:   "El error más grande al invertir es dejar tu dinero en el banco."
+  script: "Tu cuenta de ahorro casi no paga intereses, y la inflación te come el resto..."  <-- BIEN, continúa
 
-Ejemplo de lo correcto:
-  hook:   "El error más grande al empezar a invertir es dejar tu dinero en el banco."
-  script: "Tu cuenta de ahorro casi no paga intereses, mientras la inflación te come..."  <-- BIEN, continúa
-
-Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con esta forma:
+Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
   "hook": "primera frase de 1 línea que enganche en los primeros 2 segundos",
-  "script": "texto corrido que CONTINÚA después del hook (NO lo repitas ni lo parafrasees), 90-130 palabras, frases cortas y claras",
-  "caption": "descripción para el post, con un gancho y 3-5 hashtags relevantes",
-  "title": "título corto de 3-7 palabras"
-}}"""
+  "script": "texto corrido que CONTINÚA después del hook (NO lo repitas), 90-130 palabras, frases cortas",
+  "caption": "descripción para el post: 1 gancho + explicación útil + 1 llamado a la acción + 3-5 hashtags",
+  "title": "título corto de 3-7 palabras",
+  "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
+  "broll_keywords": "2-4 palabras EN INGLÉS para buscar video de fondo en Pexels. REGLAS: escenas neutrales o mexicanas de finanzas/tecnología (ej: 'smartphone banking app', 'coins jar savings', 'laptop stock charts', 'mexico city street'). PROHIBIDO close-ups de billetes o monedas de un país específico (evita 'cash', 'dollar bills', 'banknotes') para no mostrar dinero extranjero",
+  "cards": [
+    {{"big": "texto grande, máx ~14 caracteres", "small": "frase corta que lo explica"}}
+  ],
+  "graphics": []
+}}
+
+Reglas para "cards": 0 a 2 elementos. Son rótulos que refuerzan la narración. Si no aportan, deja [].
+
+Reglas para "graphics": 0 o 1 elemento, SOLO si tienes un dato numérico REAL y concreto
+que valga la pena animar (no inventes cifras). Si no, deja []. Cada gráfico debe ser
+EXACTAMENTE uno de estos dos formatos, con números planos (sin comas ni signo $):
+- Contador que sube:
+  {{"type": "countup", "value": 3200, "prefix": "$", "suffix": "", "label": "AL AÑO EN COMISIONES"}}
+- Barras comparativas (A en rojo vs B en verde):
+  {{"type": "bars", "title": "AHORRO A 1 AÑO", "a_label": "EN EL BANCO", "a_value": 385,
+    "b_label": "EN CETES", "b_value": 963, "a_color": "red", "b_color": "green", "money": true}}
+No uses otros tipos ni omitas claves de estos formatos."""
 
     last_err = None
     for attempt in range(max_retries):
