@@ -9,6 +9,41 @@ SUB_FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
 BG_TARGET_LUMA = float(os.environ.get("BG_TARGET_LUMA", "105"))
 BG_VIGNETTE = os.environ.get("BG_VIGNETTE", "PI/5").strip()
 
+CARD_MAX_W = int(os.environ.get("CARD_MAX_W", "940"))
+
+_FIT_FONT_CANDIDATES = [
+    os.environ.get("IMG_FONT_FILE", ""),
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "C:\\Windows\\Fonts\\arialbd.ttf",
+    "C:\\Windows\\Fonts\\Arial.ttf",
+    "/Library/Fonts/Arial Bold.ttf",
+]
+
+
+def _fit_fontsize(text: str, max_w: int, start: int, minimum: int) -> int:
+    """Devuelve el fontsize (<= start, >= minimum) con el que 'text' cabe en max_w px.
+    Usa Pillow si hay una fuente .ttf; si no, cae a una estimación por caracteres."""
+    text = (text or "").strip()
+    if not text:
+        return start
+    path = next((p for p in _FIT_FONT_CANDIDATES if p and os.path.isfile(p)), None)
+    if path:
+        try:
+            from PIL import ImageFont
+            size = start
+            while size > minimum:
+                if ImageFont.truetype(path, size).getlength(text) <= max_w:
+                    return size
+                size -= 4
+            return minimum
+        except Exception:
+            pass
+    # Respaldo sin Pillow: ancho aprox. 0.62*size por caracter (mayúsculas bold).
+    size = start
+    while size > minimum and 0.62 * size * len(text) > max_w:
+        size -= 4
+    return size
+
 
 def _escape_drawtext(txt: str) -> str:
     return (txt.replace("\\", "\\\\")
@@ -107,18 +142,23 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
     last = "bg"
 
     for i, card in enumerate(cards or []):
-        big = _escape_drawtext(str(card.get("big", "")))
-        small = _escape_drawtext(str(card.get("small", "")))
+        raw_big = str(card.get("big", ""))
+        raw_small = str(card.get("small", ""))
+        # Ajuste automático: encoge el texto hasta que quepa en CARD_MAX_W.
+        big_fs = _fit_fontsize(raw_big, CARD_MAX_W, 170, 70)
+        small_fs = _fit_fontsize(raw_small, CARD_MAX_W, 52, 34)
+        big = _escape_drawtext(raw_big)
+        small = _escape_drawtext(raw_small)
         st, en = float(card["start"]), float(card["end"])
 
         chain.append(
             f"[{last}]drawtext=font='{SUB_FONT}':text='{big}':fontcolor=0x00E5FF:"
-            f"fontsize=170:borderw=6:bordercolor=black:x=(w-tw)/2:y=h*0.20:"
+            f"fontsize={big_fs}:borderw=6:bordercolor=black:x=(w-tw)/2:y=h*0.20:"
             f"enable='between(t,{st},{en})'[c{i}a]"
         )
         chain.append(
             f"[c{i}a]drawtext=font='{SUB_FONT}':text='{small}':fontcolor=white:"
-            f"fontsize=52:borderw=4:bordercolor=black:x=(w-tw)/2:y=h*0.34:"
+            f"fontsize={small_fs}:borderw=4:bordercolor=black:x=(w-tw)/2:y=h*0.34:"
             f"enable='between(t,{st},{en})'[c{i}b]"
         )
         last = f"c{i}b"
