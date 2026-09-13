@@ -65,6 +65,7 @@ Ejemplo correcto:
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
   "hook": "primera frase de 1 línea que enganche en los primeros 2 segundos",
+  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE en pantalla los primeros ~2.5s: 3-6 palabras, tipo cifra/pregunta/afirmación que FRENE el scroll (ej: '¿$1,000 AL CAJERO?', 'EVITA ESTA COMISIÓN', 'GANA 10% AL AÑO')",
   "script": "texto corrido que CONTINÚA después del hook (NO lo repitas), 90-130 palabras, frases cortas",
   "caption": "descripción para el post: 1 gancho + explicación útil + 1 llamado a la acción + 3-5 hashtags",
   "title": "título corto de 3-7 palabras",

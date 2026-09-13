@@ -11,6 +11,8 @@ BG_VIGNETTE = os.environ.get("BG_VIGNETTE", "PI/5").strip()
 
 CARD_MAX_W = int(os.environ.get("CARD_MAX_W", "940"))
 
+HOOK_DUR = float(os.environ.get("HOOK_DUR", "2.8"))
+
 _FIT_FONT_CANDIDATES = [
     os.environ.get("IMG_FONT_FILE", ""),
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -38,7 +40,6 @@ def _fit_fontsize(text: str, max_w: int, start: int, minimum: int) -> int:
             return minimum
         except Exception:
             pass
-    # Respaldo sin Pillow: ancho aprox. 0.62*size por caracter (mayúsculas bold).
     size = start
     while size > minimum and 0.62 * size * len(text) > max_w:
         size -= 4
@@ -105,7 +106,7 @@ def _pick_music():
 
 
 def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
-                graphics=None, duration=None):
+                graphics=None, duration=None, hook=None):
     """cards: lista opcional de dicts {'big': '70%', 'small': 'texto', 'start': s, 'end': s}.
     graphics: lista opcional de dicts {'pattern': ruta_%05d.png, 'start': s, 'end': s, 'fps': n}.
     duration: si se pasa, corta la salida a esos segundos (en vez de -shortest)."""
@@ -141,10 +142,25 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
     chain = [base]
     last = "bg"
 
+    if hook:
+        raw_hook = str(hook).strip().upper()
+        hook_fs = _fit_fontsize(raw_hook, CARD_MAX_W, 130, 64)
+        htxt = _escape_drawtext(raw_hook)
+        # entra deslizándose desde abajo + fade in; hace fade out al final
+        yexpr = "h*0.30+80*(1-min(t/0.45,1))"
+        alpha = (f"if(lt(t,0.35),t/0.35,"
+                 f"if(gt(t,{HOOK_DUR - 0.3:.2f}),max(0,({HOOK_DUR:.2f}-t)/0.3),1))")
+        chain.append(
+            f"[{last}]drawtext=font='{SUB_FONT}':text='{htxt}':fontcolor=0x00E5FF:"
+            f"fontsize={hook_fs}:borderw=9:bordercolor=black:shadowcolor=black@0.6:"
+            f"shadowx=4:shadowy=4:x=(w-tw)/2:y='{yexpr}':alpha='{alpha}':"
+            f"enable='between(t,0,{HOOK_DUR:.2f})'[hook]"
+        )
+        last = "hook"
+
     for i, card in enumerate(cards or []):
         raw_big = str(card.get("big", ""))
         raw_small = str(card.get("small", ""))
-        # Ajuste automático: encoge el texto hasta que quepa en CARD_MAX_W.
         big_fs = _fit_fontsize(raw_big, CARD_MAX_W, 170, 70)
         small_fs = _fit_fontsize(raw_small, CARD_MAX_W, 52, 34)
         big = _escape_drawtext(raw_big)

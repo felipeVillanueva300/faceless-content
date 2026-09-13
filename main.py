@@ -85,6 +85,7 @@ def generar_borrador():
     caption = data.get("caption") or data.get("title", "")
     title = data.get("title", "")
     topic = data.get("topic") or title
+    hook_card = (data.get("hook_card") or title or "").strip()
 
     print("[2/7] Sintetizando voz")
     audio = os.path.join(BUILD, "audio.mp3")
@@ -123,7 +124,7 @@ def generar_borrador():
 
     out = os.path.join(BUILD, "reel.mp4")
     video.build_video(audio, ass, out, bg_video=bg, cards=cards,
-                      graphics=graphic_overlays, duration=dur)
+                      graphics=graphic_overlays, duration=dur, hook=hook_card)
 
     print("[6/7] Subiendo video a URL pública")
     url, tag = uploader.upload_public(out, caption=caption, title=title)
