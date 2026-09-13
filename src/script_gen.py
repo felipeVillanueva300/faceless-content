@@ -32,18 +32,20 @@ def generate_script(niche: str = "tecnología y finanzas",
                     avoid=None, max_retries: int = 4) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today()
-    pilar = content_plan.pilar_del_dia(today, offset=7)   # video usa offset 7
+    plan = content_plan.plan_del_dia(today, offset=7)   # video usa offset 7
     evitar = content_plan.avoid_text(avoid)
+    cal = content_plan.calendario_linea(plan)
 
     prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
 de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
 México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
 Nada de jerga, nada de frases motivacionales vacías.
 
-PILAR DE HOY (el tema base): {pilar}.
-{evitar}
-Genera UN guion para un video vertical de 30 a 45 segundos sobre el PILAR de hoy,
-con un ángulo fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
+PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
+FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
+{cal}{evitar}
+Genera UN guion para un video vertical de 30 a 45 segundos sobre el PILAR y el FORMATO
+de hoy, con un ángulo fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
 
 MUY IMPORTANTE — cómo se usa el guion:
 El "hook" y el "script" se CONCATENAN y se narran JUNTOS, en ese orden, como una
@@ -97,7 +99,10 @@ No uses otros tipos ni omitas claves de estos formatos."""
                     response_mime_type="application/json",
                 ),
             )
-            return _extract_json(resp.text)
+            data = _extract_json(resp.text)
+            data["categoria"] = plan["categoria_id"]
+            data["formato"] = plan["formato_nombre"]
+            return data
         except errors.APIError as e:
             code = getattr(e, "code", None) or getattr(e, "status_code", None)
             last_err = e
@@ -110,7 +115,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                     f"GEMINI_MODEL a un modelo con más cuota (p. ej. gemini-2.5-flash o "
                     f"gemini-2.0-flash-lite) o habilitar billing."
                 ) from e
-            
+
             if code in (429, 500, 502, 503) and attempt < max_retries - 1:
                 wait = 8 * (attempt + 1)
                 print(f"Gemini respondió {code} (transitorio). Reintento en {wait}s...")

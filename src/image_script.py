@@ -10,24 +10,6 @@ from src import content_plan
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 
-FORMATOS = [
-    ("El dato que sorprende",
-     "'big' = la cifra impactante (ej: '$3,200 AL AÑO'). "
-     "'small' = frase clara que explica qué significa para la persona."),
-    ("El error común",
-     "'big' = 'EL ERROR #1'. "
-     "'small' = el error concreto que comete la gente, en una frase clara."),
-    ("El tip accionable",
-     "'big' = una acción corta en mayúsculas (ej: 'REVISA ESTO HOY'). "
-     "'small' = cómo hacerlo y para qué, en una frase clara."),
-    ("Mito vs. realidad",
-     "'big' = 'MITO'. "
-     "'small' = la creencia falsa entre comillas + la verdad corta."),
-    ("Comparativa simple",
-     "'big' = 'A vs B' con dos conceptos cortos (ej: 'AHORRAR vs INVERTIR'). "
-     "'small' = cuál conviene y por qué, en una frase clara."),
-]
-
 
 def _extract_json(text: str) -> dict:
     text = text.strip()
@@ -37,26 +19,22 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
-def _formato_del_dia(today):
-    return FORMATOS[today.toordinal() % len(FORMATOS)]
-
-
 def generate_image_post(niche="tecnología y finanzas", avoid=None, max_retries=6) -> dict:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today()
-    pilar = content_plan.pilar_del_dia(today)          # imagen usa offset 0
-    nombre_formato, reglas_formato = _formato_del_dia(today)
+    plan = content_plan.plan_del_dia(today, offset=0)   # imagen usa offset 0
     evitar = content_plan.avoid_text(avoid)
+    cal = content_plan.calendario_linea(plan)
 
     prompt = f"""Eres redactor de una cuenta mexicana de finanzas y tecnología llamada "Dinero Simple".
 Tu público: personas normales en México, SIN conocimientos financieros. Escribes claro y directo,
 como si le explicaras a un amigo. Nada de jerga. Nada de frases motivacionales vacías.
 
-PILAR DE HOY (el tema base): {pilar}.
-FORMATO DE HOY: "{nombre_formato}".
+PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
+FORMATO DE HOY: {plan['formato_nombre']}.
 Instrucciones del formato:
-{reglas_formato}
-{evitar}
+{plan['formato_imagen']}
+{cal}{evitar}
 Genera UN post de UNA imagen sobre el PILAR y el FORMATO de hoy. UNA idea útil y concreta que
 cualquiera entienda al instante y pueda aplicar. Usa la fecha como semilla: {today.isoformat()}.
 
@@ -88,7 +66,10 @@ Devuelve SOLO un objeto JSON válido, sin markdown, con estas claves exactas:
                     response_mime_type="application/json",
                 ),
             )
-            return _extract_json(resp.text)
+            data = _extract_json(resp.text)
+            data["categoria"] = plan["categoria_id"]
+            data["formato"] = plan["formato_nombre"]
+            return data
         except errors.APIError as e:
             code = getattr(e, "code", None) or getattr(e, "status_code", None)
             last_err = e

@@ -22,7 +22,7 @@ def _write_summary(url, titulo, caption, publicado):
         pass
 
 
-def _publicar_ig_youtube(url, caption, titulo):    
+def _publicar_ig_youtube(url, caption, titulo):
     results, errores = {}, {}
 
     ig = os.environ.get("IG_USER_ID")
@@ -54,6 +54,7 @@ def publicar_por_id(publish_id: str):
     repo = os.environ["GITHUB_REPOSITORY"]
     print(f"[Publicar por ID] Buscando video del release: {publish_id}")
     url, caption, titulo = uploader.get_release_info(repo, publish_id)
+
     override = os.environ.get("PUBLISH_CAPTION", "").strip()
     if override:
         caption = override
@@ -129,7 +130,7 @@ def generar_borrador():
     print("    URL:", url)
     print("    ID :", tag)
 
-    history.add(topic)
+    history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
