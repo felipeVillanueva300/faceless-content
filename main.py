@@ -22,11 +22,10 @@ def _write_summary(url, titulo, caption, publicado):
         pass
 
 
-def _publicar(url, caption):
-    """Publica una URL de video en IG y FB. Tolerante a fallos por red."""
-    ig = os.environ.get("IG_USER_ID")
-    pg = os.environ.get("FB_PAGE_ID")
+def _publicar_ig_youtube(url, caption, titulo):    
     results, errores = {}, {}
+
+    ig = os.environ.get("IG_USER_ID")
     if ig:
         try:
             results["instagram"] = publisher.publish_instagram(ig, url, caption)
@@ -34,13 +33,17 @@ def _publicar(url, caption):
         except Exception as e:
             errores["instagram"] = str(e)
             print("    Instagram FALLÓ:", e)
-    if pg:
+
+    if os.environ.get("YT_REFRESH_TOKEN"):
         try:
-            results["facebook"] = publisher.publish_facebook(pg, url, caption)
-            print("    Facebook OK:", results["facebook"])
+            from src import youtube_upload
+            vid = youtube_upload.upload_short_from_url(url, titulo, description=caption)
+            results["youtube"] = vid
+            print("    YouTube OK:", vid)
         except Exception as e:
-            errores["facebook"] = str(e)
-            print("    Facebook FALLÓ:", e)
+            errores["youtube"] = str(e)
+            print("    YouTube FALLÓ:", e)
+
     print("Publicados:", results)
     if errores:
         print("Con errores:", errores)
@@ -51,8 +54,6 @@ def publicar_por_id(publish_id: str):
     repo = os.environ["GITHUB_REPOSITORY"]
     print(f"[Publicar por ID] Buscando video del release: {publish_id}")
     url, caption, titulo = uploader.get_release_info(repo, publish_id)
-
-    # Permite sobreescribir el caption a mano desde el workflow (opcional).
     override = os.environ.get("PUBLISH_CAPTION", "").strip()
     if override:
         caption = override
@@ -61,11 +62,12 @@ def publicar_por_id(publish_id: str):
 
     print("    URL:", url)
     print("    Caption:", (caption[:80] + "…") if len(caption) > 80 else caption or "(vacío)")
-    print("[Publicar por ID] Publicando en redes")
-    results = _publicar(url, caption)
+    print("[Publicar por ID] Publicando en Instagram y YouTube (Facebook es manual)")
+    results = _publicar_ig_youtube(url, caption, titulo)
     _write_summary(url, titulo, caption, publicado=bool(results))
     notify.notify_telegram(titulo, caption or "(sin caption)", url, publicado=bool(results))
-    if (os.environ.get("IG_USER_ID") or os.environ.get("FB_PAGE_ID")) and not results:
+    algo_configurado = os.environ.get("IG_USER_ID") or os.environ.get("YT_REFRESH_TOKEN")
+    if algo_configurado and not results:
         sys.exit(1)
 
 
@@ -143,10 +145,10 @@ def generar_borrador():
         return
 
     print("[7/7] Publicando (cron directo)")
-    results = _publicar(url, caption)
+    results = _publicar_ig_youtube(url, caption, title)
     _write_summary(url, title, caption, publicado=bool(results))
     notify.notify_telegram(title, caption, url, publicado=bool(results))
-    if (os.environ.get("IG_USER_ID") or os.environ.get("FB_PAGE_ID")) and not results:
+    if (os.environ.get("IG_USER_ID") or os.environ.get("YT_REFRESH_TOKEN")) and not results:
         sys.exit(1)
 
 
