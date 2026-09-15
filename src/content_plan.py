@@ -1,7 +1,10 @@
 import datetime
 
-COOLDOWN_DIAS = 5   
+COOLDOWN_DIAS = 5
 
+# --------------------------------------------------------------------------
+# Pilares (categorias base). El dia que NO es de temporada, se usa esto.
+# --------------------------------------------------------------------------
 PILARES = [
     {"id": "presupuesto", "nombre": "Presupuesto personal",
      "angulos": ["50/30/20", "base cero", "presupuesto inverso", "quincenal", "margen de error"]},
@@ -55,7 +58,63 @@ FORMATOS = [
     {"id": "comparativa", "nombre": "Comparativa simple",
      "video": "Compara dos opciones (A vs B) y di cuál conviene y por qué.",
      "imagen": "'big' = 'A vs B' con dos conceptos cortos. 'small' = cuál conviene y por qué."},
+    # Formato extra SOLO para el golpe del día y la reacción (no entra en la rotación normal).
+    {"id": "mensaje", "nombre": "Mensaje del día",
+     "video": "Mensaje corto y humano para EL día de la fecha: disfruta con conciencia, sin sermón; "
+              "un recordatorio ligero de que la cuenta llega después.",
+     "imagen": "'big' = frase corta del día. 'small' = recordatorio ligero, sin regañar."},
 ]
+
+_FORMATO_POR_ID = {f["id"]: f for f in FORMATOS}
+
+
+# --------------------------------------------------------------------------
+# EVENTOS FUERTES: cada uno con su fecha objetivo (mes, dia = el "mero dia").
+# La cadencia se dispara alrededor de esa fecha, no toda la ventana.
+# --------------------------------------------------------------------------
+EVENTOS = [
+    {"id": "patrio", "mes": 9, "dia": 16,
+     "tema": "las fiestas patrias (la cena del 15, la coperacha, el Grito) sin endeudarte"},
+    {"id": "muertos", "mes": 11, "dia": 2,
+     "tema": "Día de Muertos: ofrenda, flores y pan sin descontrol"},
+    {"id": "buenfin", "mes": 11, "dia": 17,   # aprox; el Buen Fin se mueve cada año, ajusta si hace falta
+     "tema": "el Buen Fin: MSI cuándo sí y cuándo no, comprar sin endeudarte"},
+    {"id": "aguinaldo", "mes": 12, "dia": 15,
+     "tema": "el aguinaldo (qué te toca por ley y cómo administrarlo) y los gastos decembrinos"},
+    {"id": "navidad", "mes": 12, "dia": 24,
+     "tema": "Navidad: regalos y cena sin arruinar enero"},
+    {"id": "reyes", "mes": 1, "dia": 6,
+     "tema": "Reyes: rosca y regalos sin deuda, y arranque financiero del año"},
+    {"id": "sat_anual", "mes": 4, "dia": 30,
+     "tema": "la declaración anual del SAT (personas físicas): qué deducir y cómo, antes de que cierre"},
+]
+
+# Golpes de temporada = DÍAS PARA el evento (positivo = falta; 0 = el mero día;
+# negativo = ya pasó). Espaciado ~3 días + el mero día + una reacción 2 días después.
+# Edita esta lista para cambiar el ritmo (p.ej. mete 12 para arrancar 12 días antes).
+RAMPA_OFFSETS = [10, 7, 4, 1, 0, -2]
+
+# Rol de cada golpe: (etiqueta, formato_id, instruccion_extra_para_el_prompt).
+# El formato del golpe REEMPLAZA la rotacion normal ese dia, para que los golpes
+# de un mismo evento se sientan distintos entre si (dato -> howto -> mito -> tip -> mensaje).
+BEATS = {
+    10:  ("arranque", "dato",
+          "Presenta el impacto o el costo REAL que se viene con esta fecha (sin inventar cifras). "
+          "Es el primer aviso: pon el tema sobre la mesa."),
+    7:   ("prepárate", "howto",
+          "Enséñale a prepararse desde YA (apartar, planear, comparar). Algo accionable, no teoría."),
+    4:   ("mito/error", "mito",
+          "Desmonta un mito o error MUY común de estas fechas (ej: 'pagar el mínimo de la tarjeta sale gratis')."),
+    1:   ("último ajuste", "tip",
+          "Checklist o último ajuste para no pasarse justo antes de la fecha."),
+    0:   ("el día", "mensaje",
+          "Es el día: mensaje corto y humano. Disfruta con conciencia; sin regañar."),
+    -2:  ("reacción", "mensaje",
+          "Reacciona a lo que se movió/viralizó en la fecha con un ángulo de dinero. REQUIERE revisión humana."),
+}
+
+# Ventana en dias para considerar que un evento 'aplica' al buscar su ocurrencia.
+_VENTANA_BUSQUEDA = 40
 
 
 def _between(today, m1, d1, m2, d2) -> bool:
@@ -64,64 +123,90 @@ def _between(today, m1, d1, m2, d2) -> bool:
     a, b = (m1, d1), (m2, d2)
     if a <= b:
         return a <= x <= b
-    return x >= a or x <= b   
+    return x >= a or x <= b
+
+
+def _delta_a_evento(today, mes, dia):
+    """Días de HOY a la fecha objetivo más cercana (maneja cruce de año).
+    Positivo = la fecha aún no llega; negativo = ya pasó."""
+    candidatos = []
+    for y in (today.year - 1, today.year, today.year + 1):
+        try:
+            f = datetime.date(y, mes, dia)
+        except ValueError:
+            continue
+        candidatos.append((f - today).days)
+    # el más cercano a 0 dentro de la ventana
+    dentro = [c for c in candidatos if -_VENTANA_BUSQUEDA <= c <= _VENTANA_BUSQUEDA]
+    if not dentro:
+        return None
+    return min(dentro, key=abs)
+
+
+def evento_del_dia(today=None):
+    """¿Hoy es un golpe de temporada? Devuelve dict o None.
+
+    dict: {evento_id, tema, offset, etiqueta, formato_id, instruccion, es_borrador}
+    """
+    today = today or datetime.date.today()
+    for ev in EVENTOS:
+        delta = _delta_a_evento(today, ev["mes"], ev["dia"])
+        if delta is None:
+            continue
+        if delta in RAMPA_OFFSETS:
+            etiqueta, fmt_id, instr = BEATS[delta]
+            return {
+                "evento_id": ev["id"],
+                "tema": ev["tema"],
+                "offset": delta,
+                "etiqueta": etiqueta,
+                "formato_id": fmt_id,
+                "instruccion": instr,
+                "es_borrador": delta < 0,   # la 'reacción' post-fecha nunca se autopublica
+            }
+    return None
 
 
 def calendario_hint(today=None):
-    """Devuelve (tema_de_temporada, peso) o (None, None). Fuerte = manda casi
-    siempre en su ventana; Suave = solo un empujón. Orden: fuertes/específicos primero."""
-    today = today or datetime.date.today()
-    m, d = today.month, today.day
-
-    if _between(today, 12, 26, 1, 6):
-        return ("Año nuevo: propósitos financieros, arranque del año y Reyes sin endeudarte", "Fuerte")
-    if m == 1 and d >= 7:
-        return ("Cuesta de enero; predial y tenencia con descuento por pago anticipado", "Fuerte")
-    if _between(today, 12, 1, 12, 24):
-        return ("Aguinaldo (ley y cómo administrarlo), gastos decembrinos y posadas sin deuda", "Fuerte")
-    if _between(today, 11, 14, 11, 20):
-        return ("Buen Fin: MSI cuándo sí y cuándo no, comprar sin endeudarte", "Fuerte")
-    if _between(today, 10, 25, 11, 2):
-        return ("Día de Muertos: gastos de ofrenda, flores y pan sin descontrol", "Fuerte")
-    if _between(today, 9, 1, 9, 16):
-        return ("Mes patrio: presupuesto para las fiestas y el Grito sin endeudarte", "Fuerte")
-    if m == 4:
-        return ("Declaración anual del SAT (personas físicas): qué deducir y cómo", "Fuerte")
-    if _between(today, 7, 1, 8, 31):
-        return ("Vacaciones (presupuesto de viaje) y regreso a clases (útiles/uniformes sin deuda)", "Fuerte")
-    # Suaves (nudges)
-    if _between(today, 9, 20, 11, 10):
-        return ("Preparar el Buen Fin: haz tu lista y compara precios con tiempo", "Suave")
-    if m == 2 and d in (13, 14):
-        return ("San Valentín con presupuesto", "Suave")
-    if m == 5 and d in (10, 15):
-        return ("Día de las madres / del maestro: regalos con presupuesto", "Suave")
-    if _between(today, 6, 15, 6, 21):
-        return ("Día del padre: regalo con presupuesto", "Suave")
+    """Compat: devuelve (tema, peso). Fuerte solo en un golpe de temporada;
+    fuera de eso, sin temporada. (Los 'nudges' suaves largos se quitaron a
+    propósito: eran los que saturaban de repetición.)"""
+    ev = evento_del_dia(today)
+    if ev:
+        return (ev["tema"], "Fuerte")
     return (None, None)
 
 
 def plan_del_dia(today=None, offset=0):
-    """Elige categoría (con enfriamiento de COOLDOWN_DIAS), formato (sin repetir
-    los últimos 2) y hint de calendario. Devuelve un dict con todo lo que el prompt
-    necesita, más los ids para guardar en el historial."""
+    """Elige categoría (enfriamiento de COOLDOWN_DIAS), formato (sin repetir los
+    últimos 2) y, si hoy toca golpe de temporada, sobreescribe el formato con el
+    del golpe y marca el tema. Devuelve un dict con todo lo que el prompt necesita."""
     today = today or datetime.date.today()
 
     recientes_pilares, recientes_formatos = [], []
     try:
         from src import history
-        recientes_pilares = history.recent_pilares(COOLDOWN_DIAS)   # lista de ids
-        recientes_formatos = history.recent_formatos(2)             # lista de nombres
+        recientes_pilares = history.recent_pilares(COOLDOWN_DIAS)   # ids
+        recientes_formatos = history.recent_formatos(2)             # nombres
     except Exception:
         pass
 
     disponibles = [p for p in PILARES if p["id"] not in recientes_pilares] or PILARES
     cat = disponibles[(today.toordinal() + offset) % len(disponibles)]
 
-    fmts = [f for f in FORMATOS if f["nombre"] not in recientes_formatos] or FORMATOS
+    fmts = [f for f in FORMATOS if f["nombre"] not in recientes_formatos and f["id"] != "mensaje"] or FORMATOS
     fmt = fmts[today.toordinal() % len(fmts)]
 
-    tema, peso = calendario_hint(today)
+    ev = evento_del_dia(today)
+    beat_instr = ""
+    es_borrador = False
+    if ev:
+        # El golpe manda: usa SU formato para que la cuenta regresiva no se repita.
+        fmt = _FORMATO_POR_ID.get(ev["formato_id"], fmt)
+        beat_instr = ev["instruccion"]
+        es_borrador = ev["es_borrador"]
+
+    tema, peso = (ev["tema"], "Fuerte") if ev else (None, None)
     return {
         "categoria_id": cat["id"],
         "categoria_nombre": cat["nombre"],
@@ -131,17 +216,27 @@ def plan_del_dia(today=None, offset=0):
         "formato_imagen": fmt["imagen"],
         "cal_tema": tema,
         "cal_peso": peso,
+        # nuevos (los consumidores viejos los ignoran sin romperse):
+        "evento_id": ev["evento_id"] if ev else None,
+        "evento_beat": ev["etiqueta"] if ev else None,
+        "evento_instruccion": beat_instr,
+        "publicar_borrador": es_borrador,
     }
 
 
 def calendario_linea(plan) -> str:
-    """Línea lista para el prompt según el peso de la temporada."""
+    """Línea lista para el prompt. En un golpe de temporada, además del tema le pasa
+    el ROL del golpe (arranque/mito/último ajuste/día/reacción) para que cada uno
+    sea distinto."""
     tema, peso = plan.get("cal_tema"), plan.get("cal_peso")
     if not tema:
         return ""
-    if peso == "Fuerte":
-        return f"TEMA DE TEMPORADA (hoy PRIORÍZALO por encima del pilar): {tema}.\n"
-    return f"Si encaja de forma natural, orienta el tema hacia: {tema}.\n"
+    instr = plan.get("evento_instruccion", "")
+    beat = plan.get("evento_beat", "")
+    linea = f"TEMA DE TEMPORADA (hoy PRIORÍZALO por encima del pilar): {tema}.\n"
+    if beat:
+        linea += f"Rol de hoy en la cuenta regresiva ({beat}): {instr}\n"
+    return linea
 
 
 def pilar_del_dia(today=None, offset=0):
