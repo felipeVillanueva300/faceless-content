@@ -92,7 +92,7 @@ EVENTOS = [
 # Golpes de temporada = DÍAS PARA el evento (positivo = falta; 0 = el mero día;
 # negativo = ya pasó). Espaciado ~3 días + el mero día + una reacción 2 días después.
 # Edita esta lista para cambiar el ritmo (p.ej. mete 12 para arrancar 12 días antes).
-RAMPA_OFFSETS = [10, 7, 4, 1, 0, -2]
+RAMPA_OFFSETS = [10, 7, 4, 0, -2]
 
 # Rol de cada golpe: (etiqueta, formato_id, instruccion_extra_para_el_prompt).
 # El formato del golpe REEMPLAZA la rotacion normal ese dia, para que los golpes
