@@ -11,6 +11,8 @@ BG_VIGNETTE = os.environ.get("BG_VIGNETTE", "PI/5").strip()
 
 CARD_MAX_W = int(os.environ.get("CARD_MAX_W", "940"))
 
+CARD_SHOW_SMALL = os.environ.get("CARD_SHOW_SMALL", "1").strip().lower() in ("1", "true", "yes")
+
 HOOK_DUR = float(os.environ.get("HOOK_DUR", "2.8"))
 
 _FIT_FONT_CANDIDATES = [
@@ -172,12 +174,15 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
             f"fontsize={big_fs}:borderw=6:bordercolor=black:x=(w-tw)/2:y=h*0.20:"
             f"enable='between(t,{st},{en})'[c{i}a]"
         )
-        chain.append(
-            f"[c{i}a]drawtext=font='{SUB_FONT}':text='{small}':fontcolor=white:"
-            f"fontsize={small_fs}:borderw=4:bordercolor=black:x=(w-tw)/2:y=h*0.34:"
-            f"enable='between(t,{st},{en})'[c{i}b]"
-        )
-        last = f"c{i}b"
+        last = f"c{i}a"
+
+        if CARD_SHOW_SMALL and raw_small.strip():
+            chain.append(
+                f"[{last}]drawtext=font='{SUB_FONT}':text='{small}':fontcolor=white:"
+                f"fontsize={small_fs}:borderw=4:bordercolor=black:x=(w-tw)/2:y=h*0.34:"
+                f"enable='between(t,{st},{en})'[c{i}b]"
+            )
+            last = f"c{i}b"
 
     graphics = graphics or []
     for gi, g in enumerate(graphics):

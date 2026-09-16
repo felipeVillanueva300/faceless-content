@@ -93,6 +93,12 @@ def generar_borrador():
     history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
+
+    if data.get("publicar_borrador"):
+        if publicar:
+            print("    Día de 'reacción' post-fecha: se fuerza BORRADOR (revisión humana).")
+        publicar = False
+
     if not publicar:
         print("=" * 60)
         print("MODO BORRADOR (imagen, no se publicó).")

@@ -8,7 +8,20 @@ from google.genai import errors
 
 from src import content_plan
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+def _model_ladder():
+    lista = os.environ.get("GEMINI_MODELS", "").strip()
+    if lista:
+        modelos = [m.strip() for m in lista.split(",") if m.strip()]
+    else:
+        modelos = [os.environ.get("GEMINI_MODEL", "gemini-3.6-flash").strip()]
+    # sin duplicados, conservando el orden
+    vistos, out = set(), []
+    for m in modelos:
+        if m and m not in vistos:
+            vistos.add(m)
+            out.append(m)
+    return out
+
 
 _DAILY_QUOTA_MARKS = ("PerDay", "GenerateRequestsPerDay", "free_tier_requests",
                       "RequestsPerDay")
@@ -89,38 +102,56 @@ EXACTAMENTE uno de estos dos formatos, con números planos (sin comas ni signo $
     "b_label": "EN CETES", "b_value": 963, "a_color": "red", "b_color": "green", "money": true}}
 No uses otros tipos ni omitas claves de estos formatos."""
 
+    modelos = _model_ladder()
+    agotados = []
     last_err = None
-    for attempt in range(max_retries):
-        try:
-            resp = client.models.generate_content(
-                model=MODEL,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=1.0,
-                    response_mime_type="application/json",
-                ),
-            )
-            data = _extract_json(resp.text)
-            data["categoria"] = plan["categoria_id"]
-            data["formato"] = plan["formato_nombre"]
-            return data
-        except errors.APIError as e:
-            code = getattr(e, "code", None) or getattr(e, "status_code", None)
-            last_err = e
+    for mi, model in enumerate(modelos):
+        for attempt in range(max_retries):
+            try:
+                resp = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        temperature=1.0,
+                        response_mime_type="application/json",
+                    ),
+                )
+                data = _extract_json(resp.text)
+                data["categoria"] = plan["categoria_id"]
+                data["formato"] = plan["formato_nombre"]
+                data["publicar_borrador"] = plan.get("publicar_borrador", False)
+                if mi > 0:
+                    print(f"    (se usó el modelo de respaldo '{model}')")
+                return data
+            except errors.APIError as e:
+                code = getattr(e, "code", None) or getattr(e, "status_code", None)
+                last_err = e
 
-            if code == 429 and _is_daily_quota(e):
-                raise RuntimeError(
-                    f"Cuota DIARIA del free tier de Gemini agotada para el modelo "
-                    f"'{MODEL}'. No se recupera reintentando; se resetea a medianoche "
-                    f"hora del Pacífico (~08:00 UTC / ~01:00 CDMX). Opciones: cambiar "
-                    f"GEMINI_MODEL a un modelo con más cuota (p. ej. gemini-2.5-flash o "
-                    f"gemini-2.0-flash-lite) o habilitar billing."
-                ) from e
+                if code == 429 and _is_daily_quota(e):
+                    agotados.append(model)
+                    if mi < len(modelos) - 1:
+                        print(f"Cuota diaria agotada en '{model}'. Salto al siguiente "
+                              f"modelo: '{modelos[mi + 1]}'...")
+                    break  # rompe el bucle de intentos -> siguiente modelo
 
-            if code in (429, 500, 502, 503) and attempt < max_retries - 1:
-                wait = 8 * (attempt + 1)
-                print(f"Gemini respondió {code} (transitorio). Reintento en {wait}s...")
-                time.sleep(wait)
-                continue
-            raise
+                if code in (429, 500, 502, 503) and attempt < max_retries - 1:
+                    wait = 8 * (attempt + 1)
+                    print(f"Gemini respondió {code} (transitorio) en '{model}'. "
+                          f"Reintento en {wait}s...")
+                    time.sleep(wait)
+                    continue
+
+                if code in (429, 500, 502, 503):
+                    print(f"'{model}' sigue fallando ({code}); pruebo el siguiente modelo.")
+                    break
+
+                raise
+
+    if agotados:
+        raise RuntimeError(
+            "Cuota DIARIA del free tier de Gemini agotada en TODOS los modelos del "
+            f"escalón ({', '.join(agotados)}). Se resetea a medianoche hora del "
+            "Pacífico (~08:00 UTC / ~01:00 CDMX). Opciones: ampliar GEMINI_MODELS con "
+            "otro modelo/flash-lite, o habilitar billing."
+        )
     raise last_err

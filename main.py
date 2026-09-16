@@ -135,6 +135,11 @@ def generar_borrador():
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
+    if data.get("publicar_borrador"):
+        if publicar:
+            print("    Día de 'reacción' post-fecha: se fuerza BORRADOR (revisión humana).")
+        publicar = False
+
     if not publicar:
         print("=" * 60)
         print("MODO BORRADOR (no se publicó).")

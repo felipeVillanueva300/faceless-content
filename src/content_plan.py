@@ -73,7 +73,7 @@ _FORMATO_POR_ID = {f["id"]: f for f in FORMATOS}
 # La cadencia se dispara alrededor de esa fecha, no toda la ventana.
 # --------------------------------------------------------------------------
 EVENTOS = [
-    {"id": "patrio", "mes": 9, "dia": 16,
+    {"id": "patrio", "mes": 9, "dia": 15,
      "tema": "las fiestas patrias (la cena del 15, la coperacha, el Grito) sin endeudarte"},
     {"id": "muertos", "mes": 11, "dia": 2,
      "tema": "Día de Muertos: ofrenda, flores y pan sin descontrol"},
@@ -92,7 +92,7 @@ EVENTOS = [
 # Golpes de temporada = DÍAS PARA el evento (positivo = falta; 0 = el mero día;
 # negativo = ya pasó). Espaciado ~3 días + el mero día + una reacción 2 días después.
 # Edita esta lista para cambiar el ritmo (p.ej. mete 12 para arrancar 12 días antes).
-RAMPA_OFFSETS = [10, 7, 4, 0, -2]
+RAMPA_OFFSETS = [10, 7, 4, 1, 0, -2]
 
 # Rol de cada golpe: (etiqueta, formato_id, instruccion_extra_para_el_prompt).
 # El formato del golpe REEMPLAZA la rotacion normal ese dia, para que los golpes
