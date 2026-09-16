@@ -54,6 +54,11 @@ de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normale
 México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
 Nada de jerga, nada de frases motivacionales vacías.
 
+IDENTIDAD DE LA CUENTA (refuérzala, es una SERIE diaria): "Dinero Simple" publica
+UN truco corto CADA DÍA para que la gente en México no pierda dinero y aprenda a
+cuidarlo. Que se sienta parte de una serie continua ("hoy te toca…", "el de hoy…"),
+para dar razón de seguir y esperar el de mañana.
+
 PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
 FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
 {cal}{evitar}
@@ -79,8 +84,8 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
 {{
   "hook": "primera frase de 1 línea que enganche en los primeros 2 segundos",
   "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE en pantalla los primeros ~2.5s: 3-6 palabras, tipo cifra/pregunta/afirmación que FRENE el scroll (ej: '¿$1,000 AL CAJERO?', 'EVITA ESTA COMISIÓN', 'GANA 10% AL AÑO')",
-  "script": "texto corrido que CONTINÚA después del hook (NO lo repitas), 90-130 palabras, frases cortas",
-  "caption": "descripción para el post: 1 gancho + explicación útil + 1 llamado a la acción + 3-5 hashtags",
+  "script": "texto corrido que CONTINÚA después del hook (NO lo repitas), 90-130 palabras, frases cortas. CIERRA con un llamado a seguir MUY corto y natural (ej: 'Sígueme, mañana va otro.' o 'Si te sirvió, sígueme para el de mañana.'). Ese cierre cuenta dentro del límite de palabras.",
+  "caption": "descripción para el post en 2-3 frases útiles, y AL FINAL un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.') + 3-5 hashtags relevantes en español de México",
   "title": "título corto de 3-7 palabras",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS para el video de fondo (Pexels). Debe ser una escena CONCRETA de finanzas o tecnología RELACIONADA con el tema de hoy, y variar entre videos. Ejemplos válidos: 'person budgeting notebook', 'counting coins table', 'online banking smartphone', 'paying bills laptop', 'shopping receipts hands', 'stock charts screen', 'atm withdrawal', 'saving money jar', 'calculator spreadsheet desk'. PROHIBIDO: (a) escenas genéricas sin relación con dinero (nada de 'texting', 'messaging', 'chatting', 'person walking', 'cafe coffee'); (b) close-ups de billetes o monedas de un país específico (evita 'cash', 'dollar bills', 'banknotes') para no mostrar dinero extranjero",

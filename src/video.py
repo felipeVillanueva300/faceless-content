@@ -15,6 +15,10 @@ CARD_SHOW_SMALL = os.environ.get("CARD_SHOW_SMALL", "1").strip().lower() in ("1"
 
 HOOK_DUR = float(os.environ.get("HOOK_DUR", "2.8"))
 
+OUTRO_CTA = os.environ.get("OUTRO_CTA", "SÍGUEME").strip()
+OUTRO_SUB = os.environ.get("OUTRO_SUB", "uno nuevo cada día").strip()
+OUTRO_DUR = float(os.environ.get("OUTRO_DUR", "3.0"))
+
 _FIT_FONT_CANDIDATES = [
     os.environ.get("IMG_FONT_FILE", ""),
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -198,6 +202,30 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
 
     chain.append(f"[{last}]subtitles={subs}[subd]")
     last = "subd"
+
+    if OUTRO_CTA and duration:
+        oc_st = max(0.0, float(duration) - OUTRO_DUR)
+        oc_alpha = (f"if(lt(t,{oc_st:.2f}),0,"
+                    f"if(lt(t,{oc_st + 0.3:.2f}),(t-{oc_st:.2f})/0.3,1))")
+        big_txt = _escape_drawtext(OUTRO_CTA.upper())
+        big_fs = _fit_fontsize(OUTRO_CTA.upper(), CARD_MAX_W, 150, 90)
+        chain.append(
+            f"[{last}]drawtext=font='{SUB_FONT}':text='{big_txt}':fontcolor=0x00E5FF:"
+            f"fontsize={big_fs}:borderw=8:bordercolor=black:shadowcolor=black@0.6:"
+            f"shadowx=4:shadowy=4:x=(w-tw)/2:y=h*0.40:alpha='{oc_alpha}':"
+            f"enable='between(t,{oc_st:.2f},{float(duration):.2f})'[octa]"
+        )
+        last = "octa"
+        if OUTRO_SUB:
+            sub_txt = _escape_drawtext(OUTRO_SUB)
+            sub_fs = _fit_fontsize(OUTRO_SUB, CARD_MAX_W, 58, 40)
+            chain.append(
+                f"[{last}]drawtext=font='{SUB_FONT}':text='{sub_txt}':fontcolor=white:"
+                f"fontsize={sub_fs}:borderw=4:bordercolor=black:x=(w-tw)/2:"
+                f"y=h*0.40+{big_fs + 24}:alpha='{oc_alpha}':"
+                f"enable='between(t,{oc_st:.2f},{float(duration):.2f})'[octb]"
+            )
+            last = "octb"
 
     wm = _escape_drawtext(WATERMARK)
     chain.append(

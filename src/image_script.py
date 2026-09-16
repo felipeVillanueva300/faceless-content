@@ -28,6 +28,7 @@ def generate_image_post(niche="tecnología y finanzas", avoid=None, max_retries=
     prompt = f"""Eres redactor de una cuenta mexicana de finanzas y tecnología llamada "Dinero Simple".
 Tu público: personas normales en México, SIN conocimientos financieros. Escribes claro y directo,
 como si le explicaras a un amigo. Nada de jerga. Nada de frases motivacionales vacías.
+Es una SERIE diaria: "Dinero Simple" publica un consejo corto cada día para cuidar tu dinero en México.
 
 PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
 FORMATO DE HOY: {plan['formato_nombre']}.
@@ -40,7 +41,7 @@ cualquiera entienda al instante y pueda aplicar. Usa la fecha como semilla: {tod
 Reglas de longitud:
 - "big": máximo ~14 caracteres. El gancho grande de la imagen.
 - "small": una FRASE CLARA Y COMPLETA de 8 a 12 palabras (que se entienda sola).
-- "caption": 1 gancho + explicación útil en 2-3 frases + 1 llamado a la acción + 3-4 hashtags.
+- "caption": explicación útil en 2-3 frases y AL FINAL un llamado a SEGUIR + guardar (ej: "Sígueme @dinerosimplemx para un consejo diario y guarda este.") + 3-4 hashtags.
 - "title": 3-5 palabras.
 - "image_prompt": 1-2 frases EN INGLÉS para un fondo profesional del tema, SIN texto ni números.
 - "topic": identificador corto del tema en minúsculas con guiones (ej: "cancelar-suscripciones").
