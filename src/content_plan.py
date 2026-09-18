@@ -1,3 +1,4 @@
+import os
 import datetime
 
 COOLDOWN_DIAS = 5
@@ -177,11 +178,76 @@ def calendario_hint(today=None):
     return (None, None)
 
 
+def serie_override():
+    """Lee de variables de entorno una SERIE forzada (Parte N de un tema).
+
+    Cuando quieres una 'Parte 2/3…' de un tema concreto (ej. manejo de tarjeta:
+    fecha de corte, fecha de pago, cuándo comprar), disparas el workflow a mano con
+    estas variables y ESE día el pipeline ignora el pilar aleatorio y hace justo esa
+    parte, sin repetir lo que ya dijiste en las partes anteriores.
+
+    Variables (todas opcionales salvo SERIE_TEMA):
+      SERIE_TEMA      -> el tema de la serie (ej: "cómo manejar tu tarjeta de crédito")
+      SERIE_PARTE     -> número de parte (ej: "2")
+      SERIE_TOTAL     -> total de partes, si lo sabes (ej: "4")
+      SERIE_SUBTEMA   -> qué toca EXACTAMENTE hoy (ej: "la fecha de pago y cuándo comprar")
+      SERIE_ANTERIOR  -> qué YA se cubrió en partes previas, para NO repetirlo
+                         (ej: "Parte 1 explicó qué es la fecha de corte")
+      SERIE_FORMATO   -> id de formato opcional (tip, howto, dato, error, mito, comparativa)
+
+    Devuelve dict o None."""
+    tema = os.environ.get("SERIE_TEMA", "").strip()
+    if not tema:
+        return None
+    return {
+        "tema": tema,
+        "parte": os.environ.get("SERIE_PARTE", "").strip(),
+        "total": os.environ.get("SERIE_TOTAL", "").strip(),
+        "subtema": os.environ.get("SERIE_SUBTEMA", "").strip(),
+        "anterior": os.environ.get("SERIE_ANTERIOR", "").strip(),
+        "formato_id": os.environ.get("SERIE_FORMATO", "").strip().lower(),
+    }
+
+
 def plan_del_dia(today=None, offset=0):
     """Elige categoría (enfriamiento de COOLDOWN_DIAS), formato (sin repetir los
     últimos 2) y, si hoy toca golpe de temporada, sobreescribe el formato con el
-    del golpe y marca el tema. Devuelve un dict con todo lo que el prompt necesita."""
+    del golpe y marca el tema. Si hay una SERIE forzada (ver serie_override),
+    esa manda por encima de todo. Devuelve un dict con todo lo que el prompt necesita."""
     today = today or datetime.date.today()
+
+    # --- SERIE forzada: manda por encima del pilar y de la temporada ---
+    serie = serie_override()
+    if serie:
+        fmt = _FORMATO_POR_ID.get(serie["formato_id"])
+        if not fmt:
+            # sin formato explícito: how-to encaja para "parte N paso a paso"
+            fmt = _FORMATO_POR_ID.get("howto", FORMATOS[0])
+        etiqueta_parte = ""
+        if serie["parte"]:
+            etiqueta_parte = f"Parte {serie['parte']}"
+            if serie["total"]:
+                etiqueta_parte += f" de {serie['total']}"
+        return {
+            "categoria_id": "serie",
+            "categoria_nombre": serie["tema"],
+            "angulos": serie["subtema"] or "continúa la serie con el siguiente punto lógico",
+            "formato_nombre": fmt["nombre"],
+            "formato_video": fmt["video"],
+            "formato_imagen": fmt["imagen"],
+            "cal_tema": None,
+            "cal_peso": None,
+            "evento_id": None,
+            "evento_beat": None,
+            "evento_instruccion": "",
+            "publicar_borrador": False,
+            # datos de la serie para el prompt y el historial:
+            "serie_tema": serie["tema"],
+            "serie_parte": serie["parte"],
+            "serie_etiqueta": etiqueta_parte,
+            "serie_subtema": serie["subtema"],
+            "serie_anterior": serie["anterior"],
+        }
 
     recientes_pilares, recientes_formatos = [], []
     try:
@@ -225,9 +291,22 @@ def plan_del_dia(today=None, offset=0):
 
 
 def calendario_linea(plan) -> str:
-    """Línea lista para el prompt. En un golpe de temporada, además del tema le pasa
-    el ROL del golpe (arranque/mito/último ajuste/día/reacción) para que cada uno
-    sea distinto."""
+    """Línea lista para el prompt. Si hay SERIE forzada, emite la directiva de la
+    serie (Parte N, qué toca hoy, qué NO repetir). Si no, y hay golpe de temporada,
+    pasa el tema + el ROL del golpe para que cada golpe sea distinto."""
+    # --- SERIE forzada ---
+    if plan.get("serie_tema"):
+        etiqueta = plan.get("serie_etiqueta") or "siguiente parte"
+        linea = (f"SERIE (hoy IGNORA el pilar normal): esto es la {etiqueta} de una serie "
+                 f"sobre \"{plan['serie_tema']}\". Debe sentirse CONTINUACIÓN, no un video suelto: "
+                 f"menciona al inicio que es la {etiqueta} y al final adelanta que viene la siguiente.\n")
+        if plan.get("serie_subtema"):
+            linea += f"Lo que toca EXACTAMENTE hoy (no te desvíes): {plan['serie_subtema']}.\n"
+        if plan.get("serie_anterior"):
+            linea += (f"Ya se cubrió en partes anteriores (PROHIBIDO repetirlo, solo puedes "
+                      f"referirlo en 1 frase): {plan['serie_anterior']}.\n")
+        return linea
+
     tema, peso = plan.get("cal_tema"), plan.get("cal_peso")
     if not tema:
         return ""

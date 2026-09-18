@@ -9,6 +9,30 @@ on:
         description: "ID del video a PUBLICAR (ej: daily-20260907-025109). Vacío = generar un borrador nuevo."
         type: string
         default: ""
+      serie_tema:
+        description: "SERIE: tema a forzar hoy (ej: 'cómo manejar tu tarjeta de crédito'). Vacío = día normal."
+        type: string
+        default: ""
+      serie_parte:
+        description: "SERIE: número de parte (ej: 2)"
+        type: string
+        default: ""
+      serie_total:
+        description: "SERIE: total de partes, si lo sabes (ej: 4)"
+        type: string
+        default: ""
+      serie_subtema:
+        description: "SERIE: qué toca EXACTAMENTE hoy (ej: 'la fecha de pago y cuándo comprar tras el corte')"
+        type: string
+        default: ""
+      serie_anterior:
+        description: "SERIE: qué ya se cubrió antes, para NO repetirlo (ej: 'Parte 1 explicó la fecha de corte')"
+        type: string
+        default: ""
+      serie_formato:
+        description: "SERIE: formato opcional (howto, tip, dato, error, mito, comparativa). Vacío = paso a paso."
+        type: string
+        default: ""
 
 permissions:
   contents: write  
@@ -54,6 +78,12 @@ jobs:
           YT_PRIVACY: "public"
           WATERMARK_TEXT: "@dinerosimplemx"
           PUBLISH_ID: ${{ inputs.publicar_id }}
+          SERIE_TEMA: ${{ inputs.serie_tema }}
+          SERIE_PARTE: ${{ inputs.serie_parte }}
+          SERIE_TOTAL: ${{ inputs.serie_total }}
+          SERIE_SUBTEMA: ${{ inputs.serie_subtema }}
+          SERIE_ANTERIOR: ${{ inputs.serie_anterior }}
+          SERIE_FORMATO: ${{ inputs.serie_formato }}
           PUBLISH: "false"
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"
