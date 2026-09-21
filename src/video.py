@@ -15,6 +15,8 @@ CARD_SHOW_SMALL = os.environ.get("CARD_SHOW_SMALL", "1").strip().lower() in ("1"
 
 HOOK_DUR = float(os.environ.get("HOOK_DUR", "2.8"))
 
+# Cierre con llamado a seguir (los últimos segundos del video). Vacía OUTRO_CTA
+# ("") para quitarlo. Es de lo que más convierte vista -> seguidor.
 OUTRO_CTA = os.environ.get("OUTRO_CTA", "SÍGUEME").strip()
 OUTRO_SUB = os.environ.get("OUTRO_SUB", "uno nuevo cada día").strip()
 OUTRO_DUR = float(os.environ.get("OUTRO_DUR", "3.0"))
@@ -263,3 +265,90 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         out,
     ]
     subprocess.run(cmd, check=True, cwd=work_dir)
+
+
+def build_multi_background(clips, duration, out_path, durations=None):
+    """Une varios clips en UN fondo vertical 1080x1920 de largo 'duration', cortando
+    entre clips. Devuelve out_path, o None si no se puede (cae al fondo degradado).
+
+    'durations': si se pasa (una por clip), cada clip dura EXACTAMENTE eso — así el fondo
+    cambia justo cuando la voz pasa a ese bloque. Si no, se reparte en partes iguales.
+
+    Cada clip se escala a cubrir 1080x1920 (sin barras), se recorta y se hace loop si es
+    más corto que su segmento. No lleva audio."""
+    clips = [c for c in (clips or []) if c and os.path.isfile(c)]
+    if not clips:
+        return None
+    if len(clips) == 1:
+        return clips[0]   # un solo clip: el pipeline normal ya lo maneja
+
+    n = len(clips)
+    # duraciones por clip: explícitas (medidas de la voz) o partes iguales
+    if durations and len(durations) == n:
+        segs = [max(0.5, float(d)) for d in durations]
+    else:
+        segs = [max(1.0, float(duration) / n)] * n
+
+    inputs = []
+    for c in clips:
+        inputs += ["-stream_loop", "-1", "-i", os.path.basename(c)]
+
+    parts, labels = [], []
+    for i in range(n):
+        labels.append(f"[v{i}]")
+        parts.append(
+            f"[{i}:v]scale=1080:1920:force_original_aspect_ratio=increase,"
+            f"crop=1080:1920,setsar=1,fps=30,trim=0:{segs[i]:.3f},setpts=PTS-STARTPTS[v{i}]"
+        )
+    concat = "".join(labels) + f"concat=n={n}:v=1:a=0[bg]"
+    filtro = ";".join(parts + [concat])
+
+    work_dir = os.path.dirname(os.path.abspath(out_path)) or "."
+    cmd = [
+        FFMPEG, "-y",
+        *inputs,
+        "-filter_complex", filtro,
+        "-map", "[bg]",
+        "-t", f"{sum(segs):.2f}",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20",
+        "-an", os.path.basename(out_path),
+    ]
+    try:
+        subprocess.run(cmd, check=True, cwd=work_dir,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        segdesc = "exacto por bloque" if (durations and len(durations) == n) else f"{segs[0]:.1f}s c/u"
+        print(f"    fondo multi-escena armado con {n} clips ({segdesc})")
+        return out_path
+    except subprocess.CalledProcessError as e:
+        err = (e.stderr or b"").decode("utf-8", "ignore")[-300:]
+        print(f"    (no se pudo armar fondo multi-escena: {err}); uso el primer clip")
+        return clips[0]
+
+
+def image_to_clip(img_path, out_path, seconds=10.0):
+    """Convierte una imagen fija en un clip vertical 1080x1920 con zoom lento
+    (efecto Ken Burns), para que un fondo generado por IA se sienta vivo. Devuelve
+    out_path o None si falla."""
+    if not (img_path and os.path.isfile(img_path)):
+        return None
+    frames = max(30, int(seconds * 30))
+    work_dir = os.path.dirname(os.path.abspath(out_path)) or "."
+    vf = (
+        "scale=1350:2400:force_original_aspect_ratio=increase,crop=1350:2400,"
+        f"zoompan=z='min(zoom+0.0005,1.18)':d={frames}:"
+        "x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30,setsar=1"
+    )
+    cmd = [
+        FFMPEG, "-y", "-loop", "1", "-i", os.path.basename(img_path),
+        "-t", f"{seconds:.2f}", "-vf", vf,
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20",
+        "-an", os.path.basename(out_path),
+    ]
+    try:
+        subprocess.run(cmd, check=True, cwd=work_dir,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        return out_path
+    except subprocess.CalledProcessError as e:
+        err = (e.stderr or b"").decode("utf-8", "ignore")[-200:]
+        print(f"    (image_to_clip falló: {err})")
+        return None

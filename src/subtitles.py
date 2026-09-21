@@ -80,7 +80,23 @@ def _animated_lines_from_boundaries(boundaries):
     return lines
 
 
+def _silabas(palabra: str) -> int:
+    """Cuenta sílabas aprox. en español: grupos de vocales (diptongos = 1).
+    Es una buena aproximación de cuánto DURA una palabra al hablarse, mucho
+    mejor que contar letras (que infla palabras con muchas consonantes)."""
+    import re
+    p = palabra.lower()
+    p = re.sub(r"[^a-záéíóúüñ]", "", p)
+    if not p:
+        return 0
+    grupos = re.findall(r"[aeiouáéíóúü]+", p)
+    return max(1, len(grupos))
+
+
 def _static_lines_from_text(text, duration):
+    """Reparte los subtítulos por el audio SIN tiempos de palabra reales, estimando
+    la duración de cada grupo por sus SÍLABAS (+ una pausa extra si termina en signo).
+    Deja un pequeño respiro inicial para que no arranque antes que la voz."""
     import re
     oraciones = [s for s in re.split(r'(?<=[\.\?\!])\s+', text.strip()) if s]
     groups = []
@@ -90,14 +106,20 @@ def _static_lines_from_text(text, duration):
             groups.append(pals[i:i + WORDS_PER_CUE])
 
     def peso(g):
-        base = len(" ".join(g))
-        pausa = 6 if g and g[-1][-1:] in ".,;:?!" else 0
-        return base + pausa
+        sil = sum(_silabas(w) for w in g) or 1
+        # pausa extra por puntuación final (punto pesa más que coma)
+        fin = g[-1][-1:] if g else ""
+        pausa = 2.0 if fin in ".?!" else (1.0 if fin in ",;:" else 0.0)
+        return sil + pausa
 
     total = sum(peso(g) for g in groups) or 1
-    lines, t = [], 0.0
+    # pequeño offset inicial (la voz no arranca en el frame 0)
+    lead = min(0.25, duration * 0.02)
+    disp = max(0.1, duration - lead)
+
+    lines, t = [], lead
     for g in groups:
-        span = duration * (peso(g) / total)
+        span = disp * (peso(g) / total)
         txt = " ".join(g).upper()
         lines.append(
             f"Dialogue: 0,{_ass_time(t)},{_ass_time(t + span)},Default,,0,0,0,,{txt}"
@@ -114,3 +136,42 @@ def build_ass(text, boundaries, ass_path, audio_path, words_per_cue: int = None)
 
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write(_header(FONT) + "\n".join(body))
+
+def _cues_en_ventana(texto, t0, t1):
+    """Reparte el texto de UN bloque en subtítulos dentro de [t0, t1] (su tiempo real
+    medido), pesando por sílabas. Como cada bloque tiene su propia ventana, el desfase
+    no se acumula de un bloque a otro."""
+    pals = (texto or "").split()
+    if not pals:
+        return []
+    grupos = [pals[i:i + WORDS_PER_CUE] for i in range(0, len(pals), WORDS_PER_CUE)]
+
+    def peso(g):
+        sil = sum(_silabas(w) for w in g) or 1
+        fin = g[-1][-1:] if g else ""
+        pausa = 2.0 if fin in ".?!" else (1.0 if fin in ",;:" else 0.0)
+        return sil + pausa
+
+    total = sum(peso(g) for g in grupos) or 1
+    span_total = max(0.1, t1 - t0)
+    lines, t = [], t0
+    for g in grupos:
+        span = span_total * (peso(g) / total)
+        txt = " ".join(g).upper()
+        lines.append(
+            f"Dialogue: 0,{_ass_time(t)},{_ass_time(t + span)},Default,,0,0,0,,{txt}"
+        )
+        t += span
+    return lines
+
+
+def build_ass_segments(segmentos, ass_path):
+    """segmentos: lista de (texto, inicio_seg, fin_seg) — un bloque de narración con su
+    ventana de tiempo REAL. Genera el .ass con los subtítulos de cada bloque acomodados
+    dentro de su ventana. Es lo que sincroniza voz y texto sin depender de edge-tts."""
+    body = []
+    for texto, t0, t1 in segmentos:
+        body.extend(_cues_en_ventana(texto, t0, t1))
+    with open(ass_path, "w", encoding="utf-8") as f:
+        f.write(_header(FONT) + "\n".join(body))
+    return ass_path

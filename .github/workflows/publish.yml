@@ -88,3 +88,11 @@ jobs:
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"
           TTS_VOICE: es-MX-JorgeNeural
+          AI_IMAGE_ENABLED: "1"
+          AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER || 'cloudflare' }}
+          AI_IMAGE_MODE: ${{ vars.AI_IMAGE_MODE || 'mix' }}
+          AI_IMAGE_SEED: ${{ vars.AI_IMAGE_SEED || '7' }}
+          SEGMENTED_BG: ${{ vars.SEGMENTED_BG || '1' }}
+          TTS_RATE: ${{ vars.TTS_RATE || '+5%' }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

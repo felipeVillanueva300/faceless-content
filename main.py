@@ -81,29 +81,116 @@ def generar_borrador():
     if recientes:
         print(f"    ({len(recientes)} temas recientes a evitar)")
     data = script_gen.generate_script(niche, avoid=recientes)
-    narration = f"{data['hook']} {data['script']}"
     caption = data.get("caption") or data.get("title", "")
     title = data.get("title", "")
     topic = data.get("topic") or title
     hook_card = (data.get("hook_card") or title or "").strip()
 
-    print("[2/7] Sintetizando voz")
-    audio = os.path.join(BUILD, "audio.mp3")
-    boundaries = tts.synthesize(narration, audio)
+    # --- Guion por BLOQUES (beats): sincronía exacta voz <-> fondo ---
+    beats = [b for b in (data.get("beats") or [])
+             if isinstance(b, dict) and (b.get("narration") or "").strip()]
+    seg_on = os.environ.get("SEGMENTED_BG", "1").strip().lower() in ("1", "true", "yes")
+    usar_bloques = seg_on and len(beats) >= 2
 
-    print("[3/7] Generando subtítulos")
+    audio = os.path.join(BUILD, "audio.mp3")
     ass = os.path.join(BUILD, "subs.ass")
-    subtitles.build_ass(narration, boundaries, ass, audio)
+    seg_dur = None
+    escenas = []
+    dur = 40.0
+
+    if usar_bloques:
+        textos = []
+        for i, b in enumerate(beats):
+            n = (b.get("narration") or "").strip()
+            if i == 0:
+                n = f"{data.get('hook', '').strip()} {n}".strip()
+            textos.append(n)
+        escenas = [(b.get("scene") or "").strip() for b in beats]
+
+        print("[2/7] Sintetizando voz (por bloques)")
+        audio_seg, seg_dur = tts.synthesize_segments(textos, BUILD)
+        if audio_seg and seg_dur:
+            audio = audio_seg
+            dur = sum(seg_dur)
+            print("[3/7] Generando subtítulos (por bloque)")
+            segmentos, t = [], 0.0
+            for txt, d in zip(textos, seg_dur):
+                segmentos.append((txt, t, t + d)); t += d
+            subtitles.build_ass_segments(segmentos, ass)
+        else:
+            usar_bloques = False   # síntesis por bloques falló -> camino normal
+
+    if not usar_bloques:
+        resto = data.get("script") or " ".join((b.get("narration") or "") for b in beats)
+        narration = f"{data['hook']} {resto}".strip()
+        print("[2/7] Sintetizando voz")
+        boundaries = tts.synthesize(narration, audio)
+        try:
+            dur = subtitles._audio_duration(audio)
+        except Exception:
+            dur = 40.0
+        print("[3/7] Generando subtítulos")
+        subtitles.build_ass(narration, boundaries, ass, audio)
 
     print("[4/7] Buscando b-roll de fondo")
-    kw = (data.get("broll_keywords") or "money finance").strip()
-    bg = broll.fetch_broll(kw, os.path.join(BUILD, "broll.mp4"))
+    # Escenas del fondo: de los beats (si hay), o de broll_scenes/keywords (respaldo).
+    if not escenas:
+        bs = data.get("broll_scenes") or []
+        if isinstance(bs, str):
+            bs = [bs]
+        escenas = [s.strip() for s in bs if s and s.strip()]
+    escenas = [e for e in escenas if e] or [(data.get("broll_keywords") or "money finance").strip()]
+
+    
+    from src import ai_image
+    modo_ia = os.environ.get("AI_IMAGE_MODE", "off").strip().lower()
+
+    def _clip_stock(esc, i):
+        return broll.fetch_broll(esc, os.path.join(BUILD, f"broll_{i}.mp4"))
+
+    def _clip_ia(esc, i):
+        if not ai_image.ENABLED:
+            return None
+        img = ai_image.generate_image(esc, os.path.join(BUILD, f"ia_{i}.png"))
+        return video.image_to_clip(img, os.path.join(BUILD, f"ia_{i}.mp4")) if img else None
+
+    clips = []
+    if modo_ia == "mix" and ai_image.ENABLED:
+        # escena par -> video real primero; impar -> IA primero. Respaldo cruzado.
+        for i, esc in enumerate(escenas):
+            if i % 2 == 0:
+                clip = _clip_stock(esc, i) or _clip_ia(esc, i)
+            else:
+                clip = _clip_ia(esc, i) or _clip_stock(esc, i)
+            if clip:
+                clips.append(clip)
+    elif modo_ia == "always" and ai_image.ENABLED:
+        for i, esc in enumerate(escenas):
+            clip = _clip_ia(esc, i) or _clip_stock(esc, i)
+            if clip:
+                clips.append(clip)
+    else:
+        clips = broll.fetch_broll_scenes(escenas, BUILD)
+        if not clips and modo_ia == "fallback" and ai_image.ENABLED:
+            for i, esc in enumerate(escenas):
+                clip = _clip_ia(esc, i)
+                if clip:
+                    clips.append(clip)
+
+    if not clips:   # último recurso: el fetch de un solo clip como antes
+        kw = (data.get("broll_keywords") or "money finance").strip()
+        uno = broll.fetch_broll(kw, os.path.join(BUILD, "broll.mp4"))
+        clips = [uno] if uno else []
 
     print("[5/7] Armando video")
-    try:
-        dur = subtitles._audio_duration(audio)
-    except Exception:
-        dur = 40.0
+    
+    bg = None
+    if len(clips) >= 2:
+        durs = seg_dur if (usar_bloques and seg_dur and len(seg_dur) == len(clips)) else None
+        bg = video.build_multi_background(clips, dur, os.path.join(BUILD, "bg_combined.mp4"),
+                                          durations=durs)
+    elif len(clips) == 1:
+        bg = clips[0]
     cards = []
     for c, (a, b) in zip((data.get("cards") or [])[:2], [(0.25, 0.45), (0.60, 0.80)]):
         cards.append({"big": c.get("big", ""), "small": c.get("small", ""),
@@ -136,6 +223,7 @@ def generar_borrador():
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
     if data.get("publicar_borrador"):
+        # Golpe de 'reacción' post-fecha: nunca se autopublica; requiere tu OK.
         if publicar:
             print("    Día de 'reacción' post-fecha: se fuerza BORRADOR (revisión humana).")
         publicar = False

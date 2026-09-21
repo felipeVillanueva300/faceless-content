@@ -62,39 +62,57 @@ para dar razón de seguir y esperar el de mañana.
 PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
 FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
 {cal}{evitar}
-Genera UN guion para un video vertical de 30 a 45 segundos sobre el PILAR y el FORMATO
-de hoy, con un ángulo fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
+Genera UN guion para un video vertical sobre el PILAR y el FORMATO de hoy, con un ángulo
+fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
 
-MUY IMPORTANTE — cómo se usa el guion:
-El "hook" y el "script" se CONCATENAN y se narran JUNTOS, en ese orden, como una
-sola voz continua. Por eso:
-- El "script" debe CONTINUAR justo después del hook, SIN repetirlo y SIN parafrasearlo.
-- NO empieces el "script" retomando la idea del hook; entra directo al desarrollo.
-- Leídos seguidos (hook + " " + script), NO debe haber ninguna frase ni idea repetida
-  al inicio. Debe sonar natural, como si una persona hablara de corrido.
+DURACIÓN FLEXIBLE (clave): el video dura entre 25 y 60 segundos. NO rellenes para llegar
+a un número. Usa el tiempo que el tema NECESITE para quedar BIEN explicado:
+- Tema simple -> corto (30-45s). Tema que necesita matiz o pasos -> más largo (hasta 60s).
+- Prohibido el relleno/preámbulo ("hoy te voy a contar…", "muchos no saben que…"). El
+  PRIMER bloque entra directo al valor.
 
-Ejemplo de lo que NO se debe hacer:
-  hook:   "El error más grande al invertir es dejar tu dinero en el banco."
-  script: "El error más grande al invertir es dejarlo en el banco. Los bancos..."  <-- MAL, repite el hook
-Ejemplo correcto:
-  hook:   "El error más grande al invertir es dejar tu dinero en el banco."
-  script: "Tu cuenta de ahorro casi no paga intereses, y la inflación te come el resto..."  <-- BIEN, continúa
+CALIDAD DEL CONSEJO (lo más importante): da el consejo MÁS ÚTIL y COMPLETO, no el obvio
+ni el técnicamente-correcto-pero-flojo. Incluye SIEMPRE el matiz práctico que ayuda a
+quien NO está en el caso ideal. Ejemplos del nivel que quiero:
+- Tarjeta: no digas solo "paga el total". Di que si no puedes el total, pagues al menos
+  el monto que EVITA intereses (el saldo al corte), y dónde ver esa opción en la app.
+- Ahorro: no digas solo "ahorra". Di cuánto, cómo automatizarlo y dónde.
+Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,
+mejor que tres a medias.
+
+MUY IMPORTANTE — cómo se arma el guion (POR BLOQUES):
+El guion se cuenta en BLOQUES ("beats"). El "hook" se narra primero, y luego los
+bloques en orden, como una sola voz continua. Cada bloque tiene su propia frase y su
+propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a ese punto.
+- El primer bloque CONTINÚA justo después del hook, SIN repetirlo ni parafrasearlo.
+- Leídos seguidos (hook + bloques), debe sonar natural, como alguien hablando de corrido.
+- Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Cada
+  bloque = UNA idea, sin apurar. El ÚLTIMO bloque cierra con un llamado a seguir corto
+  (ej: 'Sígueme, mañana va otro.').
+- Cada bloque va con su "scene": 2-4 palabras EN INGLÉS, escena CONCRETA de finanzas/
+  tecnología ligada a LO QUE DICE ESE BLOQUE, distinta entre bloques.
 
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
   "hook": "primera frase de 1 línea que enganche en los primeros 2 segundos",
-  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE en pantalla los primeros ~2.5s: 3-6 palabras, tipo cifra/pregunta/afirmación que FRENE el scroll (ej: '¿$1,000 AL CAJERO?', 'EVITA ESTA COMISIÓN', 'GANA 10% AL AÑO')",
-  "script": "texto corrido que CONTINÚA después del hook (NO lo repitas), 90-130 palabras, frases cortas. CIERRA con un llamado a seguir MUY corto y natural (ej: 'Sígueme, mañana va otro.' o 'Si te sirvió, sígueme para el de mañana.'). Ese cierre cuenta dentro del límite de palabras.",
+  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE en pantalla los primeros ~2.5s: 3-6 palabras, tipo cifra/pregunta/afirmación que FRENE el scroll (ej: '¿$1,000 AL CAJERO?', 'EVITA ESTA COMISIÓN', 'GANA 10% AL AÑO'). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
+  "beats": [
+    {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "credit card hand"}},
+    {{"narration": "frase del bloque 2", "scene": "calendar planner desk"}},
+    {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
+    {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}
+  ],
   "caption": "descripción para el post en 2-3 frases útiles, y AL FINAL un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.') + 3-5 hashtags relevantes en español de México",
-  "title": "título corto de 3-7 palabras",
+  "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
-  "broll_keywords": "2-4 palabras EN INGLÉS para el video de fondo (Pexels). Debe ser una escena CONCRETA de finanzas o tecnología RELACIONADA con el tema de hoy, y variar entre videos. Ejemplos válidos: 'person budgeting notebook', 'counting coins table', 'online banking smartphone', 'paying bills laptop', 'shopping receipts hands', 'stock charts screen', 'atm withdrawal', 'saving money jar', 'calculator spreadsheet desk'. PROHIBIDO: (a) escenas genéricas sin relación con dinero (nada de 'texting', 'messaging', 'chatting', 'person walking', 'cafe coffee'); (b) close-ups de billetes o monedas de un país específico (evita 'cash', 'dollar bills', 'banknotes') para no mostrar dinero extranjero",
+  "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",
   "cards": [
     {{"big": "texto grande, máx ~14 caracteres", "small": "frase corta que lo explica"}}
   ],
   "graphics": []
 }}
 
+Reglas para "beats": de 3 a 5 bloques (usa más SOLO si el tema necesita más explicación). Cada uno con "narration" (español) y "scene" (inglés, 2-4 palabras).
 Reglas para "cards": 0 a 2 elementos. Son rótulos que refuerzan la narración. Si no aportan, deja [].
 
 Reglas para "graphics": 0 o 1 elemento, SOLO si tienes un dato numérico REAL y concreto

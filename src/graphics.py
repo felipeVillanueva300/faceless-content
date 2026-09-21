@@ -47,6 +47,22 @@ def _ease(t):
     return 1 - (1 - t) ** 3
 
 
+def _fit_font(text, max_w, start, minimum):
+    """Devuelve una fuente cuyo ancho para 'text' cabe en max_w (baja de a 2px)."""
+    text = (text or "").strip()
+    size = start
+    while size > minimum:
+        f = _font(size)
+        try:
+            w = f.getlength(text)
+        except Exception:
+            w = 0.6 * size * len(text)
+        if w <= max_w:
+            return f
+        size -= 2
+    return _font(minimum)
+
+
 def render_bars_frame(spec, progress, out_path):
     """spec: {title, a_label, a_value, b_label, b_value, a_color?, b_color?}."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -60,15 +76,20 @@ def render_bars_frame(spec, progress, out_path):
 
     base_y = 1180
     max_h = 560
-    bar_w = 300
-    gap = 120
+    bar_w = 280
+    gap = 200                      # más separación entre barras (antes 120)
     cx = W // 2
     ax = cx - gap // 2 - bar_w
     bx = cx + gap // 2
     mx = max(a_val, b_val) or 1
 
+    # cada etiqueta/valor se limita al espacio de su barra + medio hueco, para que
+    # NUNCA se encimen dos etiquetas largas (el bug de 'SIN AUTOMATIZARAUTOMATIZADO').
+    celda = bar_w + gap - 40       # ancho máximo por etiqueta
+
     if title:
-        _center(d, title.upper(), _font(60), cx, base_y - max_h - 150, WHITE)
+        _center(d, title.upper(), _fit_font(title.upper(), W - 120, 60, 34), cx,
+                base_y - max_h - 150, WHITE)
 
     for x, val, col, lbl in [(ax, a_val, a_col, spec.get("a_label", "")),
                              (bx, b_val, b_col, spec.get("b_label", ""))]:
@@ -77,9 +98,9 @@ def render_bars_frame(spec, progress, out_path):
         # valor arriba de la barra (sube con la animación)
         shown = val * p
         txt = f"${shown:,.0f}" if spec.get("money", True) else f"{shown:,.0f}"
-        _center(d, txt, _font(64), x + bar_w / 2, base_y - h - 90, WHITE)
-        # etiqueta abajo
-        _center(d, lbl, _font(44), x + bar_w / 2, base_y + 24, DIM, shadow=False)
+        _center(d, txt, _fit_font(txt, celda, 64, 34), x + bar_w / 2, base_y - h - 90, WHITE)
+        # etiqueta abajo (auto-ajustada para no chocar con la otra)
+        _center(d, lbl, _fit_font(lbl, celda, 44, 24), x + bar_w / 2, base_y + 24, DIM, shadow=False)
 
     img.save(out_path)
     return out_path

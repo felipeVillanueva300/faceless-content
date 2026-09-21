@@ -88,3 +88,38 @@ def fetch_broll(keywords: str, out_path: str) -> str | None:
 
     print(f"    (sin b-roll para '{keywords}' en {fuentes}: fondo degradado)")
     return None
+
+
+def fetch_broll_scenes(scenes, out_dir: str, max_scenes: int = 4):
+    import os
+    escenas = [s.strip() for s in (scenes or []) if s and s.strip()][:max_scenes]
+    if not escenas:
+        return []
+    if not (PEXELS_KEY or PIXABAY_KEY):
+        print("    (sin API keys de b-roll: fondo degradado)")
+        return []
+
+    fuentes = [s for s in SOURCES if s in _FETCHERS] or list(_FETCHERS)
+    rutas, vistos = [], set()
+    for i, kw in enumerate(escenas):
+        destino = os.path.join(out_dir, f"broll_{i}.mp4")
+        bajado = None
+        for fuente in fuentes:
+            try:
+                res = _FETCHERS[fuente](kw, destino)
+            except Exception as e:
+                print(f"    ({fuente} falló en escena '{kw}': {e})")
+                res = None
+            if res and os.path.isfile(res):
+                firma = os.path.getsize(res)
+                if firma in vistos:
+                    continue
+                vistos.add(firma)
+                bajado = res
+                break
+        if bajado:
+            rutas.append(bajado)
+        else:
+            print(f"    (escena '{kw}' sin clip usable; se salta)")
+    print(f"    b-roll multi-escena: {len(rutas)}/{len(escenas)} clips")
+    return rutas
