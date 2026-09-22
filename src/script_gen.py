@@ -54,10 +54,16 @@ de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normale
 México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
 Nada de jerga, nada de frases motivacionales vacías.
 
-IDENTIDAD DE LA CUENTA (refuérzala, es una SERIE diaria): "Dinero Simple" publica
-UN truco corto CADA DÍA para que la gente en México no pierda dinero y aprenda a
-cuidarlo. Que se sienta parte de una serie continua ("hoy te toca…", "el de hoy…"),
-para dar razón de seguir y esperar el de mañana.
+IDENTIDAD Y PERSONALIDAD (refuérzala SIEMPRE, es lo que hace única a la cuenta):
+"Dinero Simple" está del lado de la gente: es el amigo que TE DEFIENDE para que NO te
+vean la cara con tu dinero. Ángulo central: "lo que el banco/las apps/las letras chiquitas
+NO te dicen, yo sí". Tono: directo, cómplice y protector — como un amigo que te dice la
+verdad que otros te esconden, con un toque de "no te dejes". NADA de conspiración,
+alarmismo falso ni odio; es defender al usuario con datos reales y consejos accionables.
+Frases que reflejan la voz (úsalas de vez en cuando, no forzadas): "que no te vean la
+cara", "el banco no te lo va a decir", "no te dejes cobrar de más".
+Es una SERIE diaria: UN truco corto CADA DÍA. Que se sienta continua ("hoy te toca…",
+"el de hoy…") para dar razón de seguir y esperar el de mañana.
 
 PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
 FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
@@ -80,6 +86,19 @@ quien NO está en el caso ideal. Ejemplos del nivel que quiero:
 Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,
 mejor que tres a medias.
 
+EL GANCHO (lo más importante — decide si te ven o te saltan en 1 segundo):
+El "hook" NO es el título del tema. Es un FRENO DE SCROLL. Debe hacer que la persona
+piense "espera, ¿qué?". Usa UNA de estas fórmulas:
+- Cifra + consecuencia concreta: "Pagar el mínimo puede costarte 3 años y el doble de tu deuda."
+- Callout que pica (háblale directo y con algo en juego): "Si pagas el mínimo de tu tarjeta, el banco te lo agradece — y tú lo pagas carísimo."
+- Error/pérdida con la que se identifican: "Estás regalándole dinero a tu banco cada mes sin darte cuenta."
+- Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
+PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
+"El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
+Reglas: concreto, con una cifra o consecuencia real (sin inventar cifras), en segunda
+persona ("tú/tu"), y que genere una PREGUNTA en la cabeza del que ve. Si tu hook podría
+ser el subtítulo de un libro de texto, está mal.
+
 MUY IMPORTANTE — cómo se arma el guion (POR BLOQUES):
 El guion se cuenta en BLOQUES ("beats"). El "hook" se narra primero, y luego los
 bloques en orden, como una sola voz continua. Cada bloque tiene su propia frase y su
@@ -94,8 +113,8 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
-  "hook": "primera frase de 1 línea que enganche en los primeros 2 segundos",
-  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE en pantalla los primeros ~2.5s: 3-6 palabras, tipo cifra/pregunta/afirmación que FRENE el scroll (ej: '¿$1,000 AL CAJERO?', 'EVITA ESTA COMISIÓN', 'GANA 10% AL AÑO'). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
+  "hook": "FRENO DE SCROLL de 1 línea (ver EL GANCHO arriba): cifra+consecuencia, callout que pica, o pregunta que incomoda. En segunda persona. NUNCA el título del tema.",
+  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿3 AÑOS PAGANDO?', 'LE REGALAS DINERO AL BANCO', 'TE VA A DOLER'. Mal: 'EL ERROR DEL PAGO MÍNIMO' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
   "beats": [
     {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "credit card hand"}},
     {{"narration": "frase del bloque 2", "scene": "calendar planner desk"}},

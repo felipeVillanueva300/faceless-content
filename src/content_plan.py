@@ -2,41 +2,50 @@ import os
 import datetime
 
 COOLDOWN_DIAS = 5
+TECH_CADA_DIAS = 3   
 
 # --------------------------------------------------------------------------
 # Pilares (categorias base). El dia que NO es de temporada, se usa esto.
 # --------------------------------------------------------------------------
+
 PILARES = [
-    {"id": "presupuesto", "nombre": "Presupuesto personal",
+    {"id": "presupuesto", "tipo": "fin", "nombre": "Presupuesto personal",
      "angulos": ["50/30/20", "base cero", "presupuesto inverso", "quincenal", "margen de error"]},
-    {"id": "ahorro", "nombre": "Ahorro",
+    {"id": "ahorro", "tipo": "fin", "nombre": "Ahorro",
      "angulos": ["fondo de emergencia", "retos de ahorro", "apartados/cajitas", "ahorro por metas"]},
-    {"id": "deudas", "nombre": "Manejo de deudas",
+    {"id": "deudas", "tipo": "fin", "nombre": "Manejo de deudas",
      "angulos": ["bola de nieve vs avalancha", "por qué no pagar el mínimo", "consolidar deudas"]},
-    {"id": "inversion", "nombre": "Inversión para principiantes",
+    {"id": "inversion", "tipo": "fin", "nombre": "Inversión para principiantes",
      "angulos": ["CETES/CetesDirecto", "SOFIPOs", "fondos", "rendimiento real vs inflación"]},
-    {"id": "bancos", "nombre": "Bancos y comisiones",
+    {"id": "bancos", "tipo": "fin", "nombre": "Bancos y comisiones",
      "angulos": ["cuenta básica sin comisiones", "comisiones ocultas", "cuentas digitales"]},
-    {"id": "credito", "nombre": "Crédito y buró",
+    {"id": "credito", "tipo": "fin", "nombre": "Crédito y buró",
      "angulos": ["revisar tu buró gratis", "subir tu score", "mitos del buró", "primera tarjeta"]},
-    {"id": "fraudes", "nombre": "Fraudes y seguridad",
-     "angulos": ["phishing", "smishing", "apps falsas", "compras seguras", "robo de identidad"]},
-    {"id": "fintech", "nombre": "Fintech y apps",
-     "angulos": ["Nu", "Klar", "Hey Banco", "Mercado Pago", "comparativas de apps"]},
-    {"id": "impuestos", "nombre": "Impuestos básicos",
+    {"id": "impuestos", "tipo": "fin", "nombre": "Impuestos básicos",
      "angulos": ["RFC", "deducciones personales", "facturar", "declaración anual"]},
-    {"id": "tramites", "nombre": "Trámites y gobierno",
+    {"id": "tramites", "tipo": "fin", "nombre": "Trámites y gobierno",
      "angulos": ["Afore: elegir/cambiar", "IMSS", "pensión", "INFONAVIT básico"]},
-    {"id": "compras", "nombre": "Compras inteligentes",
+    {"id": "compras", "tipo": "fin", "nombre": "Compras inteligentes",
      "angulos": ["MSI cuándo sí/no", "Buen Fin", "comparar precios", "suscripciones fantasma"]},
-    {"id": "ingresos", "nombre": "Ingresos extra",
+    {"id": "ingresos", "tipo": "fin", "nombre": "Ingresos extra",
      "angulos": ["freelance realista", "vender en línea", "cómo cobrar", "side hustles"]},
-    {"id": "tecnologia", "nombre": "Tecnología para tu dinero",
-     "angulos": ["hojas de cálculo", "automatización", "IA para finanzas con seguridad"]},
-    {"id": "servicios", "nombre": "Servicios y hogar",
+    {"id": "servicios", "tipo": "fin", "nombre": "Servicios y hogar",
      "angulos": ["planes de celular", "CFE/luz", "internet", "renegociar servicios"]},
-    {"id": "mentalidad", "nombre": "Mentalidad y hábitos",
+    {"id": "mentalidad", "tipo": "fin", "nombre": "Mentalidad y hábitos",
      "angulos": ["gastos hormiga", "FOMO financiero", "metas realistas"]},
+    # --- Pilares TECH (garantizamos que salgan seguido) ---
+    {"id": "fraudes", "tipo": "tech", "nombre": "Fraudes y seguridad digital",
+     "angulos": ["fraude por WhatsApp/SMS", "links y apps falsas", "activar 2FA",
+                 "compras seguras en línea", "robo de identidad", "revisar permisos de apps"]},
+    {"id": "fintech", "tipo": "tech", "nombre": "Fintech y apps",
+     "angulos": ["Nu", "Klar", "Hey Banco", "Mercado Pago", "cómo elegir app segura",
+                 "apartados/cajitas", "comparar apps de banco"]},
+    {"id": "tecnologia", "tipo": "tech", "nombre": "Tecnología para tu dinero",
+     "angulos": ["IA para organizar tu dinero", "apps de presupuesto", "automatizar pagos",
+                 "cancelar suscripciones desde el cel", "hojas de cálculo simples"]},
+    {"id": "digital", "tipo": "tech", "nombre": "Dinero digital y pagos",
+     "angulos": ["SPEI y CoDi sin comisión", "qué es tu CLABE", "transferencias seguras",
+                 "domiciliación (y cómo cancelarla)", "e.firma / SAT en línea", "apps de gobierno"]},
 ]
 
 FORMATOS = [
@@ -249,15 +258,23 @@ def plan_del_dia(today=None, offset=0):
             "serie_anterior": serie["anterior"],
         }
 
-    recientes_pilares, recientes_formatos = [], []
+    recientes_pilares, recientes_formatos, recientes_tech = [], [], []
     try:
         from src import history
-        recientes_pilares = history.recent_pilares(COOLDOWN_DIAS)   # ids
-        recientes_formatos = history.recent_formatos(2)             # nombres
+        recientes_pilares = history.recent_pilares(COOLDOWN_DIAS)     # ids (enfriamiento)
+        recientes_formatos = history.recent_formatos(2)              # nombres
+        recientes_tech = history.recent_pilares(TECH_CADA_DIAS)      # ids ventana corta
     except Exception:
         pass
 
+    tech_ids = {p["id"] for p in PILARES if p.get("tipo") == "tech"}
     disponibles = [p for p in PILARES if p["id"] not in recientes_pilares] or PILARES
+
+    if not any(pid in tech_ids for pid in recientes_tech):
+        tech_disp = [p for p in disponibles if p["id"] in tech_ids]
+        if tech_disp:
+            disponibles = tech_disp
+
     cat = disponibles[(today.toordinal() + offset) % len(disponibles)]
 
     fmts = [f for f in FORMATOS if f["nombre"] not in recientes_formatos and f["id"] != "mensaje"] or FORMATOS
