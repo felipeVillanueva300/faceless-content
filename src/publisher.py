@@ -11,8 +11,25 @@ def _token() -> str:
     return os.environ["META_ACCESS_TOKEN"]
 
 
+def _check(r, paso: str):
+    """Si Meta respondió con error, lanza un mensaje CLARO con el detalle real de la
+    Graph API (código, subcódigo, mensaje). Sin esto, solo se veía '400 Bad Request'."""
+    if r.status_code >= 400:
+        try:
+            err = r.json().get("error", {})
+        except Exception:
+            err = {"message": r.text[:300]}
+        raise RuntimeError(
+            f"[{paso}] Meta {r.status_code}: {err.get('message', '?')} "
+            f"(type={err.get('type')}, code={err.get('code')}, "
+            f"subcode={err.get('error_subcode')}, "
+            f"fbtrace={err.get('fbtrace_id')})"
+        )
+    return r
+
+
 def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
-    r = requests.post(
+    r = _check(requests.post(
         f"{BASE}/{ig_user_id}/media",
         data={
             "media_type": "REELS",
@@ -21,35 +38,40 @@ def publish_instagram(ig_user_id: str, video_url: str, caption: str) -> str:
             "access_token": _token(),
         },
         timeout=60,
-    )
-    r.raise_for_status()
+    ), "IG crear contenedor")
     container_id = r.json()["id"]
+    print(f"    IG: contenedor {container_id} creado; esperando a que procese...")
 
+    ultimo = {}
     for _ in range(60):
-        s = requests.get(
+        s = _check(requests.get(
             f"{BASE}/{container_id}",
             params={"fields": "status_code,status", "access_token": _token()},
             timeout=30,
-        ).json()
+        ), "IG estado contenedor").json()
+        ultimo = s
         code = s.get("status_code")
         if code == "FINISHED":
             break
         if code == "ERROR":
             raise RuntimeError(
-                f"Instagram falló al procesar el video. Detalle: {s.get('status')} | {s}"
+                f"IG procesó con ERROR el video. status={s.get('status')} | {s}"
             )
         time.sleep(5)
     else:
-        raise TimeoutError("El contenedor de Instagram no quedó listo a tiempo.")
+        raise TimeoutError(
+            f"IG: el contenedor no quedó listo a tiempo (5 min). Último estado: {ultimo}"
+        )
 
     # 3) Publicar
-    p = requests.post(
+    p = _check(requests.post(
         f"{BASE}/{ig_user_id}/media_publish",
         data={"creation_id": container_id, "access_token": _token()},
         timeout=60,
-    )
-    p.raise_for_status()
-    return p.json().get("id", "")
+    ), "IG publicar")
+    media_id = p.json().get("id", "")
+    print(f"    IG: publicado (media_id={media_id})")
+    return media_id
 
 
 def _page_token(page_id: str) -> str:

@@ -7,7 +7,7 @@ from src import script_gen, tts, subtitles, video, uploader, publisher, broll, n
 BUILD = "build"
 
 
-def _write_summary(url, titulo, caption, publicado):
+def _write_summary(url, titulo, caption, publicado, errores=None):
     path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not path:
         return
@@ -18,6 +18,11 @@ def _write_summary(url, titulo, caption, publicado):
             f.write(f"**Título:** {titulo}\n\n")
             f.write(f"**Video:** [ver/descargar]({url})\n\n")
             f.write(f"**Caption:**\n\n> {caption}\n\n")
+            if errores:
+                f.write("### ⚠️ Errores al publicar (revisa aquí PRIMERO)\n\n")
+                for red, det in errores.items():
+                    f.write(f"- **{red}**: {det}\n")
+                f.write("\n")
     except Exception:
         pass
 
@@ -47,7 +52,7 @@ def _publicar_ig_youtube(url, caption, titulo):
     print("Publicados:", results)
     if errores:
         print("Con errores:", errores)
-    return results
+    return results, errores
 
 
 def publicar_por_id(publish_id: str):
@@ -64,8 +69,8 @@ def publicar_por_id(publish_id: str):
     print("    URL:", url)
     print("    Caption:", (caption[:80] + "…") if len(caption) > 80 else caption or "(vacío)")
     print("[Publicar por ID] Publicando en Instagram y YouTube (Facebook es manual)")
-    results = _publicar_ig_youtube(url, caption, titulo)
-    _write_summary(url, titulo, caption, publicado=bool(results))
+    results, errores = _publicar_ig_youtube(url, caption, titulo)
+    _write_summary(url, titulo, caption, publicado=bool(results), errores=errores)
     notify.notify_telegram(titulo, caption or "(sin caption)", url, publicado=bool(results))
     algo_configurado = os.environ.get("IG_USER_ID") or os.environ.get("YT_REFRESH_TOKEN")
     if algo_configurado and not results:
@@ -141,7 +146,6 @@ def generar_borrador():
         escenas = [s.strip() for s in bs if s and s.strip()]
     escenas = [e for e in escenas if e] or [(data.get("broll_keywords") or "money finance").strip()]
 
-    
     from src import ai_image
     modo_ia = os.environ.get("AI_IMAGE_MODE", "off").strip().lower()
 
@@ -183,7 +187,8 @@ def generar_borrador():
         clips = [uno] if uno else []
 
     print("[5/7] Armando video")
-    
+    # Fondo: si el guion fue por bloques, alinea las duraciones del fondo a las de la voz
+    # (cada escena dura lo que dura su bloque hablado) -> cambia en el momento exacto.
     bg = None
     if len(clips) >= 2:
         durs = seg_dur if (usar_bloques and seg_dur and len(seg_dur) == len(clips)) else None
@@ -240,8 +245,8 @@ def generar_borrador():
         return
 
     print("[7/7] Publicando (cron directo)")
-    results = _publicar_ig_youtube(url, caption, title)
-    _write_summary(url, title, caption, publicado=bool(results))
+    results, errores = _publicar_ig_youtube(url, caption, title)
+    _write_summary(url, title, caption, publicado=bool(results), errores=errores)
     notify.notify_telegram(title, caption, url, publicado=bool(results))
     if (os.environ.get("IG_USER_ID") or os.environ.get("YT_REFRESH_TOKEN")) and not results:
         sys.exit(1)
