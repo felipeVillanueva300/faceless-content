@@ -3,7 +3,9 @@ import json
 import datetime
 import requests
 
-KEEP_RELEASES = int(os.environ.get("KEEP_RELEASES", "4"))
+KEEP_DAYS = int(os.environ.get("KEEP_DAYS", "7"))
+KEEP_MIN = int(os.environ.get("KEEP_RELEASES", "4"))
+# KEEP_RELEASES = int(os.environ.get("KEEP_RELEASES", "4"))
 
 _MEDIA_EXTS = (".mp4", ".jpg", ".jpeg", ".png")
 
@@ -15,29 +17,30 @@ def _headers():
     }
 
 
-def _cleanup_old_releases(repo: str, keep: int, prefix: str):
-    
+def _cleanup_old_releases(repo: str, keep_days: int, prefix: str):
     try:
         r = requests.get(
             f"https://api.github.com/repos/{repo}/releases",
             headers=_headers(), params={"per_page": 100}, timeout=60,
         )
         r.raise_for_status()
-        releases = r.json()
-        propios = [rel for rel in releases if str(rel.get("tag_name", "")).startswith(prefix)]
+        propios = [rel for rel in r.json() if str(rel.get("tag_name", "")).startswith(prefix)]
         propios.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-        for rel in propios[keep:]:
-            rid = rel.get("id")
-            tag = rel.get("tag_name")
+
+        corte = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=keep_days)
+        for rel in propios[KEEP_MIN:]:
             try:
-                requests.delete(
-                    f"https://api.github.com/repos/{repo}/releases/{rid}",
-                    headers=_headers(), timeout=30,
-                )
-                requests.delete(
-                    f"https://api.github.com/repos/{repo}/git/refs/tags/{tag}",
-                    headers=_headers(), timeout=30,
-                )
+                creado = datetime.datetime.fromisoformat(rel["created_at"].replace("Z", "+00:00"))
+            except Exception:
+                continue
+            if creado >= corte:
+                continue
+            rid, tag = rel.get("id"), rel.get("tag_name")
+            try:
+                requests.delete(f"https://api.github.com/repos/{repo}/releases/{rid}",
+                                headers=_headers(), timeout=30)
+                requests.delete(f"https://api.github.com/repos/{repo}/git/refs/tags/{tag}",
+                                headers=_headers(), timeout=30)
                 print(f"    release viejo borrado: {tag}")
             except Exception as e:
                 print(f"    (no se pudo borrar {tag}: {e})")
