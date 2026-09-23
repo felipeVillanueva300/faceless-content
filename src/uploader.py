@@ -76,7 +76,7 @@ def upload_public(file_path: str, caption: str = "", title: str = "",
     up.raise_for_status()
     url = up.json()["browser_download_url"]
 
-    _cleanup_old_releases(repo, KEEP_RELEASES, prefix)
+    _cleanup_old_releases(repo, KEEP_DAYS, prefix)
     return url, tag
 
 
