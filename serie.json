@@ -1,12 +1,32 @@
 {
   "tema": "conceptos de dinero que nadie te explicó",
   "total": 5,
-  "siguiente": 0,
+  "siguiente": 1,
   "episodios": [
-    {"subtema": "qué es el poder adquisitivo con un ejemplo real: los mismos $100 hace 10 años vs hoy, y por qué importa", "anterior": "", "formato": "dato"},
-    {"subtema": "qué es la inflación en palabras simples, por qué sube todo, y cómo te afecta el sueldo aunque ganes lo mismo", "anterior": "Parte 1 explicó el poder adquisitivo", "formato": "dato"},
-    {"subtema": "qué es una tasa de interés y la diferencia entre interés que te cobran (deuda) y el que te pagan (ahorro/inversión)", "anterior": "Partes 1-2: poder adquisitivo e inflación", "formato": "howto"},
-    {"subtema": "interés compuesto: cómo tu dinero genera dinero con el tiempo, con un ejemplo de ahorro mensual", "anterior": "Parte 3 explicó qué es una tasa de interés", "formato": "dato"},
-    {"subtema": "rendimiento real: por qué tu dinero en el banco 'pierde' aunque no lo toques (inflación vs rendimiento)", "anterior": "Parte 4 explicó el interés compuesto", "formato": "mito"}
+    {
+      "subtema": "qué es el poder adquisitivo con un ejemplo real: los mismos $100 hace 10 años vs hoy, y por qué importa",
+      "anterior": "",
+      "formato": "dato"
+    },
+    {
+      "subtema": "qué es la inflación en palabras simples, por qué sube todo, y cómo te afecta el sueldo aunque ganes lo mismo",
+      "anterior": "Parte 1 explicó el poder adquisitivo",
+      "formato": "dato"
+    },
+    {
+      "subtema": "qué es una tasa de interés y la diferencia entre interés que te cobran (deuda) y el que te pagan (ahorro/inversión)",
+      "anterior": "Partes 1-2: poder adquisitivo e inflación",
+      "formato": "howto"
+    },
+    {
+      "subtema": "interés compuesto: cómo tu dinero genera dinero con el tiempo, con un ejemplo de ahorro mensual",
+      "anterior": "Parte 3 explicó qué es una tasa de interés",
+      "formato": "dato"
+    },
+    {
+      "subtema": "rendimiento real: por qué tu dinero en el banco 'pierde' aunque no lo toques (inflación vs rendimiento)",
+      "anterior": "Parte 4 explicó el interés compuesto",
+      "formato": "mito"
+    }
   ]
 }
