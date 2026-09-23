@@ -52,7 +52,7 @@ def upload_public(file_path: str, caption: str = "", title: str = "",
                   content_type: str = "video/mp4", prefix: str = "daily-"):
    
     repo = os.environ["GITHUB_REPOSITORY"]
-    tag = prefix + datetime.datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+    tag = prefix + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d-%H%M%S")
 
     body = json.dumps({"title": title or "", "caption": caption or ""}, ensure_ascii=False)
 
