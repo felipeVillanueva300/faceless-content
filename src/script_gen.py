@@ -121,7 +121,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}
   ],
-  "caption": "descripción para el post en 2-3 frases útiles, y AL FINAL un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.') + 3-5 hashtags relevantes en español de México",
+  "caption": "descripción para el post en 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
   "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",

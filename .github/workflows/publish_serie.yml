@@ -1,0 +1,93 @@
+name: Publicar Miniserie (tarde)
+
+on:
+  schedule:
+    - cron: '30 22 * * *'
+  workflow_dispatch:
+    inputs:
+      publicar_id:
+        description: "ID a PUBLICAR (para aprobar un borrador). Vacío = generar el siguiente episodio."
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  miniserie:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar ffmpeg y fuentes
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Preparar siguiente episodio de la cola
+        run: python serie_queue.py peek >> "$GITHUB_ENV"
+
+      - name: Aviso si la cola está vacía
+        if: env.HAY_EPISODIO != '1' && inputs.publicar_id == ''
+        run: echo "No hay episodios pendientes en serie.json. No se genera nada hoy."
+
+      - name: Generar borrador de la miniserie (o publicar por ID)
+        if: env.HAY_EPISODIO == '1' || inputs.publicar_id != ''
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 60
+          command: python main.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
+          GEMINI_MODELS: ${{ vars.GEMINI_MODELS || 'gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite' }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_PRIVACY: "public"
+          WATERMARK_TEXT: "@dinerosimplemx"
+          PUBLISH_ID: ${{ inputs.publicar_id }}
+          PUBLISH: "false"
+          GRAPH_VERSION: v23.0
+          NICHE: "tecnología y finanzas"
+          TTS_VOICE: es-MX-JorgeNeural
+          TTS_RATE: ${{ vars.TTS_RATE || '+5%' }}
+          AI_IMAGE_ENABLED: "1"
+          AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER || 'cloudflare' }}
+          AI_IMAGE_MODE: ${{ vars.AI_IMAGE_MODE || 'mix' }}
+          AI_IMAGE_SEED: ${{ vars.AI_IMAGE_SEED || '7' }}
+          SEGMENTED_BG: ${{ vars.SEGMENTED_BG || '1' }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          # Episodio de la cola (viene de serie_queue.py peek -> $GITHUB_ENV):
+          SERIE_TEMA: ${{ env.SERIE_TEMA }}
+          SERIE_PARTE: ${{ env.SERIE_PARTE }}
+          SERIE_TOTAL: ${{ env.SERIE_TOTAL }}
+          SERIE_SUBTEMA: ${{ env.SERIE_SUBTEMA }}
+          SERIE_ANTERIOR: ${{ env.SERIE_ANTERIOR }}
+          SERIE_FORMATO: ${{ env.SERIE_FORMATO }}
+
+      - name: Avanzar la cola (solo si se generó un episodio nuevo)
+        if: success() && env.HAY_EPISODIO == '1' && inputs.publicar_id == ''
+        run: |
+          python serie_queue.py advance
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add serie.json
+          git commit -m "Miniserie: avanzar al siguiente episodio [skip ci]" || echo "sin cambios"
+          git push

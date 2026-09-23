@@ -1,8 +1,8 @@
 name: Publicar Imagen diaria
 
 on:
-  schedule:
-    - cron: '30 23 * * *'
+  # schedule:
+  #   - cron: '30 23 * * *'
   workflow_dispatch:
     inputs:
       publicar_id:
