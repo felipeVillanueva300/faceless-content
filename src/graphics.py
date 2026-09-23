@@ -89,8 +89,7 @@ def render_bars_frame(spec, progress, out_path):
 
     if title:
         _center(d, title.upper(), _fit_font(title.upper(), W - 120, 60, 34), cx,
-                base_y - max_h - 150, WHITE)
-
+                base_y - max_h - 210, WHITE)  
     for x, val, col, lbl in [(ax, a_val, a_col, spec.get("a_label", "")),
                              (bx, b_val, b_col, spec.get("b_label", ""))]:
         h = int(max_h * (val / mx) * p)

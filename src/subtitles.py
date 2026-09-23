@@ -10,6 +10,13 @@ SUB_MARGIN_V = os.environ.get("SUB_MARGIN_V", "300")
 COL_BASE = os.environ.get("SUB_COLOR", "&H00FFFFFF")   
 COL_HL = os.environ.get("SUB_HL_COLOR", "&H0000E5FF")  
 
+_QUITAR = str.maketrans("", "", "'\"‘’“”«»`´{}\\")
+
+
+def _limpio(txt: str) -> str:
+    return " ".join(txt.translate(_QUITAR).split())
+
+
 def _ass_time(seconds: float) -> str:
     cs = int(round(seconds * 100))
     h, cs = divmod(cs, 360000)
@@ -63,7 +70,7 @@ def _animated_lines_from_boundaries(boundaries):
         group = boundaries[i:i + WORDS_PER_CUE]
         if not group:
             continue
-        words = [w[2].upper() for w in group]
+        words = [_limpio(w[2]).upper() for w in group]
         for j, w in enumerate(group):
             start = w[0] / 1e7
             end = (w[0] + w[1]) / 1e7
@@ -120,7 +127,7 @@ def _static_lines_from_text(text, duration):
     lines, t = [], lead
     for g in groups:
         span = disp * (peso(g) / total)
-        txt = " ".join(g).upper()
+        txt = _limpio(" ".join(g)).upper()
         lines.append(
             f"Dialogue: 0,{_ass_time(t)},{_ass_time(t + span)},Default,,0,0,0,,{txt}"
         )
@@ -157,7 +164,7 @@ def _cues_en_ventana(texto, t0, t1):
     lines, t = [], t0
     for g in grupos:
         span = span_total * (peso(g) / total)
-        txt = " ".join(g).upper()
+        txt = _limpio(" ".join(g)).upper()
         lines.append(
             f"Dialogue: 0,{_ass_time(t)},{_ass_time(t + span)},Default,,0,0,0,,{txt}"
         )

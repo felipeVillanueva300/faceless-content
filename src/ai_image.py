@@ -1,26 +1,3 @@
-"""Genera una imagen de FONDO a partir de una descripción, para cuando el stock
-(Pexels/Pixabay) no tiene algo relevante. Varios proveedores con el mismo interfaz;
-se elige con la variable AI_IMAGE_PROVIDER.
-
-Proveedores:
-- cloudflare : Cloudflare Workers AI (Stable Diffusion XL). GRATIS (10,000 neuronas/día).
-               Necesita CF_ACCOUNT_ID y CF_API_TOKEN.
-- pollinations: image.pollinations.ai. GRATIS y SIN API key (imagen por URL).
-- gemini      : Nano Banana (imagen de Gemini). DE PAGA (~$0.04/img). Preparado por si
-               algún día se activa; necesita GEMINI_API_KEY y AI_IMAGE_GEMINI_MODEL.
-
-Todo es best-effort: si algo falla, devuelve None y el pipeline usa stock o el
-fondo degradado. NUNCA rompe el video.
-
-Variables:
-  AI_IMAGE_ENABLED   "1" para activar (por defecto "0" = apagado)
-  AI_IMAGE_PROVIDER  cloudflare | pollinations | gemini   (por defecto cloudflare)
-  AI_IMAGE_MODE      always  -> genera imagen para CADA escena (mejor 'match')
-                     fallback-> solo cuando el stock no trae clip
-                     (lo consume main.py, no este módulo)
-  CF_ACCOUNT_ID, CF_API_TOKEN
-  AI_IMAGE_GEMINI_MODEL  (por defecto 'gemini-2.5-flash-image')
-"""
 import os
 import requests
 
@@ -29,18 +6,16 @@ W, H = 1080, 1920
 PROVIDER = os.environ.get("AI_IMAGE_PROVIDER", "cloudflare").strip().lower()
 ENABLED = os.environ.get("AI_IMAGE_ENABLED", "0").strip().lower() in ("1", "true", "yes")
 
-# Estilo fijo para que todos los fondos combinen ENTRE SÍ y con la marca, y NO lleven
-# texto (los modelos escriben texto/números con errores; el texto lo pone tu pipeline).
-# El estilo unificado + una SEMILLA fija hacen que las 4 imágenes de un video compartan
-# tono e iluminación, para que no se sientan de videos distintos.
 _ESTILO = ("cinematic vertical background photo, {p}, shallow depth of field, "
            "soft cinematic lighting, dark moody tone, consistent teal and navy color "
            "grading, clean modern minimal, no text, no words, no numbers, no letters, "
            "no watermark, high detail")
-_NEGATIVO = "text, words, numbers, letters, watermark, logo, ui, low quality, blurry"
+_NEGATIVO = ("text, words, numbers, letters, watermark, logo, ui, low quality, blurry, "
+             "banknotes, paper money, cash, coins, currency, flag")
 
-# Semilla base: mismo estilo/composición entre escenas del mismo video. Cambia con
-# AI_IMAGE_SEED; -1 = aleatorio (cada imagen distinta).
+CF_W = int(os.environ.get("CF_IMAGE_W", "768"))
+CF_H = int(os.environ.get("CF_IMAGE_H", "1344"))
+
 SEED = int(os.environ.get("AI_IMAGE_SEED", "7"))
 
 
@@ -63,7 +38,7 @@ def _cloudflare(desc: str, out_path: str):
     model = os.environ.get("CF_IMAGE_MODEL", "@cf/stabilityai/stable-diffusion-xl-base-1.0")
     url = f"https://api.cloudflare.com/client/v4/accounts/{acc}/ai/run/{model}"
     cuerpo = {"prompt": _prompt(desc), "negative_prompt": _NEGATIVO,
-              "width": 1024, "height": 1024}
+              "width": CF_W, "height": CF_H}
     if SEED >= 0:
         cuerpo["seed"] = SEED
     r = requests.post(url, headers={"Authorization": f"Bearer {tok}"},

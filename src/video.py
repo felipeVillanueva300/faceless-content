@@ -3,6 +3,16 @@ import shutil
 import subprocess
 
 FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
+
+VIDEO_CRF = os.environ.get("VIDEO_CRF", "18")
+VIDEO_PRESET = os.environ.get("VIDEO_PRESET", "medium")
+VIDEO_MAXRATE = os.environ.get("VIDEO_MAXRATE", "12M")
+_ENC_FINAL = [
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", VIDEO_PRESET, "-crf", VIDEO_CRF,
+    "-profile:v", "high", "-level", "4.1", "-r", "30", "-g", "60",
+    "-maxrate", VIDEO_MAXRATE, "-bufsize", "24M",
+]
+_ENC_INTER = ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "14"]
 WATERMARK = os.environ.get("WATERMARK_TEXT", "@dinerosimple.mx")
 SUB_FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
 
@@ -15,8 +25,6 @@ CARD_SHOW_SMALL = os.environ.get("CARD_SHOW_SMALL", "1").strip().lower() in ("1"
 
 HOOK_DUR = float(os.environ.get("HOOK_DUR", "2.8"))
 
-# Cierre con llamado a seguir (los últimos segundos del video). Vacía OUTRO_CTA
-# ("") para quitarlo. Es de lo que más convierte vista -> seguidor.
 OUTRO_CTA = os.environ.get("OUTRO_CTA", "SÍGUEME").strip()
 OUTRO_SUB = os.environ.get("OUTRO_SUB", "uno nuevo cada día").strip()
 OUTRO_DUR = float(os.environ.get("OUTRO_DUR", "3.0"))
@@ -101,16 +109,23 @@ MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.17")
 
 
 def _pick_music():
-    """Elige al azar una pista de assets/music/. Si no hay carpeta o está vacía,
-    devuelve None y el video sale solo con la voz (sin romperse)."""
+    """Elige una pista de assets/music/ ROTANDO: recorre todas antes de repetir.
+    El índice sale de la fecha (2 turnos por día: mañana y tarde), así el diario y la
+    miniserie no llevan la misma y no se necesita guardar estado.
+    Si no hay carpeta o está vacía, devuelve None (video solo con voz)."""
     import glob
-    import random
+    import datetime
     if not os.path.isdir(MUSIC_DIR):
         return None
     files = []
     for ext in ("*.mp3", "*.m4a", "*.wav", "*.ogg"):
         files += glob.glob(os.path.join(MUSIC_DIR, ext))
-    return random.choice(files) if files else None
+    if not files:
+        return None
+    files.sort()
+    ahora = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=6)  # CDMX
+    turno = 1 if ahora.hour >= 15 else 0
+    return files[(ahora.date().toordinal() * 2 + turno) % len(files)]
 
 
 def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
@@ -259,8 +274,8 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         *inputs,
         "-filter_complex", vf,
         "-map", "[v]", "-map", audio_map,
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "20",
-        "-c:a", "aac", "-b:a", "192k",
+        *_ENC_FINAL,
+        "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
         *tail, "-movflags", "+faststart",
         out,
     ]
@@ -310,7 +325,7 @@ def build_multi_background(clips, duration, out_path, durations=None):
         "-filter_complex", filtro,
         "-map", "[bg]",
         "-t", f"{sum(segs):.2f}",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20",
+        *_ENC_INTER,
         "-an", os.path.basename(out_path),
     ]
     try:
@@ -341,7 +356,7 @@ def image_to_clip(img_path, out_path, seconds=10.0):
     cmd = [
         FFMPEG, "-y", "-loop", "1", "-i", os.path.basename(img_path),
         "-t", f"{seconds:.2f}", "-vf", vf,
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20",
+        *_ENC_INTER,
         "-an", os.path.basename(out_path),
     ]
     try:

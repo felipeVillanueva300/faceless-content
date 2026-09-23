@@ -316,7 +316,12 @@ def calendario_linea(plan) -> str:
         etiqueta = plan.get("serie_etiqueta") or "siguiente parte"
         linea = (f"SERIE (hoy IGNORA el pilar normal): esto es la {etiqueta} de una serie "
                  f"sobre \"{plan['serie_tema']}\". Debe sentirse CONTINUACIÓN, no un video suelto: "
-                 f"menciona al inicio que es la {etiqueta} y al final adelanta que viene la siguiente.\n")
+                 f"menciona al inicio que es la {etiqueta} y al final adelanta que viene la siguiente.\n"
+                 f"La mención de la parte va en MÁXIMO 6 palabras y pegada al valor (ej: 'Parte 2: "
+                 f"la culpable es la inflación.'). PROHIBIDO el preámbulo de serie ('conceptos que "
+                 f"nadie te explicó', 'empecemos por lo básico'): cada segundo cuenta.\n"
+                 f"Si toca un concepto, explica el PORQUÉ con un mecanismo causa → efecto y un "
+                 f"ejemplo cotidiano de México, no solo QUÉ es.\n")
         if plan.get("serie_subtema"):
             linea += f"Lo que toca EXACTAMENTE hoy (no te desvíes): {plan['serie_subtema']}.\n"
         if plan.get("serie_anterior"):

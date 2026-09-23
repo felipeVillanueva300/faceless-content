@@ -83,6 +83,12 @@ quien NO está en el caso ideal. Ejemplos del nivel que quiero:
 - Tarjeta: no digas solo "paga el total". Di que si no puedes el total, pagues al menos
   el monto que EVITA intereses (el saldo al corte), y dónde ver esa opción en la app.
 - Ahorro: no digas solo "ahorra". Di cuánto, cómo automatizarlo y dónde.
+EXPLICA EL PORQUÉ, NO SOLO EL QUÉ: si el tema es un concepto (inflación, intereses,
+CAT, Afore...), dedica UN bloque al mecanismo causa → efecto en palabras de la calle y con
+un ejemplo de México. Mal: "la inflación hace que suban los precios" (eso es el QUÉ).
+Bien: "si al tortillero le sube el gas y el transporte, sube el kilo; y cuando todos suben
+al mismo tiempo, tu sueldo compra menos" (eso es el PORQUÉ). Una causa bien explicada vale
+más que tres mencionadas.
 Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,
 mejor que tres a medias.
 
@@ -95,6 +101,11 @@ piense "espera, ¿qué?". Usa UNA de estas fórmulas:
 - Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
 PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
 "El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
+CIFRAS (somos cuenta de finanzas: la confianza es todo):
+- Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
+  la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
+- Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
+  Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
 Reglas: concreto, con una cifra o consecuencia real (sin inventar cifras), en segunda
 persona ("tú/tu"), y que genere una PREGUNTA en la cabeza del que ve. Si tu hook podría
 ser el subtítulo de un libro de texto, está mal.
@@ -110,6 +121,11 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
   (ej: 'Sígueme, mañana va otro.').
 - Cada bloque va con su "scene": 2-4 palabras EN INGLÉS, escena CONCRETA de finanzas/
   tecnología ligada a LO QUE DICE ESE BLOQUE, distinta entre bloques.
+- PROHIBIDO en "scene": efectivo de cualquier tipo (money, cash, banknotes, bills, coins,
+  currency, pesos, dollars). Los bancos de video solo tienen billetes de OTROS países.
+  Para hablar de dinero muestra cosas que sí son de aquí y de hoy: tarjeta, celular con
+  app del banco, terminal de pago, carrito del súper, calculadora, recibo, laptop con
+  gráficas, alcancía, persona pensativa revisando su celular.
 
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
@@ -121,7 +137,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}
   ],
-  "caption": "descripción para el post en 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
+  "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador de IG/TikTok/YouTube sobre este tema (ej: 'Cómo usar meses sin intereses sin endeudarte'); luego 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
   "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",

@@ -144,7 +144,9 @@ def generar_borrador():
         if isinstance(bs, str):
             bs = [bs]
         escenas = [s.strip() for s in bs if s and s.strip()]
-    escenas = [e for e in escenas if e] or [(data.get("broll_keywords") or "money finance").strip()]
+    escenas = [e for e in escenas if e] or [(data.get("broll_keywords") or "personal finance").strip()]
+    # Nunca pedir efectivo al banco de video ni a la IA (billetes de otros países).
+    escenas = [broll.limpiar_escena(e) for e in escenas]
 
     from src import ai_image
     modo_ia = os.environ.get("AI_IMAGE_MODE", "off").strip().lower()
@@ -182,13 +184,11 @@ def generar_borrador():
                     clips.append(clip)
 
     if not clips:   # último recurso: el fetch de un solo clip como antes
-        kw = (data.get("broll_keywords") or "money finance").strip()
+        kw = broll.limpiar_escena((data.get("broll_keywords") or "personal finance").strip())
         uno = broll.fetch_broll(kw, os.path.join(BUILD, "broll.mp4"))
         clips = [uno] if uno else []
 
     print("[5/7] Armando video")
-    # Fondo: si el guion fue por bloques, alinea las duraciones del fondo a las de la voz
-    # (cada escena dura lo que dura su bloque hablado) -> cambia en el momento exacto.
     bg = None
     if len(clips) >= 2:
         durs = seg_dur if (usar_bloques and seg_dur and len(seg_dur) == len(clips)) else None
