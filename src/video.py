@@ -110,8 +110,8 @@ MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.17")
 
 def _pick_music():
     """Elige una pista de assets/music/ ROTANDO: recorre todas antes de repetir.
-    El índice sale de la fecha (2 turnos por día: mañana y tarde), así el diario y la
-    miniserie no llevan la misma y no se necesita guardar estado.
+    El índice combina la fecha, el turno (mañana/tarde) y el número de corrida de GitHub
+    (GITHUB_RUN_NUMBER), así también cambia si corres varias veces el mismo día (lab).
     Si no hay carpeta o está vacía, devuelve None (video solo con voz)."""
     import glob
     import datetime
@@ -125,7 +125,13 @@ def _pick_music():
     files.sort()
     ahora = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=6)  # CDMX
     turno = 1 if ahora.hour >= 15 else 0
-    return files[(ahora.date().toordinal() * 2 + turno) % len(files)]
+    try:
+        corrida = int(os.environ.get("GITHUB_RUN_NUMBER", "0"))
+    except ValueError:
+        corrida = 0
+    idx = (ahora.date().toordinal() * 2 + turno + corrida) % len(files)
+    print(f"    música: pista {idx + 1} de {len(files)}")
+    return files[idx]
 
 
 def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,

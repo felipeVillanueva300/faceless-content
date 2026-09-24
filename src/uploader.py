@@ -113,3 +113,37 @@ def get_release_video_url(repo: str, tag: str) -> str:
     """Compat: solo la URL del asset."""
     url, _caption, _title = get_release_info(repo, tag)
     return url
+
+
+def adjuntar(repo: str, tag: str, file_path: str, content_type: str = "application/json"):
+    """Sube un archivo extra (ej. script.json) al release 'tag'. Best-effort."""
+    try:
+        r = requests.get(f"https://api.github.com/repos/{repo}/releases/tags/{tag}",
+                         headers=_headers(), timeout=30)
+        r.raise_for_status()
+        upload_url = r.json()["upload_url"].split("{")[0]
+        with open(file_path, "rb") as f:
+            up = requests.post(f"{upload_url}?name={os.path.basename(file_path)}",
+                               headers={**_headers(), "Content-Type": content_type},
+                               data=f, timeout=120)
+        up.raise_for_status()
+        return True
+    except Exception as e:
+        print(f"    (no se pudo adjuntar {os.path.basename(file_path)}: {e})")
+        return False
+
+
+def leer_guion(repo: str, tag: str) -> dict:
+    """Descarga el script.json guardado en el release 'tag'."""
+    r = requests.get(f"https://api.github.com/repos/{repo}/releases/tags/{tag}",
+                     headers=_headers(), timeout=30)
+    r.raise_for_status()
+    for asset in r.json().get("assets", []):
+        if asset.get("name") == "script.json":
+            d = requests.get(asset["url"],
+                             headers={**_headers(), "Accept": "application/octet-stream"},
+                             timeout=60)
+            d.raise_for_status()
+            return json.loads(d.content.decode("utf-8"))
+    raise RuntimeError(f"El release '{tag}' no tiene script.json (es de antes de esta "
+                       "función). Usa los campos serie_* con el mismo tema para regenerarlo.")

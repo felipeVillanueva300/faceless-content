@@ -69,6 +69,19 @@ def synthesize_segments(textos, out_dir):
     if not partes:
         return None, []
 
+    lead = float(os.environ.get("TTS_LEAD", "0.35"))
+    if lead > 0:
+        sil = os.path.join(out_dir, "seg_lead.mp3")
+        ffb = os.environ.get("FFMPEG_BIN", "ffmpeg")
+        try:
+            subprocess.run([ffb, "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono",
+                            "-t", f"{lead:.2f}", "-c:a", "libmp3lame", "-b:a", "48k", sil],
+                           check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            partes.insert(0, sil)
+            duraciones[0] += _duracion(sil) or lead
+        except Exception:
+            pass
+
     combinado = os.path.join(out_dir, "audio.mp3")
     if len(partes) == 1:
         # un solo bloque: cópialo tal cual

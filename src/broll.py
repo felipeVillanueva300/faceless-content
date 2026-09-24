@@ -82,6 +82,113 @@ def _best_vertical(candidatos):
     return pool[0]["link"] if pool else None
 
 
+VISION_ON = os.environ.get("BROLL_VISION", "1").strip().lower() in ("1", "true", "yes")
+VISION_MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-3.5-flash-lite").strip()
+VISION_TRIES = max(1, int(os.environ.get("BROLL_VISION_TRIES", "3")))
+_FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
+
+_VISION_PROMPT = """Eres revisor de fondos de video para una cuenta de finanzas de MÉXICO.
+Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
+- billetes, monedas o efectivo (de cualquier país);
+- letreros, carteles, notas o texto legible en un idioma que NO sea español
+  (ej. alemán, tailandés, chino, ruso, francés). Texto en inglés dentro de una app o
+  pantalla sí se permite; letreros de tienda o calle en inglés NO;
+- documentos oficiales o formularios de otro país (ej. formularios de impuestos de EE.UU.);
+- banderas de otro país.
+Si no ves nada de eso, "rechazar": false.
+Responde SOLO JSON: {"rechazar": true|false, "motivo": "máx 8 palabras"}"""
+
+
+def _frames(path: str):
+    """Saca 2 cuadros JPG chicos (20% y 60% del clip). Devuelve lista de bytes."""
+    import subprocess
+    import tempfile
+    base, ext = os.path.splitext(_FFMPEG)
+    probe = (os.path.join(os.path.dirname(_FFMPEG), "ffprobe" + ext)
+             if os.path.dirname(_FFMPEG) else "ffprobe")
+    try:
+        out = subprocess.run([probe, "-v", "quiet", "-show_entries", "format=duration",
+                              "-of", "csv=p=0", path],
+                             capture_output=True, text=True, timeout=30)
+        dur = float(out.stdout.strip() or 0) or 5.0
+    except Exception:
+        dur = 5.0
+    cuadros = []
+    for frac in (0.2, 0.6):
+        tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False).name
+        try:
+            subprocess.run([_FFMPEG, "-v", "error", "-y", "-ss", f"{dur * frac:.2f}", "-i", path,
+                            "-frames:v", "1", "-vf", "scale=512:-2", tmp],
+                           check=True, timeout=60)
+            with open(tmp, "rb") as f:
+                cuadros.append(f.read())
+        except Exception:
+            pass
+        finally:
+            try:
+                os.remove(tmp)
+            except Exception:
+                pass
+    return cuadros
+
+
+def _vision_ok(path: str, etiqueta: str) -> bool:
+    """True si el clip se puede usar. Ante cualquier error, True (no bloquea el video)."""
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not (VISION_ON and key):
+        return True
+    cuadros = _frames(path)
+    if not cuadros:
+        return True
+    try:
+        import json
+        from google import genai
+        from google.genai import types
+        client = genai.Client(api_key=key)
+        partes = [types.Part.from_bytes(data=c, mime_type="image/jpeg") for c in cuadros]
+        resp = client.models.generate_content(
+            model=VISION_MODEL,
+            contents=partes + [_VISION_PROMPT],
+            config=types.GenerateContentConfig(temperature=0,
+                                               response_mime_type="application/json"),
+        )
+        txt = (resp.text or "").strip()
+        data = json.loads(txt[txt.find("{"): txt.rfind("}") + 1])
+        if data.get("rechazar"):
+            print(f"    visión RECHAZA {etiqueta}: {data.get('motivo', '')}")
+            return False
+        print(f"    visión OK {etiqueta}")
+        return True
+    except Exception as e:
+        print(f"    (visión no disponible, se acepta {etiqueta}: {str(e)[:120]})")
+        return True
+
+
+def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
+    """candidatos: lista de (id, link). Prueba en orden: descarga, revisa con visión y
+    devuelve el primero que pase. Máximo VISION_TRIES descargas."""
+    for cid, link in candidatos[:VISION_TRIES]:
+        etiqueta = f"{fuente} #{cid}" if cid is not None else fuente
+        try:
+            _download(link, out_path)
+        except Exception as e:
+            print(f"    (descarga falló {etiqueta}: {e})")
+            continue
+        if _vision_ok(out_path, etiqueta):
+            print(f"    b-roll ({etiqueta}) para '{keywords}'")
+            return out_path
+    return None
+
+
+def _orden_aleatorio(buenos):
+    """Los TOP_N primeros en orden aleatorio, luego el resto (respaldo si la visión
+    rechaza varios)."""
+    import random
+    top = list(buenos[:TOP_N])
+    random.shuffle(top)
+    return top + list(buenos[TOP_N:])
+
+
 def _from_pexels(keywords: str, out_path: str) -> str | None:
     if not PEXELS_KEY:
         return None
@@ -93,7 +200,6 @@ def _from_pexels(keywords: str, out_path: str) -> str | None:
         timeout=30,
     )
     r.raise_for_status()
-    import random
     buenos = []
     for v in r.json().get("videos", []):
         firma = " ".join([v.get("url") or ""] + [str(t) for t in (v.get("tags") or [])])
@@ -106,9 +212,7 @@ def _from_pexels(keywords: str, out_path: str) -> str | None:
             buenos.append((v.get("id"), best))
     if not buenos:
         return None
-    vid, best = random.choice(buenos[:TOP_N])
-    print(f"    b-roll (Pexels #{vid}) para '{keywords}'")
-    return _download(best, out_path)
+    return _probar_candidatos(_orden_aleatorio(buenos), out_path, "Pexels", keywords)
 
 
 def _from_pixabay(keywords: str, out_path: str) -> str | None:
@@ -132,13 +236,10 @@ def _from_pixabay(keywords: str, out_path: str) -> str | None:
     # Pixabay no filtra por orientación: primero los hits que tengan versión vertical
     hits.sort(key=lambda cs: 0 if any((c.get("height") or 0) >= (c.get("width") or 0)
                                       for c in cs) else 1)
-    import random
-    buenos = [b for b in (_best_vertical(c) for c in hits) if b]
+    buenos = [(None, b) for b in (_best_vertical(c) for c in hits) if b]
     if not buenos:
         return None
-    best = random.choice(buenos[:TOP_N])
-    print(f"    b-roll (Pixabay) para '{keywords}'")
-    return _download(best, out_path)
+    return _probar_candidatos(_orden_aleatorio(buenos), out_path, "Pixabay", keywords)
 
 
 _FETCHERS = {"pexels": _from_pexels, "pixabay": _from_pixabay}

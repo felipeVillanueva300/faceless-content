@@ -9,6 +9,10 @@ on:
         description: "ID del video a PUBLICAR (ej: daily-20260907-025109). Vacío = generar un borrador nuevo."
         type: string
         default: ""
+      rehacer_id:
+        description: "REHACER: ID de un borrador (ej: daily-20260924-163000) para generar OTRO video con el MISMO guion. Vacío = normal."
+        type: string
+        default: ""
       serie_tema:
         description: "SERIE: tema a forzar hoy (ej: 'cómo manejar tu tarjeta de crédito'). Vacío = día normal."
         type: string
@@ -78,6 +82,7 @@ jobs:
           YT_PRIVACY: "public"
           WATERMARK_TEXT: "@dinerosimplemx"
           PUBLISH_ID: ${{ inputs.publicar_id }}
+          REHACER_ID: ${{ inputs.rehacer_id }}
           SERIE_TEMA: ${{ inputs.serie_tema }}
           SERIE_PARTE: ${{ inputs.serie_parte }}
           SERIE_TOTAL: ${{ inputs.serie_total }}

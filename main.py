@@ -81,11 +81,19 @@ def generar_borrador():
     os.makedirs(BUILD, exist_ok=True)
     niche = os.environ.get("NICHE", "tecnología y finanzas")
 
-    print(f"[1/7] Generando guion sobre: {niche}")
-    recientes = history.load_recent(60)
-    if recientes:
-        print(f"    ({len(recientes)} temas recientes a evitar)")
-    data = script_gen.generate_script(niche, avoid=recientes)
+    rehacer = os.environ.get("REHACER_ID", "").strip()
+    if rehacer:
+        print(f"[1/7] Rehaciendo con el guion guardado en: {rehacer}")
+        data = uploader.leer_guion(os.environ["GITHUB_REPOSITORY"], rehacer)
+    else:
+        print(f"[1/7] Generando guion sobre: {niche}")
+        recientes = history.load_recent(60)
+        if recientes:
+            print(f"    ({len(recientes)} temas recientes a evitar)")
+        data = script_gen.generate_script(niche, avoid=recientes)
+    import json
+    with open(os.path.join(BUILD, "script.json"), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
     caption = data.get("caption") or data.get("title", "")
     title = data.get("title", "")
     topic = data.get("topic") or title
@@ -108,7 +116,10 @@ def generar_borrador():
         for i, b in enumerate(beats):
             n = (b.get("narration") or "").strip()
             if i == 0:
-                n = f"{data.get('hook', '').strip()} {n}".strip()
+                hook_txt = data.get('hook', '').strip()
+                if hook_txt and hook_txt[-1] not in ".?!…":
+                    hook_txt += "."
+                n = f"{hook_txt} {n}".strip()
             textos.append(n)
         escenas = [(b.get("scene") or "").strip() for b in beats]
 
@@ -222,8 +233,10 @@ def generar_borrador():
     url, tag = uploader.upload_public(out, caption=caption, title=title)
     print("    URL:", url)
     print("    ID :", tag)
+    uploader.adjuntar(os.environ["GITHUB_REPOSITORY"], tag, os.path.join(BUILD, "script.json"))
 
-    history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
+    if not rehacer:
+        history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
