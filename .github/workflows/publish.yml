@@ -2,7 +2,7 @@ name: Publicar Reel diario
 
 on:
   schedule:
-    - cron: '30 16 * * *'
+    - cron: '30 15 * * *'
   workflow_dispatch:
     inputs:
       publicar_id:
