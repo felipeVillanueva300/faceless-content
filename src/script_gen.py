@@ -89,6 +89,16 @@ un ejemplo de México. Mal: "la inflación hace que suban los precios" (eso es e
 Bien: "si al tortillero le sube el gas y el transporte, sube el kilo; y cuando todos suben
 al mismo tiempo, tu sueldo compra menos" (eso es el PORQUÉ). Una causa bien explicada vale
 más que tres mencionadas.
+TODO LO QUE NOMBRAS, LO EXPLICAS: cada método, término o sigla que menciones (50/30/20,
+base cero, CAT, Afore, SOFIPO...) se DEFINE en su propio bloque, en palabras simples y con
+un ejemplo en pesos. Ej: "50/30/20: de una quincena de $8,000, $4,000 a lo necesario
+(renta, luz, súper), $2,400 a gustos y $1,600 a ahorro". Nombrar algo sin explicarlo deja
+al que ve con un hueco, y se va.
+- Si comparas DOS métodos, cada uno lleva su bloque (qué es + ejemplo en pesos) ANTES de
+  decir cuál conviene. Si no te caben los dos bien explicados en 60 s, habla de UNO solo.
+- Mejor un solo concepto completo que dos a medias.
+- Las frases de la marca ("no te dejes cobrar", "que no te vean la cara") solo si vienen
+  al caso; si nadie te está cobrando nada en el tema, no las uses.
 Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,
 mejor que tres a medias.
 
@@ -116,7 +126,9 @@ bloques en orden, como una sola voz continua. Cada bloque tiene su propia frase 
 propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a ese punto.
 - El primer bloque CONTINÚA justo después del hook, SIN repetirlo ni parafrasearlo.
 - Leídos seguidos (hook + bloques), debe sonar natural, como alguien hablando de corrido.
-- Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Cada
+- Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Si
+  el tema es un método, una comparación o un paso a paso, usa MÍNIMO ~120 palabras: la
+  gente necesita el ejemplo para entenderlo. Cada
   bloque = UNA idea, sin apurar. El ÚLTIMO bloque cierra con un llamado a seguir corto
   (ej: 'Sígueme, mañana va otro.').
 - Cada bloque va con su "scene": 2-4 palabras EN INGLÉS, escena CONCRETA de finanzas/
