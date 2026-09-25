@@ -14,7 +14,11 @@ _QUITAR = str.maketrans("", "", "'\"‘’“”«»`´{}\\")
 
 
 def _limpio(txt: str) -> str:
-    return " ".join(txt.translate(_QUITAR).split())
+    import unicodedata
+    t = unicodedata.normalize("NFC", txt or "")
+    t = "".join(" " if unicodedata.category(c) == "Zs" else c for c in t)
+    t = "".join(c for c in t if unicodedata.category(c) not in ("Mn", "Cf", "Cc"))
+    return " ".join(t.translate(_QUITAR).split())
 
 
 def _ass_time(seconds: float) -> str:

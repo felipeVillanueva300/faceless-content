@@ -116,6 +116,9 @@ CIFRAS (somos cuenta de finanzas: la confianza es todo):
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
   Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
+- UNA sola cuenta en todo el video: el hook, el hook_card, las cards, el gráfico y la
+  narración usan LOS MISMOS números. Mal: hook "¿10 mil al año?", gráfico "$19,325" y voz
+  "1,800 al mes". Haz la cuenta una vez (ej. $60 x 22 días x 12 = $15,840) y repítela igual.
 Reglas: concreto, con una cifra o consecuencia real (sin inventar cifras), en segunda
 persona ("tú/tu"), y que genere una PREGUNTA en la cabeza del que ve. Si tu hook podría
 ser el subtítulo de un libro de texto, está mal.

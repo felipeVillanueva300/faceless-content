@@ -172,20 +172,34 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
     last = "bg"
 
     if hook:
-        raw_hook = str(hook).strip().upper()
-        hook_fs = _fit_fontsize(raw_hook, CARD_MAX_W, 130, 64)
-        htxt = _escape_drawtext(raw_hook)
-        # entra deslizándose desde abajo + fade in; hace fade out al final
-        yexpr = "h*0.30+80*(1-min(t/0.45,1))"
+        raw_hook = " ".join(str(hook).strip().upper().split())
+        ancho = CARD_MAX_W - 40
+        lineas = [raw_hook]
+        hook_fs = _fit_fontsize(raw_hook, ancho, 130, 96)
+        if hook_fs <= 96:
+            pals = raw_hook.split()
+            if len(pals) >= 2:
+                mejor = min(range(1, len(pals)),
+                            key=lambda k: abs(len(" ".join(pals[:k])) - len(" ".join(pals[k:]))))
+                lineas = [" ".join(pals[:mejor]), " ".join(pals[mejor:])]
+            larga = max(lineas, key=len)
+            hook_fs = _fit_fontsize(larga, ancho, 120, 56)
         alpha = (f"if(lt(t,0.35),t/0.35,"
                  f"if(gt(t,{HOOK_DUR - 0.3:.2f}),max(0,({HOOK_DUR:.2f}-t)/0.3),1))")
-        chain.append(
-            f"[{last}]drawtext=font='{SUB_FONT}':text='{htxt}':fontcolor=0x00E5FF:"
-            f"fontsize={hook_fs}:borderw=9:bordercolor=black:shadowcolor=black@0.6:"
-            f"shadowx=4:shadowy=4:x=(w-tw)/2:y='{yexpr}':alpha='{alpha}':"
-            f"enable='between(t,0,{HOOK_DUR:.2f})'[hook]"
-        )
-        last = "hook"
+        salto = int(hook_fs * 1.15)
+        y0 = f"h*0.30-{(len(lineas) - 1) * salto // 2}"
+        for li, linea in enumerate(lineas):
+            htxt = _escape_drawtext(linea)
+            # entra deslizándose desde abajo + fade in; hace fade out al final
+            yexpr = f"{y0}+{li * salto}+80*(1-min(t/0.45,1))"
+            tag = f"hook{li}"
+            chain.append(
+                f"[{last}]drawtext=font='{SUB_FONT}':text='{htxt}':fontcolor=0x00E5FF:"
+                f"fontsize={hook_fs}:borderw=9:bordercolor=black:shadowcolor=black@0.6:"
+                f"shadowx=4:shadowy=4:x=(w-tw)/2:y='{yexpr}':alpha='{alpha}':"
+                f"enable='between(t,0,{HOOK_DUR:.2f})'[{tag}]"
+            )
+            last = tag
 
     for i, card in enumerate(cards or []):
         raw_big = str(card.get("big", ""))
@@ -289,14 +303,6 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
 
 
 def build_multi_background(clips, duration, out_path, durations=None):
-    """Une varios clips en UN fondo vertical 1080x1920 de largo 'duration', cortando
-    entre clips. Devuelve out_path, o None si no se puede (cae al fondo degradado).
-
-    'durations': si se pasa (una por clip), cada clip dura EXACTAMENTE eso — así el fondo
-    cambia justo cuando la voz pasa a ese bloque. Si no, se reparte en partes iguales.
-
-    Cada clip se escala a cubrir 1080x1920 (sin barras), se recorta y se hace loop si es
-    más corto que su segmento. No lleva audio."""
     clips = [c for c in (clips or []) if c and os.path.isfile(c)]
     if not clips:
         return None
