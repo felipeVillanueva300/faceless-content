@@ -71,9 +71,11 @@ FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
 Genera UN guion para un video vertical sobre el PILAR y el FORMATO de hoy, con un ángulo
 fresco, concreto y poco obvio. Usa la fecha como semilla: {today.isoformat()}.
 
-DURACIÓN FLEXIBLE (clave): el video dura entre 25 y 60 segundos. NO rellenes para llegar
+DURACIÓN FLEXIBLE (clave): el video dura entre 30 y 60 segundos. NO rellenes para llegar
 a un número. Usa el tiempo que el tema NECESITE para quedar BIEN explicado:
-- Tema simple -> corto (30-45s). Tema que necesita matiz o pasos -> más largo (hasta 60s).
+- Tip rápido de una sola acción -> 30-45s.
+- Concepto, método, comparación, paso a paso o capítulo de serie -> 45-60s. Ahí el
+  tiempo extra se usa en el ejemplo y en el "dónde / cómo", no en relleno.
 - Prohibido el relleno/preámbulo ("hoy te voy a contar…", "muchos no saben que…"). El
   PRIMER bloque entra directo al valor.
 
@@ -97,6 +99,16 @@ al que ve con un hueco, y se va.
 - Si comparas DOS métodos, cada uno lleva su bloque (qué es + ejemplo en pesos) ANTES de
   decir cuál conviene. Si no te caben los dos bien explicados en 60 s, habla de UNO solo.
 - Mejor un solo concepto completo que dos a medias.
+CERO CABOS SUELTOS (lo que más se nota cuando falta): si el guion dice "un instrumento",
+"una app", "una cuenta", "una herramienta" o "el banco", DI CUÁL con su nombre real
+(CETES en CetesDirecto, una SOFIPO regulada, Nu, Klar, Mercado Pago, Finerio, la app de tu
+banco...) y UN paso concreto para empezar ("descárgala, conecta tu cuenta y activa X").
+- Si usas una tasa o rendimiento, que sea realista para México HOY, dilo como aproximado y
+  que cambia ("hoy CETES anda cerca de X% anual, cambia cada semana"). Si no conoces la
+  tasa actual, usa un ejemplo marcado como ejemplo, pero SIEMPRE nombra dónde se consigue.
+- Pregúntate al final: "¿quien lo ve sabe QUÉ hacer y DÓNDE hacerlo mañana?". Si no, falta.
+- Cuando haya un nombre concreto (app, instrumento, institución), ponlo en una "card"
+  para que se LEA en pantalla, no solo se escuche.
 - Las frases de la marca ("no te dejes cobrar", "que no te vean la cara") solo si vienen
   al caso; si nadie te está cobrando nada en el tema, no las uses.
 Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,

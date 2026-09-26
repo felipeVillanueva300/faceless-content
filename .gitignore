@@ -9,5 +9,6 @@ __pycache__/
 *.pyc
 
 docs/
+privado/
 run_test.ps1
 run_image_test.ps1
