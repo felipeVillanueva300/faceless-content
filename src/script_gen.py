@@ -128,6 +128,9 @@ CIFRAS (somos cuenta de finanzas: la confianza es todo):
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
   Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
+- Consecuencias legales o fiscales (SAT, bloqueos, multas, buró): solo si una fuente oficial
+  lo dice (SAT, PRODECON, CONDUSEF, Banxico). Muchos "te va a caer el SAT" son rumores
+  virales: si el tema viene de ahí, di qué es mito y qué es real, no lo amplifiques.
 - UNA sola cuenta en todo el video: el hook, el hook_card, las cards, el gráfico y la
   narración usan LOS MISMOS números. Mal: hook "¿10 mil al año?", gráfico "$19,325" y voz
   "1,800 al mes". Haz la cuenta una vez (ej. $60 x 22 días x 12 = $15,840) y repítela igual.

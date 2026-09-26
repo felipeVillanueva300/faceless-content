@@ -7,7 +7,24 @@ RATE = os.environ.get("TTS_RATE", "+0%")
 PITCH = os.environ.get("TTS_PITCH", "+0Hz")
 
 
+_PRONUNCIA_BASE = {"SPEI": "spéi", "CoDi": "códi", "CODI": "códi", "CLABE": "clábe"}
+
+
+def _pronunciar(text: str) -> str:
+    import re
+    tabla = dict(_PRONUNCIA_BASE)
+    for par in os.environ.get("TTS_PRONUNCIA", "").split(";"):
+        if "=" in par:
+            k, v = par.split("=", 1)
+            if k.strip():
+                tabla[k.strip()] = v.strip()
+    for sigla, dicho in tabla.items():
+        text = re.sub(rf"\b{re.escape(sigla)}\b", dicho, text)
+    return text
+
+
 async def _synth(text: str, audio_path: str):
+    text = _pronunciar(text)
     boundaries = []
     communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
     with open(audio_path, "wb") as f:
