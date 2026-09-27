@@ -1,32 +1,12 @@
 {
-  "tema": "conceptos de dinero que nadie te explicó",
+  "tema": "cómo empezar a invertir desde cero en México",
   "total": 5,
-  "siguiente": 5,
+  "siguiente": 0,
   "episodios": [
-    {
-      "subtema": "qué es el poder adquisitivo con un ejemplo real: los mismos $100 hace 10 años vs hoy, y por qué importa",
-      "anterior": "",
-      "formato": "dato"
-    },
-    {
-      "subtema": "qué es la inflación en palabras simples, por qué sube todo, y cómo te afecta el sueldo aunque ganes lo mismo",
-      "anterior": "Parte 1 explicó el poder adquisitivo",
-      "formato": "dato"
-    },
-    {
-      "subtema": "qué es una tasa de interés y la diferencia entre interés que te cobran (deuda) y el que te pagan (ahorro/inversión)",
-      "anterior": "Partes 1-2: poder adquisitivo e inflación",
-      "formato": "howto"
-    },
-    {
-      "subtema": "interés compuesto: cómo tu dinero genera dinero con el tiempo, con un ejemplo de ahorro mensual",
-      "anterior": "Parte 3 explicó qué es una tasa de interés",
-      "formato": "dato"
-    },
-    {
-      "subtema": "rendimiento real: por qué tu dinero en el banco 'pierde' aunque no lo toques (inflación vs rendimiento), y la cuenta simple: tasa que te pagan menos inflación; di dónde conseguir una tasa que le gane (CETES en CetesDirecto, SOFIPO regulada)",
-      "anterior": "Parte 4 explicó el interés compuesto",
-      "formato": "mito"
-    }
+    {"subtema": "el primer paso real antes de invertir: fondo de emergencia (cuánto: 3 a 6 meses de gastos) y dónde guardarlo para que rinda y esté disponible (cuenta con rendimiento diario o CETES a 28 días)", "anterior": "", "formato": "howto"},
+    {"subtema": "qué son los CETES en palabras simples: le prestas al gobierno y te regresa más; plazos (28, 91, 182 días), desde $100, y por qué son el primer instrumento para principiantes", "anterior": "Parte 1: primero el fondo de emergencia", "formato": "dato"},
+    {"subtema": "cómo abrir tu cuenta en CetesDirecto paso a paso: CURP, cuenta CLABE, INE; y cómo programar el ahorro recurrente para que se invierta solo", "anterior": "Parte 2 explicó qué son los CETES", "formato": "howto"},
+    {"subtema": "SOFIPOs vs banco vs CETES: dónde rinde más, qué es el seguro de depósito (IPAB en bancos, PROSOFIPO en SOFIPOs) y cómo revisar que la SOFIPO esté autorizada por la CNBV", "anterior": "Partes 1-3 cubrieron fondo, CETES y CetesDirecto", "formato": "comparativa"},
+    {"subtema": "el error #1 del novato: caer en 'inversiones' que prometen rendimientos altos y seguros; señales de fraude y cómo checar en la CNBV/CONDUSEF si una empresa está autorizada", "anterior": "Parte 4 comparó SOFIPOs, banco y CETES", "formato": "error"}
   ]
 }
