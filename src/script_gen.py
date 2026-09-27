@@ -86,6 +86,22 @@ a un número. Usa el tiempo que el tema NECESITE para quedar BIEN explicado:
 - Prohibido el relleno/preámbulo ("hoy te voy a contar…", "muchos no saben que…"). El
   PRIMER bloque entra directo al valor.
 
+EJEMPLOS QUE SE ENTIENDEN A LA PRIMERA: nada de referencias raras, chistes internos,
+números sin contexto o frases que haya que "descifrar" (mal: "por la multa de la 34").
+Si citas un ejemplo, que sea algo que cualquiera reconozca al instante (ej. un concepto de
+transferencia como "pago de la tanda" o "lo de las chelas"). En formato MITO: enuncia el
+mito con palabras simples y di claro qué parte es falsa y qué parte SÍ es cierta; no digas
+"falso" a secas si una parte es real.
+
+A QUIÉN LE HABLAS (realidad de la mayoría en México): gente que cobra por quincena, paga
+mucho en efectivo o con débito, compra en el súper, el tianguis, el mercado o la tiendita,
+y muchas veces no tiene tarjeta de crédito ni compra en línea.
+- El consejo tiene que servirle a ESA persona. Si un truco solo aplica a quien compra en
+  línea, tiene tarjeta de crédito o ya invierte, elige otro consejo o da primero la versión
+  que sí puede hacer cualquiera (ej. la lista del súper/tianguis antes que el carrito en línea).
+- Ejemplos y precios cotidianos: kilo de tortilla, despensa en el tianguis, pasaje, recarga
+  del celular, no gastos de clase alta.
+
 CALIDAD DEL CONSEJO (lo más importante): da el consejo MÁS ÚTIL y COMPLETO, no el obvio
 ni el técnicamente-correcto-pero-flojo. Incluye SIEMPRE el matiz práctico que ayuda a
 quien NO está en el caso ideal. Ejemplos del nivel que quiero:
