@@ -99,5 +99,7 @@ jobs:
           AI_IMAGE_SEED: ${{ vars.AI_IMAGE_SEED || '7' }}
           SEGMENTED_BG: ${{ vars.SEGMENTED_BG || '1' }}
           TTS_RATE: ${{ vars.TTS_RATE || '+5%' }}
+          DATOS_ACTUALES: ${{ vars.DATOS_ACTUALES }}
+          BANXICO_TOKEN: ${{ secrets.BANXICO_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

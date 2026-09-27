@@ -48,6 +48,13 @@ def generate_script(niche: str = "tecnología y finanzas",
     plan = content_plan.plan_del_dia(today, offset=7)   # video usa offset 7
     evitar = content_plan.avoid_text(avoid)
     cal = content_plan.calendario_linea(plan)
+    from src import datos_mx
+    datos = datos_mx.datos_actuales()
+    datos_txt = (f"DATOS VIGENTES (úsalos TAL CUAL para cualquier cifra actual; NO inventes otras "
+                 f"tasas ni inflación): {datos}\n") if datos else (
+                 "No tienes datos vigentes de tasas ni inflación: NO pongas tasas de CETES, "
+                 "SOFIPOs ni inflación como hechos actuales; di 'revisa la tasa de hoy en "
+                 "CetesDirecto' o usa un ejemplo marcado como ejemplo.\n")
 
     prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
 de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
@@ -123,7 +130,7 @@ piense "espera, ¿qué?". Usa UNA de estas fórmulas:
 - Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
 PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
 "El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
-CIFRAS (somos cuenta de finanzas: la confianza es todo):
+{datos_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
 - Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".

@@ -67,6 +67,8 @@ jobs:
           NICHE: "tecnología y finanzas"
           TTS_VOICE: es-MX-JorgeNeural
           TTS_RATE: ${{ vars.TTS_RATE || '+5%' }}
+          DATOS_ACTUALES: ${{ vars.DATOS_ACTUALES }}
+          BANXICO_TOKEN: ${{ secrets.BANXICO_TOKEN }}
           AI_IMAGE_ENABLED: "1"
           AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER || 'cloudflare' }}
           AI_IMAGE_MODE: ${{ vars.AI_IMAGE_MODE || 'mix' }}
