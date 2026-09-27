@@ -117,11 +117,30 @@ def render_countup_frame(spec, progress, out_path):
     num = f"{prefix}{value:,.0f}{suffix}"
 
     cy = 1000
-    _center(d, num, _font(230), W // 2, cy - 150, CYAN)
+    # El número y la etiqueta se ajustan al ancho (antes: fuente fija de 230 px y
+    # "$15,000 MXN" se salía de la pantalla). La etiqueta larga se parte en 2 líneas.
+    final = f"{prefix}{float(spec['value']):,.0f}{suffix}"      # tamaño con el valor FINAL
+    f_num = _fit_font(final, W - 100, 230, 90)
+    _center(d, num, f_num, W // 2, cy + 75 - getattr(f_num, "size", 230), CYAN)
     # línea de acento
     lw = 520
     d.rounded_rectangle([(W - lw) // 2, cy + 130, (W + lw) // 2, cy + 142], radius=6, fill=CYAN)
-    _center(d, spec.get("label", "").upper(), _font(62), W // 2, cy + 175, WHITE)
+    label = (spec.get("label", "") or "").upper()
+    f_lab = _fit_font(label, W - 120, 62, 44)
+    lineas = [label]
+    try:
+        cabe = f_lab.getlength(label) <= W - 120
+    except Exception:
+        cabe = True
+    if not cabe and " " in label:
+        pals = label.split()
+        k = min(range(1, len(pals)),
+                key=lambda i: abs(len(" ".join(pals[:i])) - len(" ".join(pals[i:]))))
+        lineas = [" ".join(pals[:k]), " ".join(pals[k:])]
+        f_lab = _fit_font(max(lineas, key=len), W - 120, 62, 34)
+    alto = getattr(f_lab, "size", 62)
+    for i, ln in enumerate(lineas):
+        _center(d, ln, f_lab, W // 2, cy + 175 + i * int(alto * 1.2), WHITE)
 
     img.save(out_path)
     return out_path
