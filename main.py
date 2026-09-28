@@ -6,6 +6,61 @@ from src import script_gen, tts, subtitles, video, uploader, publisher, broll, n
 
 BUILD = "build"
 
+CARD_DUR = float(os.environ.get("CARD_DUR", "4.5"))
+GRAPHIC_DUR = float(os.environ.get("GRAPHIC_DUR", "4.0"))
+
+
+def _compacto(texto: str) -> str:
+    """minúsculas, sin acentos ni espacios/puntuación: 'Cetes Directo' == 'CETESDIRECTO',
+    '$24,000' == '24000'. Sirve para encontrar en qué punto de la voz se dice algo."""
+    import re
+    import unicodedata
+    t = unicodedata.normalize("NFD", (texto or "").lower())
+    t = "".join(ch for ch in t if unicodedata.category(ch) != "Mn")
+    return re.sub(r"[^a-z0-9]", "", t)
+
+
+def _momento_mencion(claves, segmentos, beat=None):
+    """Segundo en que la voz dice alguna de 'claves' (card o dato del gráfico).
+    segmentos: [(texto, inicio, duración)] de cada bloque de voz.
+    1) busca el texto dentro de los bloques y estima el segundo por la posición
+       de la palabra en el bloque (la voz es de ritmo casi constante);
+    2) si no aparece, usa el 'beat' que mandó Gemini (inicio de ese bloque);
+    3) si tampoco, None (el que llama usa la posición fija de antes)."""
+    for clave in claves:
+        c = _compacto(str(clave))
+        if len(c) < 3:
+            continue
+        for texto, t0, d in segmentos:
+            comp = _compacto(texto)
+            pos = comp.find(c)
+            if pos >= 0 and comp:
+                return t0 + d * (pos / len(comp))
+    try:
+        b = int(beat)
+    except (TypeError, ValueError):
+        b = 0
+    if 1 <= b <= len(segmentos) and len(segmentos) > 1:
+        return segmentos[b - 1][1] + 0.3
+    return None
+
+
+def _ventanas(items, dur, minimo=1.5):
+    """items: [(inicio, dict)] -> ajusta inicio/fin: sin tapar el hook ni el cierre
+    'SÍGUEME', sin encimarse entre sí y con una duración mínima legible."""
+    from src.video import HOOK_DUR, OUTRO_DUR
+    limite = dur - OUTRO_DUR - 0.1
+    out, prev_fin = [], 0.0
+    for st, largo, it in sorted(items, key=lambda x: x[0]):
+        st = max(st - 0.6, HOOK_DUR + 0.1, prev_fin + 0.05)   # entra un poquito antes de oírse
+        en = min(st + largo, limite)
+        if en - st < minimo:
+            continue
+        it["start"], it["end"] = round(st, 2), round(en, 2)
+        out.append(it)
+        prev_fin = en
+    return out
+
 
 def _write_summary(url, titulo, caption, publicado, errores=None):
     path = os.environ.get("GITHUB_STEP_SUMMARY")
@@ -110,6 +165,7 @@ def generar_borrador():
     seg_dur = None
     escenas = []
     dur = 40.0
+    segmentos = [] 
 
     if usar_bloques:
         textos = []
@@ -129,10 +185,12 @@ def generar_borrador():
             audio = audio_seg
             dur = sum(seg_dur)
             print("[3/7] Generando subtítulos (por bloque)")
-            segmentos, t = [], 0.0
+            subs_seg, t = [], 0.0
             for txt, d in zip(textos, seg_dur):
-                segmentos.append((txt, t, t + d)); t += d
-            subtitles.build_ass_segments(segmentos, ass)
+                subs_seg.append((txt, t, t + d))
+                segmentos.append((txt, t, d))
+                t += d
+            subtitles.build_ass_segments(subs_seg, ass)
         else:
             usar_bloques = False   # síntesis por bloques falló -> camino normal
 
@@ -147,6 +205,7 @@ def generar_borrador():
             dur = 40.0
         print("[3/7] Generando subtítulos")
         subtitles.build_ass(narration, boundaries, ass, audio)
+        segmentos = [(narration, 0.0, dur)]
 
     print("[4/7] Buscando b-roll de fondo")
     # Escenas del fondo: de los beats (si hay), o de broll_scenes/keywords (respaldo).
@@ -207,20 +266,34 @@ def generar_borrador():
                                           durations=durs)
     elif len(clips) == 1:
         bg = clips[0]
-    cards = []
-    for c, (a, b) in zip((data.get("cards") or [])[:2], [(0.25, 0.45), (0.60, 0.80)]):
-        cards.append({"big": c.get("big", ""), "small": c.get("small", ""),
-                      "start": round(dur * a, 2), "end": round(dur * b, 2)})
+    pendientes = []
+    for ci, c in enumerate([c for c in (data.get("cards") or []) if isinstance(c, dict)][:2]):
+        st = _momento_mencion([c.get("big", "")], segmentos, c.get("beat"))
+        if st is None:
+            st = dur * (0.25, 0.60)[ci]
+        pendientes.append((st, CARD_DUR, {"big": c.get("big", ""), "small": c.get("small", "")}))
+    cards = _ventanas(pendientes, dur)
+    for c in cards:
+        print(f"    card '{c['big']}' de {c['start']}s a {c['end']}s")
 
     graphic_overlays = []
-    for gi, g in enumerate((data.get("graphics") or [])[:2]):
-        st = round(dur * (0.28 if gi == 0 else 0.62), 2)
-        en = round(min(st + 4.0, dur - 0.5), 2)
-        if en - st < 1.5:
-            continue
+    pend_g = []
+    for gi, g in enumerate([g for g in (data.get("graphics") or []) if isinstance(g, dict)][:2]):
+        claves = []
+        for k in (g.get("value"), g.get("b_value"), g.get("a_value"), g.get("label", "")):
+            if isinstance(k, float) and k.is_integer():
+                k = int(k)
+            claves.append(k)
+        st = _momento_mencion([k for k in claves if k not in (None, "")], segmentos, g.get("beat"))
+        if st is None:
+            st = dur * (0.28, 0.62)[gi]
+        pend_g.append((st, GRAPHIC_DUR, {"spec": g, "gi": gi}))
+    for it in _ventanas(pend_g, dur):
+        st, en, gi = it["start"], it["end"], it["gi"]
         gdir = os.path.join(BUILD, f"g{gi}")
-        pattern, _n, fps = graphics.render_frames(g, en - st, gdir)
+        pattern, _n, fps = graphics.render_frames(it["spec"], en - st, gdir)
         graphic_overlays.append({"pattern": pattern, "start": st, "end": en, "fps": fps})
+        print(f"    gráfico {gi + 1} de {st}s a {en}s")
 
     if graphic_overlays:
         cards = []

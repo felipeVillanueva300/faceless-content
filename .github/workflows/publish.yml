@@ -33,30 +33,34 @@ on:
         description: "SERIE: qué ya se cubrió antes, para NO repetirlo (ej: 'Parte 1 explicó la fecha de corte')"
         type: string
         default: ""
+      serie_siguiente:
+        description: "SERIE: de qué trata la SIGUIENTE parte (para adelantarla bien). Vacío = no lo menciona; si parte = total, cierra la serie."
+        type: string
+        default: ""
       serie_formato:
         description: "SERIE: formato opcional (howto, tip, dato, error, mito, comparativa). Vacío = paso a paso."
         type: string
         default: ""
 
 permissions:
-  contents: write  
+  contents: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
- 
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
- 
+
       - name: Instalar ffmpeg y fuentes
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
- 
+
       - name: Instalar dependencias
         run: pip install -r requirements.txt
- 
+
       - name: Generar o publicar (con reintentos del job completo)
         uses: nick-fields/retry@v3
         with:
@@ -89,6 +93,7 @@ jobs:
           SERIE_SUBTEMA: ${{ inputs.serie_subtema }}
           SERIE_ANTERIOR: ${{ inputs.serie_anterior }}
           SERIE_FORMATO: ${{ inputs.serie_formato }}
+          SERIE_SIGUIENTE: ${{ inputs.serie_siguiente }}
           PUBLISH: "false"
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"

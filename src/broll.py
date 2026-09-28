@@ -91,10 +91,14 @@ _VISION_PROMPT = """Eres revisor de fondos de video para una cuenta de finanzas 
 Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
 - billetes, monedas o efectivo (de cualquier país);
 - letreros, carteles, notas o texto legible en un idioma que NO sea español
-  (ej. alemán, tailandés, chino, ruso, francés). Texto en inglés dentro de una app o
+  (ej. alemán, tailandés, chino, ruso, francés). Texto CHICO en inglés dentro de una app o
   pantalla sí se permite; letreros de tienda o calle en inglés NO;
+- una palabra o frase en inglés GRANDE que domine el cuadro (ej. "BUDGET" o "SAVINGS"
+  a pantalla completa en un celular);
 - documentos oficiales o formularios de otro país (ej. formularios de impuestos de EE.UU.);
-- banderas de otro país.
+- banderas de otro país;
+- personas haciendo algo claramente AJENO a dinero, compras, trabajo, casa o tecnología
+  (maquillarse, parches o mascarillas faciales, hacer ejercicio, bailar).
 Si no ves nada de eso, "rechazar": false.
 Responde SOLO JSON: {"rechazar": true|false, "motivo": "máx 8 palabras"}"""
 

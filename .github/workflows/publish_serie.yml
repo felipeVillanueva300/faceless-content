@@ -83,6 +83,7 @@ jobs:
           SERIE_SUBTEMA: ${{ env.SERIE_SUBTEMA }}
           SERIE_ANTERIOR: ${{ env.SERIE_ANTERIOR }}
           SERIE_FORMATO: ${{ env.SERIE_FORMATO }}
+          SERIE_SIGUIENTE: ${{ env.SERIE_SIGUIENTE }}
 
       - name: Avanzar la cola (solo si se generó un episodio nuevo)
         if: success() && env.HAY_EPISODIO == '1' && inputs.publicar_id == ''

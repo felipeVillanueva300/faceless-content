@@ -203,6 +203,8 @@ def serie_override():
       SERIE_ANTERIOR  -> qué YA se cubrió en partes previas, para NO repetirlo
                          (ej: "Parte 1 explicó qué es la fecha de corte")
       SERIE_FORMATO   -> id de formato opcional (tip, howto, dato, error, mito, comparativa)
+      SERIE_SIGUIENTE -> de qué trata la SIGUIENTE parte (para adelantarla bien).
+                         Vacío + parte == total -> es el último capítulo y cierra la serie.
 
     Devuelve dict o None."""
     tema = os.environ.get("SERIE_TEMA", "").strip()
@@ -215,6 +217,7 @@ def serie_override():
         "subtema": os.environ.get("SERIE_SUBTEMA", "").strip(),
         "anterior": os.environ.get("SERIE_ANTERIOR", "").strip(),
         "formato_id": os.environ.get("SERIE_FORMATO", "").strip().lower(),
+        "siguiente": os.environ.get("SERIE_SIGUIENTE", "").strip(),
     }
 
 
@@ -256,6 +259,8 @@ def plan_del_dia(today=None, offset=0):
             "serie_etiqueta": etiqueta_parte,
             "serie_subtema": serie["subtema"],
             "serie_anterior": serie["anterior"],
+            "serie_total": serie["total"],
+            "serie_siguiente": serie["siguiente"],
         }
 
     recientes_pilares, recientes_formatos, recientes_tech = [], [], []
@@ -307,6 +312,30 @@ def plan_del_dia(today=None, offset=0):
     }
 
 
+def _cierre_serie(plan) -> str:
+    """Instrucción para el FINAL de un capítulo: adelantar EXACTAMENTE la siguiente parte,
+    o cerrar la serie si es la última. Nunca dejar que Gemini adivine el siguiente tema."""
+    parte, total = plan.get("serie_parte") or "", plan.get("serie_total") or ""
+    siguiente = plan.get("serie_siguiente") or ""
+    try:
+        ultima = bool(total) and int(parte) >= int(total)
+    except ValueError:
+        ultima = False
+    if ultima:
+        return ("Es el ÚLTIMO capítulo: al final CIERRA la serie (resume en 1 frase lo que ya "
+                "sabe hacer quien la vio completa). PROHIBIDO decir que viene otra parte; el "
+                "llamado es a seguir la cuenta para la próxima serie.\n")
+    if siguiente:
+        try:
+            num = f"Parte {int(parte) + 1}"
+        except ValueError:
+            num = "siguiente parte"
+        return (f"Al final adelanta la {num} con EXACTAMENTE este tema, resumido en máximo 8 "
+                f"palabras (PROHIBIDO prometer otro tema): {siguiente}.\n")
+    return ("Al final di que viene la siguiente parte SIN decir de qué trata (no lo sabes; "
+            "PROHIBIDO inventarlo).\n")
+
+
 def calendario_linea(plan) -> str:
     """Línea lista para el prompt. Si hay SERIE forzada, emite la directiva de la
     serie (Parte N, qué toca hoy, qué NO repetir). Si no, y hay golpe de temporada,
@@ -323,7 +352,8 @@ def calendario_linea(plan) -> str:
             etiqueta = plan.get("serie_etiqueta") or f"Parte {plan['serie_parte']}"
             linea = (f"SERIE (hoy IGNORA el pilar normal): esto es la {etiqueta} de una serie "
                      f"sobre \"{plan['serie_tema']}\". Debe sentirse CONTINUACIÓN, no un video suelto: "
-                     f"menciona al inicio que es la {etiqueta} y al final adelanta que viene la siguiente.\n"
+                     f"menciona al inicio que es la {etiqueta}.\n"
+                     f"{_cierre_serie(plan)}"
                      f"La mención de la parte va en MÁXIMO 6 palabras, pegada al valor y con el número "
                      f"CORRECTO ({etiqueta}). PROHIBIDO el preámbulo de serie ('conceptos que "
                      f"nadie te explicó', 'empecemos por lo básico'): cada segundo cuenta.\n"

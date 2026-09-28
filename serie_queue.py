@@ -1,25 +1,3 @@
-"""Cola de episodios para la MINISERIE automática de la tarde.
-
-Lee/escribe 'serie.json' (en la raíz del repo). El workflow de la tarde llama:
-  python serie_queue.py peek     -> imprime las variables SERIE_* del siguiente episodio
-                                    (para volcarlas a $GITHUB_ENV). Si no hay pendientes,
-                                    imprime HAY_EPISODIO=0.
-  python serie_queue.py advance  -> marca el episodio actual como hecho (avanza el índice)
-                                    y guarda serie.json.
-
-Formato de serie.json:
-{
-  "tema": "cómo manejar tu tarjeta de crédito",
-  "total": 4,
-  "siguiente": 0,
-  "episodios": [
-    {"subtema": "...", "anterior": "", "formato": "howto"},
-    ...
-  ]
-}
-Cuando 'siguiente' llega a 'total' (o al final de la lista), la cola queda vacía y el
-workflow no genera nada hasta que cargues otra serie.
-"""
 import json
 import os
 import sys
@@ -57,7 +35,12 @@ def peek():
         print("HAY_EPISODIO=0")
         return
     i, ep = actual
-    total = data.get("total", len(data.get("episodios", [])))
+    eps = data.get("episodios") or []
+    total = data.get("total", len(eps))
+    siguiente = ""
+    if i + 1 < len(eps) and i + 1 < int(total):
+        sig = eps[i + 1]
+        siguiente = sig.get("titulo") or sig.get("subtema", "")
     # Una línea KEY=valor por variable (formato de $GITHUB_ENV). Valores de una sola línea.
     lineas = {
         "HAY_EPISODIO": "1",
@@ -67,6 +50,7 @@ def peek():
         "SERIE_SUBTEMA": ep.get("subtema", ""),
         "SERIE_ANTERIOR": ep.get("anterior", ""),
         "SERIE_FORMATO": ep.get("formato", ""),
+        "SERIE_SIGUIENTE": siguiente,
     }
     for k, v in lineas.items():
         v = " ".join(str(v).splitlines())   # asegura una sola línea

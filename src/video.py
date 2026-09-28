@@ -104,6 +104,19 @@ def _brightness_delta(bg_video: str) -> float:
     return delta
 
 
+AUDIO_LUFS = os.environ.get("AUDIO_LUFS", "-14").strip()
+
+
+def _loudnorm():
+    if AUDIO_LUFS.lower() in ("", "0", "off", "no", "false"):
+        return ""
+    try:
+        objetivo = float(AUDIO_LUFS)
+    except ValueError:
+        objetivo = -14.0
+    return f"loudnorm=I={objetivo:.1f}:TP=-1.5:LRA=11"
+
+
 MUSIC_DIR = os.environ.get("MUSIC_DIR", "assets/music")
 MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.17")
 
@@ -287,6 +300,13 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
             audio_map = "[amixed]"
         vf = vf + ";" + amix
         print(f"    música de fondo: {os.path.basename(music)} (vol {MUSIC_VOLUME})")
+
+    norm = _loudnorm()
+    if norm:
+        src = audio_map if audio_map.startswith("[") else f"[{audio_map}]"
+        vf = vf + f";{src}{norm}[anorm]"
+        audio_map = "[anorm]"
+        print(f"    volumen normalizado a {AUDIO_LUFS} LUFS")
 
     tail = ["-t", f"{duration:.2f}"] if duration else ["-shortest"]
     cmd = [

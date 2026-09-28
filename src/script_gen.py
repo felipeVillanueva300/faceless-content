@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan
+from src import content_plan, script_review
 
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
@@ -166,6 +166,9 @@ El guion se cuenta en BLOQUES ("beats"). El "hook" se narra primero, y luego los
 bloques en orden, como una sola voz continua. Cada bloque tiene su propia frase y su
 propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a ese punto.
 - El primer bloque CONTINÚA justo después del hook, SIN repetirlo ni parafrasearlo.
+- REDACCIÓN: cada oración COMPLETA y con VERBO CONJUGADO; que no falte ninguna palabra.
+  Mal: "guárdalo donde rendimiento diario". Bien: "guárdalo donde tenga rendimiento diario".
+  Escribe los nombres SIEMPRE igual (CetesDirecto, junto; Mercado Pago; Nu).
 - Leídos seguidos (hook + bloques), debe sonar natural, como alguien hablando de corrido.
 - Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Si
   el tema es un método, una comparación o un paso a paso, usa MÍNIMO ~120 palabras: la
@@ -195,13 +198,18 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",
   "cards": [
-    {{"big": "texto grande, máx ~14 caracteres", "small": "frase corta que lo explica"}}
+    {{"big": "texto grande, máx ~14 caracteres", "small": "frase corta que lo explica", "beat": 2}}
   ],
   "graphics": []
 }}
 
 Reglas para "beats": de 3 a 5 bloques (usa más SOLO si el tema necesita más explicación). Cada uno con "narration" (español) y "scene" (inglés, 2-4 palabras).
 Reglas para "cards": 0 a 2 elementos. Son rótulos que refuerzan la narración. Si no aportan, deja [].
+- "beat" = número (1, 2, 3...) del bloque cuya narración MENCIONA lo de la card: ahí aparece
+  en pantalla. El "big" usa la MISMA palabra o cifra que dice la voz (si la voz dice
+  "CetesDirecto", la card dice "CETESDIRECTO"), para que salga justo cuando se oye.
+- El "small" dice LO MISMO que la voz, sin agregar ni cambiar datos (mal: voz "retiro en
+  días hábiles" y card "retiro diario").
 
 Reglas para "graphics": 0 o 1 elemento, SOLO si tienes un dato numérico REAL y concreto
 que valga la pena animar (no inventes cifras). Si no, deja []. Cada gráfico debe ser
@@ -211,6 +219,7 @@ EXACTAMENTE uno de estos dos formatos, con números planos (sin comas ni signo $
 - Barras comparativas (A en rojo vs B en verde):
   {{"type": "bars", "title": "AHORRO A 1 AÑO", "a_label": "EN EL BANCO", "a_value": 385,
     "b_label": "EN CETES", "b_value": 963, "a_color": "red", "b_color": "green", "money": true}}
+Opcional en ambos: "beat": número del bloque donde la voz dice ese dato (ahí aparece).
 No uses otros tipos ni omitas claves de estos formatos."""
 
     modelos = _model_ladder()
@@ -228,6 +237,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                     ),
                 )
                 data = _extract_json(resp.text)
+                data = script_review.revisar(data, client)
                 data["categoria"] = plan["categoria_id"]
                 data["formato"] = plan["formato_nombre"]
                 data["publicar_borrador"] = plan.get("publicar_borrador", False)
