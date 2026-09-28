@@ -85,6 +85,7 @@ def _best_vertical(candidatos):
 VISION_ON = os.environ.get("BROLL_VISION", "1").strip().lower() in ("1", "true", "yes")
 VISION_MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-3.5-flash-lite").strip()
 VISION_TRIES = max(1, int(os.environ.get("BROLL_VISION_TRIES", "3")))
+VISION_FALLBACK = os.environ.get("BROLL_VISION_FALLBACK", "gemini-3.6-flash").strip()
 _FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
 
 _VISION_PROMPT = """Eres revisor de fondos de video para una cuenta de finanzas de MÉXICO.
@@ -98,7 +99,9 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
 - documentos oficiales o formularios de otro país (ej. formularios de impuestos de EE.UU.);
 - banderas de otro país;
 - personas haciendo algo claramente AJENO a dinero, compras, trabajo, casa o tecnología
-  (maquillarse, parches o mascarillas faciales, hacer ejercicio, bailar).
+  (maquillarse, parches o mascarillas faciales, hacer ejercicio, bailar);
+- criptomonedas (Bitcoin, logos cripto) o apps de trading con velas y botones BUY/SELL,
+  SALVO que la escena pedida hable de inversión, bolsa o cripto.
 Si no ves nada de eso, "rechazar": false.
 Responde SOLO JSON: {"rechazar": true|false, "motivo": "máx 8 palabras"}"""
 
@@ -136,36 +139,58 @@ def _frames(path: str):
     return cuadros
 
 
-def _vision_ok(path: str, etiqueta: str) -> bool:
-    """True si el clip se puede usar. Ante cualquier error, True (no bloquea el video)."""
+def _transitorio(e) -> bool:
+    msg = str(e)
+    return any(m in msg for m in ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED",
+                                   "500", "INTERNAL", "overloaded", "high demand"))
+
+
+def _vision_ok(path: str, etiqueta: str, escena: str = "") -> bool:
+    """True si el clip se puede usar. Reintenta ante 503/429 y prueba el modelo de
+    respaldo; solo si todo falla devuelve True (no bloquea el video)."""
     key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not (VISION_ON and key):
         return True
     cuadros = _frames(path)
     if not cuadros:
         return True
-    try:
-        import json
-        from google import genai
-        from google.genai import types
-        client = genai.Client(api_key=key)
-        partes = [types.Part.from_bytes(data=c, mime_type="image/jpeg") for c in cuadros]
-        resp = client.models.generate_content(
-            model=VISION_MODEL,
-            contents=partes + [_VISION_PROMPT],
-            config=types.GenerateContentConfig(temperature=0,
-                                               response_mime_type="application/json"),
-        )
-        txt = (resp.text or "").strip()
-        data = json.loads(txt[txt.find("{"): txt.rfind("}") + 1])
-        if data.get("rechazar"):
-            print(f"    visión RECHAZA {etiqueta}: {data.get('motivo', '')}")
-            return False
-        print(f"    visión OK {etiqueta}")
-        return True
-    except Exception as e:
-        print(f"    (visión no disponible, se acepta {etiqueta}: {str(e)[:120]})")
-        return True
+    import json
+    import time
+    from google import genai
+    from google.genai import types
+    client = genai.Client(api_key=key)
+    partes = [types.Part.from_bytes(data=c, mime_type="image/jpeg") for c in cuadros]
+    prompt = _VISION_PROMPT + (f"\nLa escena pedida era: \"{escena}\"." if escena else "")
+    modelos = [m for m in (VISION_MODEL, VISION_FALLBACK) if m]
+    modelos = list(dict.fromkeys(modelos))          # sin duplicados
+    ultimo = None
+    for mi, modelo in enumerate(modelos):
+        for intento in range(2):                    # 2 intentos por modelo
+            try:
+                resp = client.models.generate_content(
+                    model=modelo,
+                    contents=partes + [prompt],
+                    config=types.GenerateContentConfig(temperature=0,
+                                                       response_mime_type="application/json"),
+                )
+                txt = (resp.text or "").strip()
+                data = json.loads(txt[txt.find("{"): txt.rfind("}") + 1])
+                extra = f" [{modelo}]" if mi > 0 else ""
+                if data.get("rechazar"):
+                    print(f"    visión RECHAZA {etiqueta}{extra}: {data.get('motivo', '')}")
+                    return False
+                print(f"    visión OK {etiqueta}{extra}")
+                return True
+            except Exception as e:
+                ultimo = e
+                if not _transitorio(e):
+                    break                           # error no transitorio: siguiente modelo
+                if intento == 0:
+                    time.sleep(5)
+        if mi + 1 < len(modelos):
+            print(f"    (visión: '{modelo}' saturado, pruebo '{modelos[mi + 1]}')")
+    print(f"    (visión no disponible tras reintentos, se acepta {etiqueta}: {str(ultimo)[:120]})")
+    return True
 
 
 def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
@@ -178,7 +203,7 @@ def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
         except Exception as e:
             print(f"    (descarga falló {etiqueta}: {e})")
             continue
-        if _vision_ok(out_path, etiqueta):
+        if _vision_ok(out_path, etiqueta, keywords):
             print(f"    b-roll ({etiqueta}) para '{keywords}'")
             return out_path
     return None
@@ -216,6 +241,7 @@ def _from_pexels(keywords: str, out_path: str) -> str | None:
             buenos.append((v.get("id"), best))
     if not buenos:
         return None
+    # Al azar entre los TOP_N primeros, y cada uno pasa por la revisión con visión.
     return _probar_candidatos(_orden_aleatorio(buenos), out_path, "Pexels", keywords)
 
 

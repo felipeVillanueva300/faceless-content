@@ -146,6 +146,13 @@ piense "espera, ¿qué?". Usa UNA de estas fórmulas:
 - Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
 PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
 "El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
+EL GANCHO TIENE QUE SER VERDAD para quien lo ve. No afirmes que ya hace, tiene o sufre algo
+que no sabes (mal: "Le estás prestando tu dinero al gobierno y ni te enteraste" a alguien
+que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregunta (bien:
+"Puedes prestarle al gobierno desde $100 y te paga por hacerlo").
+CERO FRASES DE RELLENO: nada que prometa algo que el video no da ("olvídate de los mitos"
+si no hay mitos) ni frases redundantes ("te regresa más dinero de vuelta"). Tampoco
+palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio.
 {datos_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
 - Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").

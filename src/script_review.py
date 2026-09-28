@@ -1,3 +1,25 @@
+"""Segunda pasada sobre el guion: REVISOR DE REDACCIÓN + nombres de marca consistentes.
+
+Por qué: Gemini a veces se come palabras al escribir de corrido. Ej. real (reel de fondo
+de emergencia): "guárdalo donde rendimiento diario y retiro en días hábiles" (faltaba
+"tenga"). La voz lo lee tal cual y se nota.
+
+Qué hace:
+1. normalizar_marcas(): escribe SIEMPRE igual los nombres (CetesDirecto, Mercado Pago...)
+   para que voz y subtítulos no cambien de forma a media frase. Local, sin costo.
+2. revisar(): una llamada barata (flash-lite) que corrige SOLO redacción: oraciones sin
+   verbo, palabras faltantes, concordancia, y que las cards no contradigan a la voz.
+   Luego se VALIDA cada campo: si el revisor cambió cifras, alargó/acortó de más o
+   rompió el formato, se queda el texto original de ESE campo.
+
+Best-effort: si el revisor falla (cuota, red, JSON raro), el guion sigue igual.
+NUNCA tumba el video.
+
+Variables:
+  SCRIPT_REVIEW        "1" (default) activa; "0" apaga.
+  SCRIPT_REVIEW_MODEL  modelo del revisor (default gemini-3.5-flash-lite).
+  MARCAS_FIX           extra "como viene=como se escribe;..." (ej. "Nu Mexico=Nu México").
+"""
 import json
 import os
 import re
@@ -6,6 +28,7 @@ import time
 REVIEW_ON = os.environ.get("SCRIPT_REVIEW", "1").strip().lower() in ("1", "true", "yes")
 REVIEW_MODEL = os.environ.get("SCRIPT_REVIEW_MODEL", "gemini-3.5-flash-lite").strip()
 
+# patrón (sin distinguir mayúsculas) -> forma oficial
 _MARCAS_BASE = [
     (r"\bcetes\s*directo\b", "CetesDirecto"),
     (r"\bmercado\s*pago\b", "Mercado Pago"),
@@ -28,6 +51,7 @@ def normalizar_marcas(texto: str) -> str:
     if not texto:
         return texto
     for patron, oficial in _tabla_marcas():
+        # respeta MAYÚSCULAS: "CETES DIRECTO" -> "CETESDIRECTO" (cards), "Cetes Directo" -> "CetesDirecto"
         texto = re.sub(patron,
                        lambda m, o=oficial: o.upper() if m.group(0).isupper() else o,
                        texto, flags=re.IGNORECASE)
@@ -76,6 +100,8 @@ Te paso un guion en JSON. Corrige SOLO la REDACCIÓN, con cambios MÍNIMOS:
    Mal: "guárdalo donde rendimiento diario y retiro en días hábiles".
    Bien: "guárdalo donde tenga rendimiento diario y retiro en días hábiles".
 2. Concordancia de género y número, y ortografía (acentos).
+   Quita redundancias obvias sin cambiar el sentido (mal: "te regresa más dinero de
+   vuelta"; bien: "te regresa más dinero").
 3. Las oraciones se LEEN EN VOZ ALTA seguidas: hook + beats deben sonar naturales.
 4. "cards" son RÓTULOS en pantalla: NO necesitan verbo. Solo corrígelas si tienen falta
    de ortografía o si CONTRADICEN lo que dice la narración (ej. la voz dice "retiro en
