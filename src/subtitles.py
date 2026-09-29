@@ -91,11 +91,74 @@ def _animated_lines_from_boundaries(boundaries):
     return lines
 
 
+_UNIDADES = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve",
+             "diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete",
+             "dieciocho", "diecinueve", "veinte", "veintiuno", "veintidós", "veintitrés",
+             "veinticuatro", "veinticinco", "veintiséis", "veintisiete", "veintiocho",
+             "veintinueve"]
+_DECENAS = ["", "", "", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta",
+            "noventa"]
+_CENTENAS = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos",
+             "seiscientos", "setecientos", "ochocientos", "novecientos"]
+
+
+def _num_a_palabras(n: int) -> str:
+    """Número entero -> cómo lo dice la voz en español (solo para estimar duración)."""
+    if n == 0:
+        return "cero"
+    if n >= 1_000_000:
+        m, r = divmod(n, 1_000_000)
+        return ("un millón" if m == 1 else _num_a_palabras(m) + " millones") + \
+               (" " + _num_a_palabras(r) if r else "")
+    if n >= 1000:
+        m, r = divmod(n, 1000)
+        return ("mil" if m == 1 else _num_a_palabras(m) + " mil") + \
+               (" " + _num_a_palabras(r) if r else "")
+    if n == 100:
+        return "cien"
+    c, r = divmod(n, 100)
+    partes = [_CENTENAS[c]] if c else []
+    if r < 30:
+        if r:
+            partes.append(_UNIDADES[r])
+    else:
+        d, u = divmod(r, 10)
+        partes.append(_DECENAS[d] + (" y " + _UNIDADES[u] if u else ""))
+    return " ".join(partes)
+
+
+def _cifra_hablada(token: str) -> str:
+    """'$8,000' -> 'ocho mil pesos'; '6.15%' -> 'seis punto quince por ciento';
+    '91,' -> 'noventa y uno'. Si no hay cifra, devuelve el token tal cual."""
+    import re
+    if not re.search(r"\d", token):
+        return token
+    t = token.strip("¿?¡!.,;:()\"'")
+    extra = []
+    if t.startswith("$"):
+        extra.append("pesos")
+    if t.endswith("%"):
+        extra.append("por ciento")
+    t = t.strip("$%")
+    ent, _, dec = t.replace(",", "").partition(".")
+    try:
+        dicho = _num_a_palabras(int(ent)) if ent else ""
+        if dec.isdigit():
+            dicho += " punto " + _num_a_palabras(int(dec))
+    except ValueError:
+        return token
+    return " ".join([dicho] + extra)
+
+
 def _silabas(palabra: str) -> int:
     """Cuenta sílabas aprox. en español: grupos de vocales (diptongos = 1).
     Es una buena aproximación de cuánto DURA una palabra al hablarse, mucho
-    mejor que contar letras (que infla palabras con muchas consonantes)."""
+    mejor que contar letras (que infla palabras con muchas consonantes).
+    Las CIFRAS se cuentan como se DICEN: "364" = "trescientos sesenta y cuatro"
+    (antes valían 0 y el subtítulo "91, 182 O 364" duraba 0.3 s contra ~4 s de voz)."""
     import re
+    if re.search(r"\d", palabra):
+        return sum(_silabas(w) for w in _cifra_hablada(palabra).split()) or 1
     p = palabra.lower()
     p = re.sub(r"[^a-záéíóúüñ]", "", p)
     if not p:
