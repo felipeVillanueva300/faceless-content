@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan, script_review
+from src import content_plan, script_review, fichas
 
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
@@ -55,6 +55,8 @@ def generate_script(niche: str = "tecnología y finanzas",
                  "No tienes datos vigentes de tasas ni inflación: NO pongas tasas de CETES, "
                  "SOFIPOs ni inflación como hechos actuales; di 'revisa la tasa de hoy en "
                  "CetesDirecto' o usa un ejemplo marcado como ejemplo.\n")
+
+    fichas_txt = fichas.texto_prompt()
 
     prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
 de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
@@ -153,7 +155,7 @@ que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregun
 CERO FRASES DE RELLENO: nada que prometa algo que el video no da ("olvídate de los mitos"
 si no hay mitos) ni frases redundantes ("te regresa más dinero de vuelta"). Tampoco
 palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio.
-{datos_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
+{datos_txt}{fichas_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
 - Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
@@ -200,7 +202,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}
   ],
-  "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador de IG/TikTok/YouTube sobre este tema (ej: 'Cómo usar meses sin intereses sin endeudarte'); luego 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
+  "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador de IG/TikTok/YouTube sobre este tema (ej: 'Cómo usar meses sin intereses sin endeudarte'); luego 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), NO pongas links (los links oficiales se agregan solos), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
   "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",
@@ -245,6 +247,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                 )
                 data = _extract_json(resp.text)
                 data = script_review.revisar(data, client)
+                data = fichas.agregar_links(data)
                 data["categoria"] = plan["categoria_id"]
                 data["formato"] = plan["formato_nombre"]
                 data["publicar_borrador"] = plan.get("publicar_borrador", False)

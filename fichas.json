@@ -1,0 +1,67 @@
+{
+  "_como_usar": "Datos VERIFICADOS de instituciones que salen seguido en los videos. El guion los usa como verdad y el caption agrega el link oficial cuando el video menciona la institución. Para agregar una: copia un bloque, llena claves (cómo se escribe/dice), link, datos, fuente y la fecha en que la verificaste. Revisa cada ficha cada ~3 meses.",
+  "fichas": {
+    "cetesdirecto": {
+      "nombre": "CetesDirecto",
+      "claves": ["cetesdirecto", "cetes directo", "cetes", "bonddia"],
+      "link": "https://www.cetesdirecto.com",
+      "datos": [
+        "Plataforma oficial del Gobierno de México para invertir en CETES y otros valores gubernamentales, sin intermediarios.",
+        "Se invierte desde $100 y no cobra comisiones; abrir la cuenta no tiene costo.",
+        "Requisitos: ser mayor de 18 años, CURP, INE, RFC y la CLABE (o número de tarjeta de débito) de una cuenta bancaria a tu nombre, correo y celular.",
+        "Registro por la página o la app oficial en unos minutos; la cuenta solo se puede abrir de 9:00 a 18:00 h.",
+        "Durante el registro te pide designar beneficiarios.",
+        "BONDDIA es el fondo con disponibilidad diaria dentro de CetesDirecto.",
+        "Tiene 'Ahorro recurrente' para programar inversiones automáticas."
+      ],
+      "fuente": "Preguntas frecuentes oficiales de cetesdirecto.com",
+      "verificado": "2026-09-29"
+    },
+    "nu": {
+      "nombre": "Nu México",
+      "claves": ["nu", "nubank", "cajitas", "cajita"],
+      "link": "https://nu.com.mx",
+      "datos": [
+        "Nu México opera como BANCO desde el 6 de agosto de 2026 (antes era SOFIPO: NO digas que es SOFIPO).",
+        "Sus depósitos están protegidos por el IPAB hasta 400,000 UDIS por persona (unos $3.5 millones de pesos).",
+        "Cajitas 24/7: rendimiento diario y dinero disponible cuando quieras; siguen funcionando igual.",
+        "Las Cajitas congeladas nuevas ahora son depósito a plazo y se les retiene ISR sobre los rendimientos."
+      ],
+      "fuente": "Blog oficial de Nu México (blog.nu.com.mx)",
+      "verificado": "2026-09-29"
+    },
+    "mercadopago": {
+      "nombre": "Mercado Pago",
+      "claves": ["mercado pago", "mercadopago"],
+      "link": "https://www.mercadopago.com.mx",
+      "datos": [
+        "Mercado Pago opera como Institución de Fondos de Pago Electrónico (IFPE), NO es banco: pidió licencia bancaria y a septiembre de 2026 no está aprobada.",
+        "El rendimiento de su cuenta viene de invertir tu saldo en un fondo de deuda; NO es un depósito bancario y NO tiene el seguro del IPAB."
+      ],
+      "fuente": "bancario.com.mx (sept 2026) — confirmar en mercadopago.com.mx antes de dar cifras",
+      "verificado": "2026-09-29"
+    },
+    "condusef": {
+      "nombre": "CONDUSEF",
+      "claves": ["condusef", "sipres", "buro de entidades financieras"],
+      "link": "https://webapps.condusef.gob.mx/SIPRES/jsp/pub/index.jsp",
+      "datos": [
+        "Para revisar si una empresa financiera está autorizada: el SIPRES de CONDUSEF (buscador gratuito en su página).",
+        "Para ver quejas, multas y cómo califican a una institución: el Buró de Entidades Financieras (buro.gob.mx)."
+      ],
+      "fuente": "CONDUSEF (gob.mx/condusef, webapps.condusef.gob.mx/SIPRES)",
+      "verificado": "2026-09-29"
+    },
+    "ipab": {
+      "nombre": "IPAB",
+      "claves": ["ipab", "seguro de deposito", "seguro de depósito"],
+      "link": "https://www.gob.mx/ipab",
+      "datos": [
+        "El IPAB protege los depósitos en BANCOS hasta 400,000 UDIS por persona y por banco (unos $3.5 millones de pesos).",
+        "No cubre SOFIPOs (esas tienen PROSOFIPO, hasta 25,000 UDIS) ni fondos de inversión."
+      ],
+      "fuente": "IPAB / Blog oficial de Nu México",
+      "verificado": "2026-09-29"
+    }
+  }
+}
