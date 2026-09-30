@@ -71,6 +71,28 @@ def recent_pilares(dias: int = 5):
     return out
 
 
+def recent_conceptos(dias: int = 120):
+    """Conceptos ya explicados en los últimos 'dias' días, para NO repetirlos aunque
+    cambien las palabras. Usa el campo 'concepto' (nuevo); en registros viejos cae al
+    título o al slug del tema ('metodo-avalancha-deudas' -> 'metodo avalancha deudas')."""
+    recs = _data().get("records", []) or []
+    hoy = datetime.date.today()
+    out = []
+    for r in recs:
+        f = r.get("fecha")
+        if f:
+            try:
+                if (hoy - datetime.date.fromisoformat(f)).days > dias:
+                    continue
+            except Exception:
+                pass
+        c = r.get("concepto") or r.get("titulo") or (r.get("topic") or "").replace("-", " ")
+        c = " ".join(c.split())
+        if c and c not in out:
+            out.append(c)
+    return out
+
+
 def recent_formatos(n: int = 2):
     """Nombres de los últimos n formatos usados (para no repetir seguido)."""
     recs = _data().get("records", []) or []
@@ -78,7 +100,8 @@ def recent_formatos(n: int = 2):
     return fmts[-n:]
 
 
-def add(topic: str, categoria=None, formato=None, keep: int = 90):
+def add(topic: str, categoria=None, formato=None, keep: int = 200,
+        concepto=None, titulo=None):
     """Agrega un registro al historial (conserva los últimos 'keep').
     Mantiene la lista 'topics' (compatibilidad) y una lista 'records' con
     fecha + categoría + formato para el enfriamiento y la rotación."""
@@ -103,6 +126,8 @@ def add(topic: str, categoria=None, formato=None, keep: int = 90):
             "topic": topic,
             "categoria": categoria,
             "formato": formato,
+            "concepto": (concepto or "").strip() or None,
+            "titulo": (titulo or "").strip() or None,
         })
         recs = recs[-keep:]
 

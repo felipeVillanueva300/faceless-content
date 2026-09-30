@@ -46,7 +46,13 @@ def generate_script(niche: str = "tecnología y finanzas",
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     today = datetime.date.today()
     plan = content_plan.plan_del_dia(today, offset=7)   # video usa offset 7
-    evitar = content_plan.avoid_text(avoid)
+    conceptos = []
+    try:
+        from src import history
+        conceptos = history.recent_conceptos(120)
+    except Exception:
+        pass
+    evitar = content_plan.avoid_text(avoid, conceptos=conceptos)
     cal = content_plan.calendario_linea(plan)
     from src import datos_mx
     datos = datos_mx.datos_actuales()
@@ -178,6 +184,8 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 - REDACCIÓN: cada oración COMPLETA y con VERBO CONJUGADO; que no falte ninguna palabra.
   Mal: "guárdalo donde rendimiento diario". Bien: "guárdalo donde tenga rendimiento diario".
   Escribe los nombres SIEMPRE igual (CetesDirecto, junto; Mercado Pago; Nu).
+- Cantidades: escribe "$4,000" (la voz ya dice "pesos"). PROHIBIDO "$4,000 pesos" o
+  "$4,000 MXN": se oye "cuatro mil pesos pesos".
 - Leídos seguidos (hook + bloques), debe sonar natural, como alguien hablando de corrido.
 - Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Si
   el tema es un método, una comparación o un paso a paso, usa MÍNIMO ~120 palabras: la
@@ -204,6 +212,7 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
   ],
   "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador de IG/TikTok/YouTube sobre este tema (ej: 'Cómo usar meses sin intereses sin endeudarte'); luego 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), NO pongas links (los links oficiales se agregan solos), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
   "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
+  "concepto": "el concepto financiero CENTRAL del video en 1-4 palabras, en su forma más común (ej: 'método avalancha', 'fondo de emergencia', 'CAT de una tarjeta'). Sirve para no repetirlo aunque cambien las palabras",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",
   "cards": [

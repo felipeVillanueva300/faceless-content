@@ -20,6 +20,8 @@ def _pronunciar(text: str) -> str:
                 tabla[k.strip()] = v.strip()
     for sigla, dicho in tabla.items():
         text = re.sub(rf"\b{re.escape(sigla)}\b", dicho, text)
+    text = re.sub(r"(\$\s?\d[\d,\.]*)\s*(?:pesos|mxn|m\.n\.)(?![a-záéíóú])", r"\1", text,
+                  flags=re.IGNORECASE)
     return text
 
 

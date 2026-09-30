@@ -309,7 +309,8 @@ def generar_borrador():
     uploader.adjuntar(os.environ["GITHUB_REPOSITORY"], tag, os.path.join(BUILD, "script.json"))
 
     if not rehacer:
-        history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
+        history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"),
+                    concepto=data.get("concepto"), titulo=title)
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 

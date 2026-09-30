@@ -14,7 +14,9 @@ PILARES = [
     {"id": "ahorro", "tipo": "fin", "nombre": "Ahorro",
      "angulos": ["fondo de emergencia", "retos de ahorro", "apartados/cajitas", "ahorro por metas"]},
     {"id": "deudas", "tipo": "fin", "nombre": "Manejo de deudas",
-     "angulos": ["bola de nieve vs avalancha", "por qué no pagar el mínimo", "consolidar deudas"]},
+     "angulos": ["bola de nieve vs avalancha", "por qué no pagar el mínimo", "consolidar deudas",
+                 "negociar una quita", "cobranza abusiva y cómo reportarla (REDECO)",
+                 "préstamos gota a gota y apps montadeudas", "reestructurar una deuda"]},
     {"id": "inversion", "tipo": "fin", "nombre": "Inversión para principiantes",
      "angulos": ["CETES/CetesDirecto", "SOFIPOs", "fondos", "rendimiento real vs inflación"]},
     {"id": "bancos", "tipo": "fin", "nombre": "Bancos y comisiones",
@@ -33,6 +35,24 @@ PILARES = [
      "angulos": ["planes de celular", "CFE/luz", "internet", "renegociar servicios"]},
     {"id": "mentalidad", "tipo": "fin", "nombre": "Mentalidad y hábitos",
      "angulos": ["gastos hormiga", "FOMO financiero", "metas realistas"]},
+    {"id": "trabajo", "tipo": "fin", "nombre": "Tu dinero y tu trabajo",
+     "angulos": ["calcular tu aguinaldo", "finiquito vs liquidación", "prima vacacional",
+                 "leer tu recibo de nómina", "reparto de utilidades (PTU)", "horas extra"]},
+    {"id": "vivienda", "tipo": "fin", "nombre": "Vivienda",
+     "angulos": ["rentar vs comprar", "crédito Infonavit paso a paso", "depósito de renta",
+                 "predial y descuentos por pago anticipado", "gastos ocultos al comprar casa"]},
+    {"id": "auto", "tipo": "fin", "nombre": "Auto y transporte",
+     "angulos": ["cuánto cuesta de verdad tener coche", "seguro de auto: qué cubre",
+                 "crédito automotriz y CAT", "gasolina y mantenimiento que ahorra", "auto usado sin fraude"]},
+    {"id": "seguros", "tipo": "fin", "nombre": "Seguros y salud financiera",
+     "angulos": ["seguro de gastos médicos vs IMSS", "seguro de vida: cuándo sí", "qué es un deducible",
+                 "microseguros baratos", "qué hacer si te niegan un reembolso"]},
+    {"id": "familia", "tipo": "fin", "nombre": "Dinero en familia",
+     "angulos": ["hablar de dinero en pareja", "enseñar a tus hijos a ahorrar", "tandas: riesgos",
+                 "prestar dinero a familiares", "remesas sin comisiones altas", "gastos de la escuela"]},
+    {"id": "consumidor", "tipo": "fin", "nombre": "Tus derechos como consumidor",
+     "angulos": ["PROFECO: cómo poner una queja", "garantías y devoluciones", "letras chiquitas de un contrato",
+                 "cancelar un servicio que no te dejan cancelar", "precios engañosos"]},
     # --- Pilares TECH (garantizamos que salgan seguido) ---
     {"id": "fraudes", "tipo": "tech", "nombre": "Fraudes y seguridad digital",
      "angulos": ["fraude por WhatsApp/SMS", "links y apps falsas", "activar 2FA",
@@ -43,6 +63,15 @@ PILARES = [
     {"id": "tecnologia", "tipo": "tech", "nombre": "Tecnología para tu dinero",
      "angulos": ["IA para organizar tu dinero", "apps de presupuesto", "automatizar pagos",
                  "cancelar suscripciones desde el cel", "hojas de cálculo simples"]},
+    {"id": "privacidad", "tipo": "tech", "nombre": "Privacidad y cuentas seguras",
+     "angulos": ["gestor de contraseñas gratis", "qué hacer si te hackean WhatsApp",
+                 "SIM swapping y cómo protegerte", "tus datos en apps de préstamo", "respaldo del celular"]},
+    {"id": "compras_linea", "tipo": "tech", "nombre": "Compras en línea",
+     "angulos": ["Temu/Shein: impuestos y aduana", "Mercado Libre: compra protegida", "tarjeta digital para comprar",
+                 "detectar tiendas falsas", "devoluciones en línea"]},
+    {"id": "ia", "tipo": "tech", "nombre": "IA para tu dinero",
+     "angulos": ["usar IA para armar tu presupuesto", "IA para comparar precios", "prompts útiles para finanzas",
+                 "estafas hechas con IA (voz clonada)", "qué NO compartir con una IA"]},
     {"id": "digital", "tipo": "tech", "nombre": "Dinero digital y pagos",
      "angulos": ["SPEI y CoDi sin comisión", "qué es tu CLABE", "transferencias seguras",
                  "domiciliación (y cómo cancelarla)", "e.firma / SAT en línea", "apps de gobierno"]},
@@ -282,6 +311,16 @@ def plan_del_dia(today=None, offset=0):
 
     cat = disponibles[(today.toordinal() + offset) % len(disponibles)]
 
+    usados = []
+    try:
+        from src import history
+        usados = history.recent_conceptos(120)
+    except Exception:
+        pass
+    angulos_frescos = [a for a in cat["angulos"] if not _ya_usado(a, usados)]
+    angulos_txt = ", ".join(angulos_frescos) if angulos_frescos else (
+        "los ángulos típicos ya se usaron: propone uno NUEVO y concreto de este pilar")
+
     fmts = [f for f in FORMATOS if f["nombre"] not in recientes_formatos and f["id"] != "mensaje"] or FORMATOS
     fmt = fmts[today.toordinal() % len(fmts)]
 
@@ -298,7 +337,7 @@ def plan_del_dia(today=None, offset=0):
     return {
         "categoria_id": cat["id"],
         "categoria_nombre": cat["nombre"],
-        "angulos": ", ".join(cat["angulos"]),
+        "angulos": angulos_txt,
         "formato_nombre": fmt["nombre"],
         "formato_video": fmt["video"],
         "formato_imagen": fmt["imagen"],
@@ -381,10 +420,38 @@ def pilar_del_dia(today=None, offset=0):
     return plan_del_dia(today, offset)["categoria_nombre"]
 
 
-def avoid_text(recientes, limite=40):
-    """Bloque de texto para el prompt con los temas a NO repetir."""
-    if not recientes:
-        return ""
-    lista = "; ".join(recientes[-limite:])
-    return ("\nTEMAS YA PUBLICADOS RECIENTEMENTE (está PROHIBIDO repetirlos; "
-            f"elige un ángulo o subtema claramente distinto):\n{lista}\n")
+_VACIAS = {"de", "la", "el", "los", "las", "y", "en", "tu", "tus", "para", "con", "por", "que",
+           "como", "vs", "del", "al", "un", "una", "sin", "mas", "metodo", "dinero", "pesos",
+           "cuenta", "cuando", "tips", "truco", "error", "mito", "guia", "paso", "sobre", "hacer",
+           # palabras de PILAR (demasiado generales para bloquear un ángulo):
+           "ahorro", "ahorrar", "deuda", "deudas", "banco", "bancos", "tarjeta", "credito",
+           "invertir", "inversion", "pagar", "gastos", "interes", "intereses", "mexico", "apps"}
+
+
+def _palabras(t: str):
+    import re
+    import unicodedata
+    t = unicodedata.normalize("NFD", (t or "").lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return {w for w in re.findall(r"[a-z0-9]+", t) if len(w) >= 5 and w not in _VACIAS}
+
+
+def _ya_usado(angulo: str, usados) -> bool:
+    """True si el ángulo comparte una palabra clave con un concepto reciente
+    ('bola de nieve vs avalancha' vs 'metodo avalancha deudas' -> 'avalancha')."""
+    pa = _palabras(angulo)
+    return any(pa & _palabras(u) for u in usados)
+
+
+def avoid_text(recientes, limite=60, conceptos=None):
+    """Bloque de texto para el prompt con los temas y CONCEPTOS a NO repetir."""
+    out = ""
+    if recientes:
+        lista = "; ".join(recientes[-limite:])
+        out += ("\nTEMAS YA PUBLICADOS RECIENTEMENTE (está PROHIBIDO repetirlos; "
+                f"elige un ángulo o subtema claramente distinto):\n{lista}\n")
+    if conceptos:
+        out += ("CONCEPTOS YA EXPLICADOS (PROHIBIDO volver a explicarlos aunque cambies las palabras, "
+                "el ejemplo o el formato; ej.: si ya salió 'método avalancha', no hagas 'paga primero "
+                f"la deuda más cara'):\n{'; '.join(conceptos[-80:])}\n")
+    return out

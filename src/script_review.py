@@ -47,9 +47,14 @@ def _tabla_marcas():
     return tabla
 
 
+_PESOS_DOBLE = re.compile(r"(\$\s?\d[\d,\.]*)\s*(?:pesos|mxn|m\.n\.)(?![a-záéíóú])",
+                          re.IGNORECASE)
+
+
 def normalizar_marcas(texto: str) -> str:
     if not texto:
         return texto
+    texto = _PESOS_DOBLE.sub(r"\1", texto)
     for patron, oficial in _tabla_marcas():
         # respeta MAYÚSCULAS: "CETES DIRECTO" -> "CETESDIRECTO" (cards), "Cetes Directo" -> "CetesDirecto"
         texto = re.sub(patron,

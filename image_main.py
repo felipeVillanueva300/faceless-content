@@ -90,7 +90,8 @@ def generar_borrador():
     print("    URL:", url)
     print("    ID :", tag)
 
-    history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"))
+    history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"),
+                concepto=data.get("concepto"), titulo=title)
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
