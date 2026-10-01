@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan, script_review, fichas
+from src import content_plan, script_review, fichas, caption
 
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
@@ -210,8 +210,8 @@ Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}
   ],
-  "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador de IG/TikTok/YouTube sobre este tema (ej: 'Cómo usar meses sin intereses sin endeudarte'); luego 2-3 frases útiles, luego un llamado claro a SEGUIR + guardar (ej: 'Sígueme @dinerosimplemx para un truco diario y guarda este para no olvidarlo.'), NO pongas links (los links oficiales se agregan solos), y OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México (nunca los omitas), mezclando 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
-  "title": "título corto de 3-7 palabras, COMPLETO y sin ambigüedad — no omitas palabras que cambien el sentido (mal: 'Truco del SAT para médicos'; bien: 'Truco del SAT para gastos médicos')",
+  "caption": "PRIMERA línea = la frase que la gente escribiría en el buscador sobre este tema, con OTRAS palabras que el título (ej. título '¿SOFIPO o banco? Dónde está seguro tu dinero' -> primera línea 'Qué seguro protege tus ahorros en México'). Luego 2-3 frases con el dato clave y QUÉ hacer (no resumas todo el video). Luego UNA pregunta corta y concreta para que la gente comente (ej: '¿Tú dónde tienes tu ahorro hoy?'). PROHIBIDO: 'Sígueme', 'guarda este video', '@dinerosimplemx', links y frases de marca ('que no te vean la cara'): el llamado a seguir y los links se agregan solos. OBLIGATORIO cerrar con una línea aparte de EXACTAMENTE 5 hashtags en español de México, 2 generales y 3 del tema. Ej: '#finanzaspersonales #dineromexico #ahorro #tarjetadecredito #educacionfinanciera'",
+  "title": "título de 35-60 caracteres que dé GANAS de verlo y que la gente buscaría: curiosidad o beneficio concreto + la palabra clave del tema (bien: '¿SOFIPO o banco? Dónde está seguro tu dinero', 'El error que te cuesta $4,000 en intereses'; mal: 'SOFIPO vs Banco vs CETES Parte 4', 'Ahorro quincenal'). Sin 'Parte N' (se agrega solo). COMPLETO y sin ambigüedad",
   "concepto": "el concepto financiero CENTRAL del video en 1-4 palabras, en su forma más común (ej: 'método avalancha', 'fondo de emergencia', 'CAT de una tarjeta'). Sirve para no repetirlo aunque cambien las palabras",
   "topic": "identificador corto del tema en minúsculas con guiones (ej: 'comisiones-cajero'); específico al ángulo de HOY",
   "broll_keywords": "2-4 palabras EN INGLÉS de respaldo (escena de finanzas/tecnología del tema). Mismas PROHIBICIONES: nada genérico sin relación con dinero; nada de billetes/monedas de otro país.",
@@ -256,6 +256,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                 )
                 data = _extract_json(resp.text)
                 data = script_review.revisar(data, client)
+                data = caption.finalizar(data, plan)
                 data = fichas.agregar_links(data)
                 data["categoria"] = plan["categoria_id"]
                 data["formato"] = plan["formato_nombre"]

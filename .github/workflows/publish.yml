@@ -37,6 +37,10 @@ on:
         description: "SERIE: de qué trata la SIGUIENTE parte (para adelantarla bien). Vacío = no lo menciona; si parte = total, cierra la serie."
         type: string
         default: ""
+      serie_nombre:
+        description: "SERIE: nombre corto para el título y el #hashtag (ej: 'Invertir desde cero')"
+        type: string
+        default: ""
       serie_formato:
         description: "SERIE: formato opcional (howto, tip, dato, error, mito, comparativa). Vacío = paso a paso."
         type: string
@@ -94,6 +98,7 @@ jobs:
           SERIE_ANTERIOR: ${{ inputs.serie_anterior }}
           SERIE_FORMATO: ${{ inputs.serie_formato }}
           SERIE_SIGUIENTE: ${{ inputs.serie_siguiente }}
+          SERIE_NOMBRE: ${{ inputs.serie_nombre }}
           PUBLISH: "false"
           GRAPH_VERSION: v23.0
           NICHE: "tecnología y finanzas"

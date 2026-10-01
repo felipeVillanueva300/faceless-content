@@ -247,6 +247,7 @@ def serie_override():
         "anterior": os.environ.get("SERIE_ANTERIOR", "").strip(),
         "formato_id": os.environ.get("SERIE_FORMATO", "").strip().lower(),
         "siguiente": os.environ.get("SERIE_SIGUIENTE", "").strip(),
+        "nombre": os.environ.get("SERIE_NOMBRE", "").strip(),
     }
 
 
@@ -290,6 +291,7 @@ def plan_del_dia(today=None, offset=0):
             "serie_anterior": serie["anterior"],
             "serie_total": serie["total"],
             "serie_siguiente": serie["siguiente"],
+            "serie_nombre": serie["nombre"] or _nombre_corto(serie["tema"]),
         }
 
     recientes_pilares, recientes_formatos, recientes_tech = [], [], []
@@ -351,6 +353,20 @@ def plan_del_dia(today=None, offset=0):
     }
 
 
+def _nombre_corto(tema: str) -> str:
+    """Nombre de respaldo si serie.json no trae "nombre": el tema recortado a ~28 letras."""
+    t = (tema or "").strip()
+    for quita in ("cómo ", "como "):
+        if t.lower().startswith(quita):
+            t = t[len(quita):]
+    out = ""
+    for w in t.split():
+        if len(out) + len(w) + 1 > 28:
+            break
+        out = (out + " " + w).strip()
+    return (out[:1].upper() + out[1:]) if out else "Serie"
+
+
 def _cierre_serie(plan) -> str:
     """Instrucción para el FINAL de un capítulo: adelantar EXACTAMENTE la siguiente parte,
     o cerrar la serie si es la última. Nunca dejar que Gemini adivine el siguiente tema."""
@@ -391,7 +407,8 @@ def calendario_linea(plan) -> str:
             etiqueta = plan.get("serie_etiqueta") or f"Parte {plan['serie_parte']}"
             linea = (f"SERIE (hoy IGNORA el pilar normal): esto es la {etiqueta} de una serie "
                      f"sobre \"{plan['serie_tema']}\". Debe sentirse CONTINUACIÓN, no un video suelto: "
-                     f"menciona al inicio que es la {etiqueta}.\n"
+                     f"di que es la {etiqueta} en el PRIMER bloque, DESPUÉS del gancho (el hook "
+                     f"NUNCA empieza con 'Parte N': los primeros segundos son para enganchar).\n"
                      f"{_cierre_serie(plan)}"
                      f"La mención de la parte va en MÁXIMO 6 palabras, pegada al valor y con el número "
                      f"CORRECTO ({etiqueta}). PROHIBIDO el preámbulo de serie ('conceptos que "

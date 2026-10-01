@@ -59,18 +59,25 @@ def agregar_links(data: dict, fichas=None) -> dict:
                      if isinstance(c, dict))
     texto = " ".join([data.get("hook", ""), data.get("script", ""), beats, cards])
     caption = data.get("caption") or ""
+    t = _norm(texto)
+
+    def _veces(f):
+        claves = [f.get("nombre", "")] + list(f.get("claves") or [])
+        return sum(t.count(_norm(c)) for c in claves if c)
+
+    candidatas = sorted(mencionadas(texto, fichas), key=_veces, reverse=True)[:2]
     lineas = []
-    for f in mencionadas(texto, fichas):
+    for f in candidatas:
         link = f.get("link", "")
         if link and link not in caption:
             lineas.append(f"🔗 {f.get('nombre', '')} (oficial): {link}")
     if not lineas:
         return data
-    bloque = "\n".join(lineas[:3])
+    bloque = "\n".join(lineas)
     partes = caption.rstrip().rsplit("\n", 1)
     if len(partes) == 2 and partes[1].strip().startswith("#"):
         data["caption"] = f"{partes[0].rstrip()}\n\n{bloque}\n\n{partes[1].strip()}"
     else:
         data["caption"] = f"{caption.rstrip()}\n\n{bloque}"
-    print(f"    links oficiales agregados al caption: {len(lineas[:3])}")
+    print(f"    links oficiales agregados al caption: {len(lineas)}")
     return data

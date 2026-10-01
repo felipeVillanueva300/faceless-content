@@ -9,33 +9,33 @@ on:
         description: "ID a PUBLICAR (para aprobar un borrador). Vacío = generar el siguiente episodio."
         type: string
         default: ""
-
+ 
 permissions:
   contents: write
-
+ 
 jobs:
   miniserie:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+ 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+ 
       - name: Instalar ffmpeg y fuentes
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
-
+ 
       - name: Instalar dependencias
         run: pip install -r requirements.txt
-
+ 
       - name: Preparar siguiente episodio de la cola
         run: python serie_queue.py peek >> "$GITHUB_ENV"
-
+ 
       - name: Aviso si la cola está vacía
         if: env.HAY_EPISODIO != '1' && inputs.publicar_id == ''
         run: echo "No hay episodios pendientes en serie.json. No se genera nada hoy."
-
+ 
       - name: Generar borrador de la miniserie (o publicar por ID)
         if: env.HAY_EPISODIO == '1' || inputs.publicar_id != ''
         uses: nick-fields/retry@v3
@@ -84,7 +84,8 @@ jobs:
           SERIE_ANTERIOR: ${{ env.SERIE_ANTERIOR }}
           SERIE_FORMATO: ${{ env.SERIE_FORMATO }}
           SERIE_SIGUIENTE: ${{ env.SERIE_SIGUIENTE }}
-
+          SERIE_NOMBRE: ${{ env.SERIE_NOMBRE }}
+ 
       - name: Avanzar la cola (solo si se generó un episodio nuevo)
         if: success() && env.HAY_EPISODIO == '1' && inputs.publicar_id == ''
         run: |

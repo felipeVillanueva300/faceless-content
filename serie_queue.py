@@ -51,6 +51,7 @@ def peek():
         "SERIE_ANTERIOR": ep.get("anterior", ""),
         "SERIE_FORMATO": ep.get("formato", ""),
         "SERIE_SIGUIENTE": siguiente,
+        "SERIE_NOMBRE": data.get("nombre", ""),
     }
     for k, v in lineas.items():
         v = " ".join(str(v).splitlines())   # asegura una sola línea
