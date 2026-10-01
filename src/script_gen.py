@@ -166,6 +166,8 @@ palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
   Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
+- NUNCA recomiendes trucos para pagar menos impuestos de forma irregular (dividir compras,
+  declarar menos, facturas de otro, no reportar ingresos). Solo deducciones y beneficios legales.
 - Consecuencias legales o fiscales (SAT, bloqueos, multas, buró): solo si una fuente oficial
   lo dice (SAT, PRODECON, CONDUSEF, Banxico). Muchos "te va a caer el SAT" son rumores
   virales: si el tema viene de ahí, di qué es mito y qué es real, no lo amplifiques.

@@ -3,7 +3,12 @@
   "fichas": {
     "cetesdirecto": {
       "nombre": "CetesDirecto",
-      "claves": ["cetesdirecto", "cetes directo", "cetes", "bonddia"],
+      "claves": [
+        "cetesdirecto",
+        "cetes directo",
+        "cetes",
+        "bonddia"
+      ],
       "link": "https://www.cetesdirecto.com",
       "datos": [
         "Plataforma oficial del Gobierno de México para invertir en CETES y otros valores gubernamentales, sin intermediarios.",
@@ -19,7 +24,12 @@
     },
     "nu": {
       "nombre": "Nu México",
-      "claves": ["nu", "nubank", "cajitas", "cajita"],
+      "claves": [
+        "nu",
+        "nubank",
+        "cajitas",
+        "cajita"
+      ],
       "link": "https://nu.com.mx",
       "datos": [
         "Nu México opera como BANCO desde el 6 de agosto de 2026 (antes era SOFIPO: NO digas que es SOFIPO).",
@@ -32,7 +42,10 @@
     },
     "mercadopago": {
       "nombre": "Mercado Pago",
-      "claves": ["mercado pago", "mercadopago"],
+      "claves": [
+        "mercado pago",
+        "mercadopago"
+      ],
       "link": "https://www.mercadopago.com.mx",
       "datos": [
         "Mercado Pago opera como Institución de Fondos de Pago Electrónico (IFPE), NO es banco: pidió licencia bancaria y a septiembre de 2026 no está aprobada.",
@@ -43,7 +56,11 @@
     },
     "condusef": {
       "nombre": "CONDUSEF",
-      "claves": ["condusef", "sipres", "buro de entidades financieras"],
+      "claves": [
+        "condusef",
+        "sipres",
+        "buro de entidades financieras"
+      ],
       "link": "https://webapps.condusef.gob.mx/SIPRES/jsp/pub/index.jsp",
       "datos": [
         "Para revisar si una empresa financiera está autorizada: el SIPRES de CONDUSEF (buscador gratuito en su página).",
@@ -54,7 +71,11 @@
     },
     "ipab": {
       "nombre": "IPAB",
-      "claves": ["ipab", "seguro de deposito", "seguro de depósito"],
+      "claves": [
+        "ipab",
+        "seguro de deposito",
+        "seguro de depósito"
+      ],
       "link": "https://www.gob.mx/ipab",
       "datos": [
         "El IPAB protege los depósitos en BANCOS hasta 400,000 UDIS por persona y por banco (unos $3.5 millones de pesos).",
@@ -62,6 +83,28 @@
       ],
       "fuente": "IPAB / Blog oficial de Nu México",
       "verificado": "2026-09-29"
+    },
+    "aduana": {
+      "nombre": "Aduana (paquetería internacional)",
+      "claves": [
+        "temu",
+        "shein",
+        "aliexpress",
+        "aduana",
+        "paqueteria",
+        "paquetería",
+        "importacion",
+        "importación"
+      ],
+      "link": "https://www.anam.gob.mx",
+      "datos": [
+        "Desde el 15 de agosto de 2025 ya NO hay monto libre de impuestos para compras por paquetería (se eliminó la franquicia de 50 dólares): se paga desde el primer dólar.",
+        "Compras de China y otros países sin tratado (Temu, Shein, AliExpress): 33.5%. De EE.UU. o Canadá: entre 17% y 19%.",
+        "Normalmente la plataforma cobra el impuesto al pagar; si no lo hizo, la paquetería o la aduana te lo cobra al entregar.",
+        "PROHIBIDO recomendar dividir compras o declarar menos para no pagar impuestos: ya no existe el límite y además es evasión."
+      ],
+      "fuente": "Xataka México / Merca2.0 / reforma vigente desde 15-ago-2025 — confirmar en anam.gob.mx o sat.gob.mx",
+      "verificado": "2026-10-01"
     }
   }
 }
