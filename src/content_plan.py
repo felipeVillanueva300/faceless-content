@@ -354,16 +354,22 @@ def plan_del_dia(today=None, offset=0):
 
 
 def _nombre_corto(tema: str) -> str:
-    """Nombre de respaldo si serie.json no trae "nombre": el tema recortado a ~28 letras."""
+    """Nombre de respaldo si serie.json no trae "nombre": el tema sin "cómo" ni "en México",
+    hasta ~36 letras SIN cortar a media frase (antes salía "Empezar a invertir desde")."""
+    import re
     t = (tema or "").strip()
     for quita in ("cómo ", "como "):
         if t.lower().startswith(quita):
             t = t[len(quita):]
+    t = re.sub(r"\s+(en|de)\s+m[eé]xico\s*$", "", t, flags=re.IGNORECASE).strip()
     out = ""
     for w in t.split():
-        if len(out) + len(w) + 1 > 28:
+        if len(out) + len(w) + 1 > 36:
             break
         out = (out + " " + w).strip()
+    # no terminar en palabra "colgada" (desde, de, para, en, a, y, con, sin)
+    while out and out.split()[-1].lower() in {"desde", "de", "para", "en", "a", "y", "con", "sin", "tu", "tus", "te", "el", "la", "que", "nadie", "lo", "los", "las"}:
+        out = " ".join(out.split()[:-1])
     return (out[:1].upper() + out[1:]) if out else "Serie"
 
 

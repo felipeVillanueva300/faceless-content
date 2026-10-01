@@ -166,6 +166,9 @@ palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
   Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
+- NUNCA inventes anécdotas, víctimas ni testimonios ("un seguidor cayó…", "a mi primo le pasó…").
+  Si el tema trae un caso real, cuéntalo EXACTAMENTE como viene (si alguien solo avisó de una
+  estafa, di que nos avisó, no que cayó). Si no hay caso real, usa "imagina que…" o "por ejemplo".
 - NUNCA recomiendes trucos para pagar menos impuestos de forma irregular (dividir compras,
   declarar menos, facturas de otro, no reportar ingresos). Solo deducciones y beneficios legales.
 - Consecuencias legales o fiscales (SAT, bloqueos, multas, buró): solo si una fuente oficial
