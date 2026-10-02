@@ -113,7 +113,11 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
 - personas haciendo algo claramente AJENO a dinero, compras, trabajo, casa o tecnología
   (maquillarse, parches o mascarillas faciales, hacer ejercicio, bailar);
 - criptomonedas (Bitcoin, logos cripto) o apps de trading con velas y botones BUY/SELL,
-  SALVO que la escena pedida hable de inversión, bolsa o cripto.
+  SALVO que la escena pedida hable de inversión, bolsa o cripto;
+- el TONO contradice la escena pedida: gente riendo, celebrando o muy sonriente cuando la
+  escena pedida es de preocupación, fraude, estafa, robo, deuda o un problema;
+- el clip no se parece EN NADA a la escena pedida (ej. se pidió "worried woman phone call"
+  y se ve una app de edición de video en un celular sobre un soporte).
 Si no ves nada de eso, "rechazar": false.
 Responde SOLO JSON: {"rechazar": true|false, "motivo": "máx 8 palabras"}"""
 
@@ -205,9 +209,17 @@ def _vision_ok(path: str, etiqueta: str, escena: str = "") -> bool:
     return True
 
 
+_USADOS = set()
+
+
+def _clave(fuente: str, cid) -> str:
+    return f"{fuente.lower()}:{cid}" if cid is not None else ""
+
+
 def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
     """candidatos: lista de (id, link). Prueba en orden: descarga, revisa con visión y
     devuelve el primero que pase. Máximo VISION_TRIES descargas."""
+    candidatos = [(cid, link) for cid, link in candidatos if _clave(fuente, cid) not in _USADOS]
     for cid, link in candidatos[:VISION_TRIES]:
         etiqueta = f"{fuente} #{cid}" if cid is not None else fuente
         try:
@@ -221,6 +233,8 @@ def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
             continue
         if _vision_ok(out_path, etiqueta, keywords):
             print(f"    b-roll ({etiqueta}) para '{keywords}'")
+            if cid is not None:
+                _USADOS.add(_clave(fuente, cid))
             return out_path
     return None
 
@@ -278,11 +292,11 @@ def _from_pixabay(keywords: str, out_path: str) -> str | None:
         cands = [{"link": v.get("url"), "width": v.get("width"), "height": v.get("height")}
                  for v in vids.values() if v.get("url")]
         if cands:
-            hits.append(cands)
+            hits.append((hit.get("id"), cands))
     # Pixabay no filtra por orientación: primero los hits que tengan versión vertical
-    hits.sort(key=lambda cs: 0 if any((c.get("height") or 0) >= (c.get("width") or 0)
-                                      for c in cs) else 1)
-    buenos = [(None, b) for b in (_best_vertical(c) for c in hits) if b]
+    hits.sort(key=lambda h: 0 if any((c.get("height") or 0) >= (c.get("width") or 0)
+                                     for c in h[1]) else 1)
+    buenos = [(hid, b) for hid, b in ((hid, _best_vertical(c)) for hid, c in hits) if b]
     if not buenos:
         return None
     return _probar_candidatos(_orden_aleatorio(buenos), out_path, "Pixabay", keywords)

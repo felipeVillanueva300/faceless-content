@@ -12,9 +12,46 @@ _CTAS = [
     "Compártelo con tu familia: a todos nos ha pasado.",
 ]
 
+_CTAS_FRAUDE = [
+    "Mándaselo a tu familia, sobre todo a quien menos usa redes: así no les ven la cara.",
+    "Compártelo con tu familia hoy: a quien ya está avisado es mucho más difícil engañarlo.",
+]
+
+_FRAUDE = re.compile(r"fraud|estaf|extorsi|clonad|suplant|phishing|hacke|montadeud|"
+                     r"\broba[nr]?\b|\brobo\b|que no te roben", re.IGNORECASE)
+
+
+def es_tema_fraude(data: dict) -> bool:
+    """True si el TEMA central del video es un fraude/estafa/robo (no si solo se menciona
+    de pasada en la narración)."""
+    texto = " ".join(str(data.get(k) or "") for k in
+                     ("title", "hook", "hook_card", "concepto", "topic"))
+    return bool(_FRAUDE.search(_sin_acentos(texto)))
+
+
+_SIGUEME_FINAL = re.compile(r"(^|(?<=[.!?…])\s+)¡?s[ií]gueme\b[^.!?…]*[.!?…]?\s*$",
+                            re.IGNORECASE)
+CTA_HABLADO_FRAUDE = os.environ.get("CTA_HABLADO_FRAUDE", "Mándaselo a tu familia hoy.")
+
+
+def cta_hablado_fraude(data: dict) -> dict:
+    """En un reel de fraude, si el último bloque cierra con "Sígueme…", lo cambia por
+    "Mándaselo a tu familia hoy." ANTES de la voz: así lo que se oye y el cierre en
+    pantalla (COMPÁRTELO) dicen lo mismo."""
+    beats = [b for b in (data.get("beats") or []) if isinstance(b, dict) and b.get("narration")]
+    if beats:
+        ult = beats[-1]
+        nuevo = _SIGUEME_FINAL.sub(lambda m: m.group(1) + CTA_HABLADO_FRAUDE, ult["narration"].strip())
+        ult["narration"] = nuevo.strip()
+    if isinstance(data.get("script"), str):
+        data["script"] = _SIGUEME_FINAL.sub(lambda m: m.group(1) + CTA_HABLADO_FRAUDE,
+                                            data["script"].strip()).strip()
+    return data
+
+
 # líneas de llamado que Gemini a veces agrega solo; las quitamos para no duplicar
-_CTA_VIEJO = re.compile(r"^\s*(s[ií]gueme|guarda (este|el video)|comp[aá]rtelo)\b.*$",
-                        re.IGNORECASE)
+_CTA_VIEJO = re.compile(r"^\s*(s[ií]gueme|guarda (este|el video)|gu[aá]rdalo|comp[aá]rtelo|"
+                        r"m[aá]ndaselo)\b.*$", re.IGNORECASE)
 
 
 def _sin_acentos(t: str) -> str:
@@ -27,12 +64,13 @@ def hashtag_serie(nombre: str) -> str:
     return "#" + "".join(p[:1].upper() + p[1:] for p in pals) if pals else ""
 
 
-def _cta_del_dia() -> str:
+def _cta_del_dia(fraude: bool = False) -> str:
     try:
         corrida = int(os.environ.get("GITHUB_RUN_NUMBER", "0"))
     except ValueError:
         corrida = 0
-    return _CTAS[(datetime.date.today().toordinal() + corrida) % len(_CTAS)]
+    lista = _CTAS_FRAUDE if fraude else _CTAS
+    return lista[(datetime.date.today().toordinal() + corrida) % len(lista)]
 
 
 def _cta_serie(nombre, parte, total) -> str:
@@ -72,7 +110,11 @@ def finalizar(data: dict, plan: dict) -> dict:
     cuerpo = [l for l in lineas if not _CTA_VIEJO.match(l)]
     while cuerpo and not cuerpo[-1].strip():
         cuerpo.pop()
-    cta = _cta_serie(serie_nombre, parte, total) if es_serie else _cta_del_dia()
+    fraude = es_tema_fraude(data)
+    data["tema_fraude"] = fraude
+    if fraude and not es_serie:
+        data = cta_hablado_fraude(data)
+    cta = _cta_serie(serie_nombre, parte, total) if es_serie else _cta_del_dia(fraude)
     if es_serie:
         tag = hashtag_serie(serie_nombre)
         if tag and tag.lower() not in hashtags.lower():

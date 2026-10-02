@@ -52,7 +52,10 @@ def generate_script(niche: str = "tecnología y finanzas",
         conceptos = history.recent_conceptos(120)
     except Exception:
         pass
-    evitar = content_plan.avoid_text(avoid, conceptos=conceptos)
+    serie_cola = plan.get("serie_pendiente") or []
+    if serie_cola:
+        print(f"    ({len(serie_cola)} capítulo(s) de la miniserie en cola: el diario no los toca)")
+    evitar = content_plan.avoid_text(avoid, conceptos=conceptos, serie=serie_cola)
     cal = content_plan.calendario_linea(plan)
     from src import datos_mx
     datos = datos_mx.datos_actuales()
@@ -154,6 +157,12 @@ piense "espera, ¿qué?". Usa UNA de estas fórmulas:
 - Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
 PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
 "El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
+PROHIBIDO arrancar con muletillas de video escolar: "¿Sabías que…?", "Muchos no saben…",
+"¿Alguna vez te has preguntado…?", "En este video…", "Hoy te voy a…". Son los arranques que
+más se saltan. Di el dato DIRECTO como afirmación o como situación con algo en juego.
+Mal: "¿Sabías que pueden clonar tu voz con IA?". Bien: "Si tu hijo te llama llorando
+pidiendo dinero, puede que no sea él." / "Con unos segundos de tu voz ya pueden llamarle
+a tu mamá."
 EL GANCHO TIENE QUE SER VERDAD para quien lo ve. No afirmes que ya hace, tiene o sufre algo
 que no sabes (mal: "Le estás prestando tu dinero al gobierno y ni te enteraste" a alguien
 que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregunta (bien:
@@ -195,10 +204,20 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 - Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Si
   el tema es un método, una comparación o un paso a paso, usa MÍNIMO ~120 palabras: la
   gente necesita el ejemplo para entenderlo. Cada
-  bloque = UNA idea, sin apurar. El ÚLTIMO bloque cierra con un llamado a seguir corto
-  (ej: 'Sígueme, mañana va otro.').
+  bloque = UNA idea, sin apurar. El ÚLTIMO bloque cierra con un llamado corto: a seguir
+  (ej: 'Sígueme, mañana va otro.') o, si el tema es un FRAUDE, estafa, robo o extorsión y NO
+  es capítulo de serie, a COMPARTIR (ej: 'Mándaselo a tu familia hoy.'): en esos temas la
+  gente comparte para avisar, y el consejo (palabra clave, colgar y llamar) solo sirve si la
+  familia también lo conoce.
 - Cada bloque va con su "scene": 2-4 palabras EN INGLÉS, escena CONCRETA de finanzas/
   tecnología ligada a LO QUE DICE ESE BLOQUE, distinta entre bloques.
+- En el PRIMER bloque y en todo bloque de más de ~15 palabras agrega también "scene2": OTRA
+  escena (inglés, 2-4 palabras) para la segunda mitad del bloque. Así el fondo cambia cada
+  4-6 segundos y la gente no se aburre con el mismo plano.
+- La "scene" del PRIMER bloque muestra con PERSONAS la situación del gancho y con la emoción
+  correcta: preocupación si es un fraude, una deuda o un problema (ej. "worried woman phone
+  call"), NUNCA gente sonriendo en un tema de fraude. Nada de objetos sueltos ni pantallas
+  de apps que no tengan que ver.
 - PROHIBIDO en "scene": efectivo de cualquier tipo (money, cash, banknotes, bills, coins,
   currency, pesos, dollars). Los bancos de video solo tienen billetes de OTROS países.
   Para hablar de dinero muestra cosas que sí son de aquí y de hoy: tarjeta, celular con
@@ -207,10 +226,10 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
-  "hook": "FRENO DE SCROLL de 1 línea (ver EL GANCHO arriba): cifra+consecuencia, callout que pica, o pregunta que incomoda. En segunda persona. NUNCA el título del tema.",
+  "hook": "FRENO DE SCROLL de 1 línea (ver EL GANCHO arriba): cifra+consecuencia, callout que pica, o pregunta que incomoda. En segunda persona. NUNCA el título del tema. NUNCA empieza con '¿Sabías que'.",
   "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿3 AÑOS PAGANDO?', 'LE REGALAS DINERO AL BANCO', 'TE VA A DOLER'. Mal: 'EL ERROR DEL PAGO MÍNIMO' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
   "beats": [
-    {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "credit card hand"}},
+    {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "worried man credit card bill", "scene2": "bank app phone screen"}},
     {{"narration": "frase del bloque 2", "scene": "calendar planner desk"}},
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}

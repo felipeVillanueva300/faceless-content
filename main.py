@@ -61,6 +61,95 @@ def _ventanas(items, dur, minimo=1.5):
         prev_fin = en
     return out
 
+MAX_TOMA_SEG = float(os.environ.get("MAX_TOMA_SEG", "6"))
+MAX_TOMAS_BLOQUE = int(os.environ.get("MAX_TOMAS_BLOQUE", "3"))
+PUNCH_ZOOM = float(os.environ.get("PUNCH_ZOOM", "1.22"))
+
+def _n_tomas(d: float) -> int:
+    import math
+    if MAX_TOMA_SEG <= 0:
+        return 1
+    return max(1, min(MAX_TOMAS_BLOQUE, math.ceil((d - 1.0) / MAX_TOMA_SEG)))
+
+
+def _armar_tomas(escenas, escenas2, durs_bloque, respaldo_kw="personal finance"):
+    """Devuelve [(toma, segundos)] para el fondo. Cada bloque de voz conserva su duración
+    EXACTA (la imagen sigue cambiando justo cuando cambia la idea), pero si el bloque es largo
+    se reparte en varias tomas:
+      - toma 1: el clip del bloque (como antes);
+      - toma 2: un clip DISTINTO ('scene2' del guion, o la misma escena sin repetir clip);
+      - toma 3 / respaldo: 'punch-in' del clip 1 (acercamiento + otro momento del clip).
+    Si un bloque se queda sin clip, usa un punch-in del anterior para no romper la sincronía."""
+    from src import ai_image
+    modo_ia = os.environ.get("AI_IMAGE_MODE", "off").strip().lower()
+    ia_on = ai_image.ENABLED and modo_ia in ("mix", "always", "fallback")
+
+    def _stock(esc, tag):
+        return broll.fetch_broll(esc, os.path.join(BUILD, f"broll_{tag}.mp4"))
+
+    def _ia(esc, tag):
+        if not ai_image.ENABLED:
+            return None
+        img = ai_image.generate_image(esc, os.path.join(BUILD, f"ia_{tag}.png"))
+        return video.image_to_clip(img, os.path.join(BUILD, f"ia_{tag}.mp4")) if img else None
+
+    def _principal(esc, i):
+        if modo_ia == "mix" and ai_image.ENABLED:
+            # bloque par -> video real primero; impar -> IA primero. Respaldo cruzado.
+            return (_stock(esc, i) or _ia(esc, i)) if i % 2 == 0 else (_ia(esc, i) or _stock(esc, i))
+        if modo_ia == "always" and ai_image.ENABLED:
+            return _ia(esc, i) or _stock(esc, i)
+        return _stock(esc, i) or (_ia(esc, i) if ia_on else None)
+
+    def _punch(ruta, ss):
+        return {"path": ruta, "zoom": PUNCH_ZOOM, "ss": ss}
+
+    tomas, banco = [], []          # banco = clips ya conseguidos (para bloques sin clip)
+    for i, (esc, d) in enumerate(zip(escenas, durs_bloque)):
+        k = _n_tomas(d)
+        sub = d / k
+        clip = _principal(esc, i)
+        if not clip:
+            if banco:
+                # reusa clips ya bajados con acercamiento, sin repetir el de la toma anterior
+                ultimo = tomas[-1][0] if tomas else None
+                ultimo = ultimo["path"] if isinstance(ultimo, dict) else ultimo
+                otros = [c for c in banco if c != ultimo] or banco
+                print(f"    (bloque {i + 1} sin clip: {k} acercamiento(s) de clips anteriores)")
+                for j in range(k):
+                    tomas.append((_punch(otros[j % len(otros)], 2.0 + sub * j), sub))
+            else:
+                tomas.append((None, d))           # se rellena abajo con los que sí hay
+            continue
+        lista = [clip]
+        es_ia = os.path.basename(clip).startswith("ia_")
+        for j in range(1, k):
+            extra = None
+            if j == 1:
+                esc2 = (escenas2[i] if i < len(escenas2) else "") or esc
+                extra = _ia(esc2, f"{i}_{j}") if es_ia else _stock(esc2, f"{i}_{j}")
+            lista.append(extra or _punch(clip, sub * j + 1.0))
+        for t in lista:
+            tomas.append((t, sub))
+            if isinstance(t, str) and t not in banco:
+                banco.append(t)
+        if k > 1:
+            print(f"    bloque {i + 1}: {d:.1f}s en {k} tomas de {sub:.1f}s")
+
+    # Bloques iniciales sin clip: acercamientos de los clips que sí se consiguieron.
+    if not banco:
+        uno = broll.fetch_broll(broll.limpiar_escena(respaldo_kw), os.path.join(BUILD, "broll.mp4"))
+        return [(uno, sum(durs_bloque))] if uno else []
+    final = []
+    for t, d in tomas:
+        if t:
+            final.append((t, d))
+            continue
+        k = _n_tomas(d)
+        for j in range(k):
+            final.append((_punch(banco[j % len(banco)], 3.0 + (d / k) * j), d / k))
+    return final
+
 
 def _write_summary(url, titulo, caption, publicado, errores=None):
     path = os.environ.get("GITHUB_STEP_SUMMARY")
@@ -186,8 +275,9 @@ def generar_borrador():
             dur = sum(seg_dur)
             print("[3/7] Generando subtítulos (por bloque)")
             subs_seg, t = [], 0.0
-            for txt, d in zip(textos, seg_dur):
-                subs_seg.append((txt, t, t + d))
+            for i, (txt, d) in enumerate(zip(textos, seg_dur)):
+                ini = t + (tts.ULTIMO_LEAD if i == 0 else 0.0)
+                subs_seg.append((txt, ini, t + d))
                 segmentos.append((txt, t, d))
                 t += d
             subtitles.build_ass_segments(subs_seg, ass)
@@ -209,7 +299,12 @@ def generar_borrador():
 
     print("[4/7] Buscando b-roll de fondo")
     # Escenas del fondo: de los beats (si hay), o de broll_scenes/keywords (respaldo).
-    if not escenas:
+    escenas2 = []
+    if escenas:
+        respaldo = (data.get("broll_keywords") or "personal finance").strip()
+        escenas = [e or respaldo for e in escenas]      # sin huecos: 1 escena por bloque
+        escenas2 = [(b.get("scene2") or "").strip() for b in beats]
+    else:
         bs = data.get("broll_scenes") or []
         if isinstance(bs, str):
             bs = [bs]
@@ -217,55 +312,24 @@ def generar_borrador():
     escenas = [e for e in escenas if e] or [(data.get("broll_keywords") or "personal finance").strip()]
     # Nunca pedir efectivo al banco de video ni a la IA (billetes de otros países).
     escenas = [broll.limpiar_escena(e) for e in escenas]
+    escenas2 = [broll.limpiar_escena(e) if e else "" for e in escenas2]
+    escenas2 += [""] * (len(escenas) - len(escenas2))
 
-    from src import ai_image
-    modo_ia = os.environ.get("AI_IMAGE_MODE", "off").strip().lower()
-
-    def _clip_stock(esc, i):
-        return broll.fetch_broll(esc, os.path.join(BUILD, f"broll_{i}.mp4"))
-
-    def _clip_ia(esc, i):
-        if not ai_image.ENABLED:
-            return None
-        img = ai_image.generate_image(esc, os.path.join(BUILD, f"ia_{i}.png"))
-        return video.image_to_clip(img, os.path.join(BUILD, f"ia_{i}.mp4")) if img else None
-
-    clips = []
-    if modo_ia == "mix" and ai_image.ENABLED:
-        # escena par -> video real primero; impar -> IA primero. Respaldo cruzado.
-        for i, esc in enumerate(escenas):
-            if i % 2 == 0:
-                clip = _clip_stock(esc, i) or _clip_ia(esc, i)
-            else:
-                clip = _clip_ia(esc, i) or _clip_stock(esc, i)
-            if clip:
-                clips.append(clip)
-    elif modo_ia == "always" and ai_image.ENABLED:
-        for i, esc in enumerate(escenas):
-            clip = _clip_ia(esc, i) or _clip_stock(esc, i)
-            if clip:
-                clips.append(clip)
+    # Duración de cada bloque: la medida de la voz (exacta) o partes iguales.
+    if usar_bloques and seg_dur and len(seg_dur) == len(escenas):
+        durs_bloque = list(seg_dur)
     else:
-        clips = broll.fetch_broll_scenes(escenas, BUILD)
-        if not clips and modo_ia == "fallback" and ai_image.ENABLED:
-            for i, esc in enumerate(escenas):
-                clip = _clip_ia(esc, i)
-                if clip:
-                    clips.append(clip)
+        durs_bloque = [dur / len(escenas)] * len(escenas)
 
-    if not clips:   # último recurso: el fetch de un solo clip como antes
-        kw = broll.limpiar_escena((data.get("broll_keywords") or "personal finance").strip())
-        uno = broll.fetch_broll(kw, os.path.join(BUILD, "broll.mp4"))
-        clips = [uno] if uno else []
+    tomas = _armar_tomas(escenas, escenas2, durs_bloque,
+                         respaldo_kw=(data.get("broll_keywords") or "personal finance").strip())
 
     print("[5/7] Armando video")
     bg = None
-    if len(clips) >= 2:
-        durs = seg_dur if (usar_bloques and seg_dur and len(seg_dur) == len(clips)) else None
-        bg = video.build_multi_background(clips, dur, os.path.join(BUILD, "bg_combined.mp4"),
-                                          durations=durs)
-    elif len(clips) == 1:
-        bg = clips[0]
+    if tomas:
+        bg = video.build_multi_background([t for t, _ in tomas], dur,
+                                          os.path.join(BUILD, "bg_combined.mp4"),
+                                          durations=[d for _, d in tomas])
     pendientes = []
     for ci, c in enumerate([c for c in (data.get("cards") or []) if isinstance(c, dict)][:2]):
         st = _momento_mencion([c.get("big", "")], segmentos, c.get("beat"))
@@ -298,9 +362,14 @@ def generar_borrador():
     if graphic_overlays:
         cards = []
 
+    outro = None
+    if data.get("tema_fraude") and not data.get("serie"):
+        outro = (os.environ.get("OUTRO_CTA_FRAUDE", "COMPÁRTELO"),
+                 os.environ.get("OUTRO_SUB_FRAUDE", "mándaselo a tu familia"))
+
     out = os.path.join(BUILD, "reel.mp4")
     video.build_video(audio, ass, out, bg_video=bg, cards=cards,
-                      graphics=graphic_overlays, duration=dur, hook=hook_card)
+                      graphics=graphic_overlays, duration=dur, hook=hook_card, outro=outro)
 
     print("[6/7] Subiendo video a URL pública")
     url, tag = uploader.upload_public(out, caption=caption, title=title)

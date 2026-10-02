@@ -251,6 +251,62 @@ def serie_override():
     }
 
 
+SERIE_JSON = os.environ.get("SERIE_JSON", "serie.json")
+
+
+def _primera_clausula(texto: str) -> str:
+    """'la llamada falsa del banco: te dicen...; regla: ...' -> 'la llamada falsa del banco'."""
+    import re
+    corte = re.split(r"[;:]", (texto or "").strip(), maxsplit=1)[0]
+    return " ".join(corte.split())[:160]
+
+
+def serie_pendiente():
+    """Capítulos de serie.json que TODAVÍA NO salen (del índice 'siguiente' en adelante).
+
+    Para que el reel diario no se adelante a la miniserie: el 2 de octubre el diario hizo
+    'voz clonada con IA' cuando ese era el tema de la Parte 5 de 'Que no te roben'.
+    Devuelve [{'concepto': ..., 'resumen': ...}]. Si el episodio trae "concepto" se usa ese
+    (más preciso); si no, la primera frase del subtema. [] si no hay serie o falla."""
+    import json
+    try:
+        with open(SERIE_JSON, encoding="utf-8") as f:
+            data = json.load(f) or {}
+    except Exception:
+        return []
+    eps = [e for e in (data.get("episodios") or []) if isinstance(e, dict)]
+    try:
+        i = max(0, int(data.get("siguiente", 0)))
+    except (TypeError, ValueError):
+        i = 0
+    try:
+        total = int(data.get("total") or len(eps))
+    except (TypeError, ValueError):
+        total = len(eps)
+    out = []
+    for ep in eps[i:total]:
+        resumen = _primera_clausula(ep.get("subtema", ""))
+        concepto = (ep.get("concepto") or "").strip() or _sin_genericas(resumen)
+        if concepto:
+            out.append({"concepto": concepto, "resumen": resumen or concepto})
+    return out
+
+
+_GENERICAS_SERIE = {"comprar", "vender", "seguro", "comision", "comisiones", "antes", "luego",
+                    "piden", "llama", "llamar", "contactos", "primeros", "minutos"}
+
+
+def _sin_genericas(frase: str) -> str:
+    import unicodedata
+    out = []
+    for w in (frase or "").split():
+        base = unicodedata.normalize("NFD", w.lower())
+        base = "".join(c for c in base if unicodedata.category(c) != "Mn").strip("'\"(),.¿?¡!")
+        if base not in _GENERICAS_SERIE:
+            out.append(w)
+    return " ".join(out)
+
+
 def plan_del_dia(today=None, offset=0):
     """Elige categoría (enfriamiento de COOLDOWN_DIAS), formato (sin repetir los
     últimos 2) y, si hoy toca golpe de temporada, sobreescribe el formato con el
@@ -319,6 +375,8 @@ def plan_del_dia(today=None, offset=0):
         usados = history.recent_conceptos(120)
     except Exception:
         pass
+    pendientes = serie_pendiente()
+    usados = list(usados) + [p["concepto"] for p in pendientes]
     angulos_frescos = [a for a in cat["angulos"] if not _ya_usado(a, usados)]
     angulos_txt = ", ".join(angulos_frescos) if angulos_frescos else (
         "los ángulos típicos ya se usaron: propone uno NUEVO y concreto de este pilar")
@@ -350,6 +408,7 @@ def plan_del_dia(today=None, offset=0):
         "evento_beat": ev["etiqueta"] if ev else None,
         "evento_instruccion": beat_instr,
         "publicar_borrador": es_borrador,
+        "serie_pendiente": [p["resumen"] for p in pendientes],
     }
 
 
@@ -466,9 +525,14 @@ def _ya_usado(angulo: str, usados) -> bool:
     return any(pa & _palabras(u) for u in usados)
 
 
-def avoid_text(recientes, limite=60, conceptos=None):
-    """Bloque de texto para el prompt con los temas y CONCEPTOS a NO repetir."""
+def avoid_text(recientes, limite=60, conceptos=None, serie=None):
+    """Bloque de texto para el prompt con los temas y CONCEPTOS a NO repetir.
+    serie: capítulos de la miniserie que aún no salen (el diario NO se les adelanta)."""
     out = ""
+    if serie:
+        out += ("\nTEMAS QUE YA VIENEN EN LA MINISERIE DE ESTOS DÍAS (PROHIBIDO tocarlos hoy, "
+                "ni con otro ángulo, otras palabras u otro formato; elige un tema claramente "
+                "distinto):\n- " + "\n- ".join(serie) + "\n")
     if recientes:
         lista = "; ".join(recientes[-limite:])
         out += ("\nTEMAS YA PUBLICADOS RECIENTEMENTE (está PROHIBIDO repetirlos; "

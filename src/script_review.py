@@ -111,6 +111,10 @@ Te paso un guion en JSON. Corrige SOLO la REDACCIÓN, con cambios MÍNIMOS:
 4. "cards" son RÓTULOS en pantalla: NO necesitan verbo. Solo corrígelas si tienen falta
    de ortografía o si CONTRADICEN lo que dice la narración (ej. la voz dice "retiro en
    días hábiles" y la card "retiro diario": la card debe decir lo mismo que la voz).
+5. Si el "hook" empieza con "¿Sabías que…", "Muchos no saben…" o "¿Alguna vez…", reescríbelo
+   como AFIRMACIÓN directa con el MISMO dato y las mismas cifras.
+   Mal: "¿Sabías que tu banco te cobra por retirar en otro cajero?".
+   Bien: "Tu banco te cobra cada vez que retiras en otro cajero."
 
 PROHIBIDO: cambiar cifras, nombres de apps/instituciones, el sentido, el tono, el orden
 o agregar información nueva. NO reescribas frases que ya están bien: déjalas IDÉNTICAS.
@@ -147,11 +151,35 @@ def _llamar(client, payload: dict):
     raise ultimo
 
 
+_ARRANQUE_FLOJO = re.compile(
+    r"^\s*¿?\s*(?:sab[ií]as\s+qu[eé]|muchos\s+no\s+saben\s+(?:que|qu[eé])|"
+    r"lo\s+que\s+(?:nadie|muchos\s+no)\s+sabe[n]?\s+es\s+que)\s+",
+    re.IGNORECASE)
+
+
+def quitar_arranque_flojo(hook: str) -> str:
+    """'¿Sabías que cualquier persona puede clonar tu voz…? Los…' ->
+    'Cualquier persona puede clonar tu voz…. Los…' (sin el '¿' abierto, cierra con punto)."""
+    if not hook or not _ARRANQUE_FLOJO.match(hook):
+        return hook
+    abrio = hook.lstrip().startswith("¿")
+    resto = _ARRANQUE_FLOJO.sub("", hook, count=1).strip()
+    if not resto:
+        return hook
+    if abrio:
+        cierre = resto.find("?")
+        if cierre >= 0 and "¿" not in resto[:cierre]:
+            resto = resto[:cierre] + "." + resto[cierre + 1:]
+    resto = resto[:1].upper() + resto[1:]
+    return resto
+
+
 def revisar(data: dict, client=None) -> dict:
     """Devuelve 'data' con redacción corregida y marcas normalizadas.
     Guarda en data['revision'] la lista de cambios aplicados (queda en script.json)."""
     data = _aplicar_marcas(data)
     if not REVIEW_ON:
+        data["hook"] = quitar_arranque_flojo(data.get("hook", ""))
         return data
     beats = [b for b in (data.get("beats") or []) if isinstance(b, dict)]
     cards = [c for c in (data.get("cards") or []) if isinstance(c, dict)]
@@ -167,6 +195,7 @@ def revisar(data: dict, client=None) -> dict:
         rev = _llamar(client, payload)
     except Exception as e:
         print(f"    (revisor de redacción no disponible, sigo con el original: {str(e)[:120]})")
+        data["hook"] = quitar_arranque_flojo(data.get("hook", ""))
         return data
 
     aplicados, rechazados = [], 0
@@ -183,6 +212,10 @@ def revisar(data: dict, client=None) -> dict:
         return original
 
     data["hook"] = _tomar(payload["hook"], rev.get("hook"), "hook")
+    sin_muletilla = quitar_arranque_flojo(data["hook"])
+    if sin_muletilla != data["hook"]:
+        aplicados.append(f"hook (sin '¿Sabías que'): {data['hook']!r} -> {sin_muletilla!r}")
+        data["hook"] = sin_muletilla
 
     nuevos_beats = rev.get("beats")
     if isinstance(nuevos_beats, list) and len(nuevos_beats) == len(beats):

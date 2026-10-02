@@ -64,6 +64,9 @@ def _duracion(path: str) -> float:
         return 0.0
 
 
+ULTIMO_LEAD = 0.0
+
+
 def synthesize_segments(textos, out_dir):
     """Sintetiza CADA bloque de narración por separado, mide su duración REAL, y los
     une en un solo audio.mp3. Devuelve (ruta_audio_combinado, [duraciones_por_bloque]).
@@ -88,7 +91,9 @@ def synthesize_segments(textos, out_dir):
     if not partes:
         return None, []
 
-    lead = float(os.environ.get("TTS_LEAD", "0.35"))
+    global ULTIMO_LEAD
+    ULTIMO_LEAD = 0.0
+    lead = float(os.environ.get("TTS_LEAD", "0.1"))
     if lead > 0:
         sil = os.path.join(out_dir, "seg_lead.mp3")
         ffb = os.environ.get("FFMPEG_BIN", "ffmpeg")
@@ -97,7 +102,8 @@ def synthesize_segments(textos, out_dir):
                             "-t", f"{lead:.2f}", "-c:a", "libmp3lame", "-b:a", "48k", sil],
                            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
             partes.insert(0, sil)
-            duraciones[0] += _duracion(sil) or lead
+            ULTIMO_LEAD = _duracion(sil) or lead
+            duraciones[0] += ULTIMO_LEAD
         except Exception:
             pass
 

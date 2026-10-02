@@ -119,6 +119,88 @@ def _loudnorm():
     return f"loudnorm=I={objetivo:.1f}:TP=-1.5:LRA=11"
 
 
+def _medir_loudnorm(path: str, objetivo: float):
+    """Primera pasada de loudnorm sobre el audio del mp4 final. Devuelve el dict de
+    mediciones (input_i, input_tp, input_lra, input_thresh, target_offset) o None."""
+    import json
+    try:
+        p = subprocess.run(
+            [FFMPEG, "-hide_banner", "-nostats", "-i", path, "-vn",
+             "-af", f"loudnorm=I={objetivo:.1f}:TP=-1.5:LRA=11:print_format=json",
+             "-f", "null", "-"],
+            capture_output=True, text=True, timeout=180,
+        )
+        txt = p.stderr or ""
+        ini, fin = txt.rfind("{"), txt.rfind("}")
+        if ini < 0 or fin < 0:
+            return None
+        return json.loads(txt[ini:fin + 1])
+    except Exception as e:
+        print(f"    (no se pudo medir el volumen: {e})")
+        return None
+
+
+def _ajustar_volumen(out_path: str):
+    """Segunda pasada: deja el video en AUDIO_LUFS (±0.5). La normalización dentro de la
+    mezcla es de una sola pasada (modo dinámico) y se queda corta: el reel del 2-oct salió
+    en -15.7 LUFS con objetivo -14.
+    Cómo: saca el audio a WAV (sin pérdida), prueba ganancia + limitador (picos a -2 dBFS)
+    midiendo hasta 3 veces, y al final lo vuelve a meter al mp4 UNA sola vez, copiando el
+    video sin recomprimir. Best-effort: si algo falla, el archivo se queda como estaba."""
+    if AUDIO_LUFS.lower() in ("", "0", "off", "no", "false"):
+        return
+    try:
+        objetivo = float(AUDIO_LUFS)
+    except ValueError:
+        objetivo = -14.0
+    m = _medir_loudnorm(out_path, objetivo)
+    try:
+        medido = float(m["input_i"]) if m else None
+    except (KeyError, TypeError, ValueError):
+        medido = None
+    if medido is None:
+        return
+    if abs(medido - objetivo) <= 0.5:
+        print(f"    volumen final {medido:.1f} LUFS (objetivo {objetivo:.0f}): OK")
+        return
+
+    base = os.path.splitext(out_path)[0]
+    wav_in, wav_out, tmp = base + ".vol_in.wav", base + ".vol_out.wav", base + ".vol.mp4"
+    limite = 10 ** (-2.0 / 20)
+    try:
+        subprocess.run([FFMPEG, "-y", "-hide_banner", "-loglevel", "error", "-i", out_path,
+                        "-vn", "-c:a", "pcm_s16le", wav_in], check=True, timeout=120)
+        ganancia, logrado = objetivo - medido, medido
+        aplicada = ganancia
+        for _ in range(3):
+            aplicada = ganancia
+            # el limitador se come parte de la ganancia: se compensa y se vuelve a medir
+            subprocess.run([FFMPEG, "-y", "-hide_banner", "-loglevel", "error", "-i", wav_in,
+                            "-af", f"volume={ganancia:.2f}dB,alimiter=limit={limite:.4f}:"
+                                   f"attack=5:release=60:level=false",
+                            "-c:a", "pcm_s16le", wav_out], check=True, timeout=120)
+            mm = _medir_loudnorm(wav_out, objetivo) or {}
+            logrado = float(mm.get("input_i", logrado))
+            if abs(logrado - objetivo) <= 0.3:
+                break
+            ganancia = min(ganancia + (objetivo - logrado), 5.0)   # nunca más de +5 dB
+        subprocess.run([FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
+                        "-i", out_path, "-i", wav_out, "-map", "0:v", "-map", "1:a",
+                        "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+                        "-movflags", "+faststart", tmp], check=True, timeout=300)
+        os.replace(tmp, out_path)
+        print(f"    volumen final ajustado: {medido:.1f} -> {logrado:.1f} LUFS "
+              f"(objetivo {objetivo:.0f}, ganancia {aplicada:+.1f} dB)")
+    except Exception as e:
+        print(f"    (no se pudo ajustar el volumen final: {e}; se queda en {medido:.1f} LUFS)")
+    finally:
+        for f in (wav_in, wav_out, tmp):
+            try:
+                os.remove(f)
+            except OSError:
+                pass
+
+
 MUSIC_DIR = os.environ.get("MUSIC_DIR", "assets/music")
 MUSIC_VOLUME = os.environ.get("MUSIC_VOLUME", "0.17")
 
@@ -150,10 +232,13 @@ def _pick_music():
 
 
 def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
-                graphics=None, duration=None, hook=None):
+                graphics=None, duration=None, hook=None, outro=None):
     """cards: lista opcional de dicts {'big': '70%', 'small': 'texto', 'start': s, 'end': s}.
     graphics: lista opcional de dicts {'pattern': ruta_%05d.png, 'start': s, 'end': s, 'fps': n}.
-    duration: si se pasa, corta la salida a esos segundos (en vez de -shortest)."""
+    duration: si se pasa, corta la salida a esos segundos (en vez de -shortest).
+    outro: (texto_grande, texto_chico) del cierre; None = OUTRO_CTA / OUTRO_SUB de siempre
+    (en temas de fraude main.py manda ("COMPÁRTELO", "mándaselo a tu familia"))."""
+    outro_cta, outro_sub = (outro if outro else (OUTRO_CTA, OUTRO_SUB))
     if shutil.which(FFMPEG) is None and not os.path.isfile(FFMPEG):
         raise FileNotFoundError(
             "No se encontró FFmpeg. Instálalo con 'winget install -e --id Gyan.FFmpeg' "
@@ -255,12 +340,12 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
     chain.append(f"[{last}]subtitles={subs}[subd]")
     last = "subd"
 
-    if OUTRO_CTA and duration:
+    if outro_cta and duration:
         oc_st = max(0.0, float(duration) - OUTRO_DUR)
         oc_alpha = (f"if(lt(t,{oc_st:.2f}),0,"
                     f"if(lt(t,{oc_st + 0.3:.2f}),(t-{oc_st:.2f})/0.3,1))")
-        big_txt = _escape_drawtext(OUTRO_CTA.upper())
-        big_fs = _fit_fontsize(OUTRO_CTA.upper(), CARD_MAX_W, 150, 90)
+        big_txt = _escape_drawtext(outro_cta.upper())
+        big_fs = _fit_fontsize(outro_cta.upper(), CARD_MAX_W, 150, 90)
         chain.append(
             f"[{last}]drawtext=font='{SUB_FONT}':text='{big_txt}':fontcolor=0x00E5FF:"
             f"fontsize={big_fs}:borderw=8:bordercolor=black:shadowcolor=black@0.6:"
@@ -268,9 +353,9 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
             f"enable='between(t,{oc_st:.2f},{float(duration):.2f})'[octa]"
         )
         last = "octa"
-        if OUTRO_SUB:
-            sub_txt = _escape_drawtext(OUTRO_SUB)
-            sub_fs = _fit_fontsize(OUTRO_SUB, CARD_MAX_W, 58, 40)
+        if outro_sub:
+            sub_txt = _escape_drawtext(outro_sub)
+            sub_fs = _fit_fontsize(outro_sub, CARD_MAX_W, 58, 40)
             chain.append(
                 f"[{last}]drawtext=font='{SUB_FONT}':text='{sub_txt}':fontcolor=white:"
                 f"fontsize={sub_fs}:borderw=4:bordercolor=black:x=(w-tw)/2:"
@@ -323,6 +408,7 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         out,
     ]
     subprocess.run(cmd, check=True, cwd=work_dir)
+    _ajustar_volumen(os.path.join(work_dir, out))
 
 
 def _eq_por_clip(path) -> str:
@@ -339,33 +425,72 @@ def _eq_por_clip(path) -> str:
     return f",eq=brightness={bright:.3f}"
 
 
-def build_multi_background(clips, duration, out_path, durations=None):
-    clips = [c for c in (clips or []) if c and os.path.isfile(c)]
-    if not clips:
-        return None
-    if len(clips) == 1:
-        return clips[0]   # un solo clip: el pipeline normal ya lo maneja
+def _duracion_video(path: str) -> float:
+    base, ext = os.path.splitext(FFMPEG)
+    probe = (os.path.join(os.path.dirname(FFMPEG), "ffprobe" + ext)
+             if os.path.dirname(FFMPEG) else "ffprobe")
+    try:
+        out = subprocess.run([probe, "-v", "quiet", "-show_entries", "format=duration",
+                              "-of", "csv=p=0", path], capture_output=True, text=True, timeout=30)
+        return float(out.stdout.strip() or 0)
+    except Exception:
+        return 0.0
 
+
+def _toma(spec):
+    """Una toma del fondo: ruta (clip tal cual) o dict {'path', 'zoom', 'ss'}.
+    zoom > 1 = 'punch-in' (acercamiento) y ss = desde qué segundo del clip arranca: así una
+    segunda toma del MISMO clip se ve como un corte nuevo y no como el mismo plano."""
+    if isinstance(spec, dict):
+        return spec.get("path"), float(spec.get("zoom") or 1.0), float(spec.get("ss") or 0.0)
+    return spec, 1.0, 0.0
+
+
+def build_multi_background(clips, duration, out_path, durations=None):
+    """clips: lista de tomas (ruta o dict de _toma). durations: segundos de cada toma
+    (medidos de la voz); si no vienen, partes iguales."""
+    pares = list(zip(clips or [], durations)) if (durations and len(durations) == len(clips or [])) \
+        else [(c, None) for c in (clips or [])]
+    pares = [(c, d) for c, d in pares if _toma(c)[0] and os.path.isfile(_toma(c)[0])]
+    if not pares:
+        return None
+    if len(pares) == 1 and _toma(pares[0][0])[1] == 1.0:
+        return _toma(pares[0][0])[0]   # un solo clip: el pipeline normal ya lo maneja
+
+    clips = [c for c, _ in pares]
     n = len(clips)
-    # duraciones por clip: explícitas (medidas de la voz) o partes iguales
-    if durations and len(durations) == n:
-        segs = [max(0.5, float(d)) for d in durations]
+    # duraciones por toma: explícitas (medidas de la voz) o partes iguales
+    if all(d is not None for _, d in pares):
+        segs = [max(0.5, float(d)) for _, d in pares]
     else:
         segs = [max(1.0, float(duration) / n)] * n
 
     inputs = []
-    for c in clips:
-        inputs += ["-stream_loop", "-1", "-i", os.path.basename(c)]
+    eq_cache = {}
+    for c, seg in zip(clips, segs):
+        ruta, _zoom, ss = _toma(c)
+        largo = _duracion_video(ruta)
+        if largo > 1.5 and ss > 0 and ss + seg > largo:
+            ss = max(0.0, largo - seg - 0.1)
+        pre = ["-ss", f"{ss:.2f}"] if ss > 0 else []
+        inputs += ["-stream_loop", "-1", *pre, "-i", os.path.basename(ruta)]
 
     parts, labels = [], []
     for i in range(n):
         labels.append(f"[v{i}]")
+        ruta, zoom, _ss = _toma(clips[i])
         # Brillo POR CLIP: antes se medía solo el primero y el mismo ajuste se aplicaba a
         # todos (un inicio oscuro dejaba sobreexpuestos los clips claros).
-        eq = _eq_por_clip(clips[i])
+        if ruta not in eq_cache:
+            eq_cache[ruta] = _eq_por_clip(ruta)
+        eq = eq_cache[ruta]
+        acerca = ""
+        if zoom > 1.0:
+            zw, zh = int(1080 * zoom) // 2 * 2, int(1920 * zoom) // 2 * 2
+            acerca = f",scale={zw}:{zh},crop=1080:1920"
         parts.append(
             f"[{i}:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-            f"crop=1080:1920,setsar=1,fps=30{eq},trim=0:{segs[i]:.3f},setpts=PTS-STARTPTS[v{i}]"
+            f"crop=1080:1920{acerca},setsar=1,fps=30{eq},trim=0:{segs[i]:.3f},setpts=PTS-STARTPTS[v{i}]"
         )
     concat = "".join(labels) + f"concat=n={n}:v=1:a=0[bg]"
     filtro = ";".join(parts + [concat])
@@ -383,13 +508,15 @@ def build_multi_background(clips, duration, out_path, durations=None):
     try:
         subprocess.run(cmd, check=True, cwd=work_dir,
                        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        segdesc = "exacto por bloque" if (durations and len(durations) == n) else f"{segs[0]:.1f}s c/u"
-        print(f"    fondo multi-escena armado con {n} clips ({segdesc})")
+        segdesc = ("exacto por bloque" if all(d is not None for _, d in pares)
+                   else f"{segs[0]:.1f}s c/u")
+        print(f"    fondo multi-escena armado con {n} tomas ({segdesc}; "
+              f"la más larga dura {max(segs):.1f}s)")
         return out_path
     except subprocess.CalledProcessError as e:
         err = (e.stderr or b"").decode("utf-8", "ignore")[-300:]
         print(f"    (no se pudo armar fondo multi-escena: {err}); uso el primer clip")
-        return clips[0]
+        return _toma(clips[0])[0]
 
 
 def image_to_clip(img_path, out_path, seconds=10.0):

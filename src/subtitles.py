@@ -66,12 +66,95 @@ def _audio_duration(audio_path: str) -> float:
         return 30.0
 
 
+_DEBILES = {
+    "a", "al", "ante", "con", "contra", "de", "del", "desde", "en", "entre", "hacia", "hasta",
+    "para", "por", "segun", "sin", "sobre", "tras", "el", "la", "los", "las", "lo", "un", "una",
+    "unos", "unas", "y", "e", "o", "u", "ni", "que", "si", "tu", "tus", "su", "sus", "mi", "mis",
+    "se", "te", "me", "le", "les", "nos", "cada", "muy", "mas", "no", "como", "cuando", "donde",
+    "porque", "pero", "este", "esta", "estos", "estas", "ese", "esa", "tan",
+}
+_FIN_FUERTE = (".", "?", "!", "…", ";", ":")
+MAX_CHARS_CUE = int(os.environ.get("SUB_MAX_CHARS", "26"))
+
+
+def _base(palabra: str) -> str:
+    import unicodedata
+    t = unicodedata.normalize("NFD", (palabra or "").lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return t.strip("¿?¡!.,;:…\"'()«»")
+
+
+def _debil(palabra: str) -> bool:
+    """True si la palabra NO puede cerrar un subtítulo (preposición, artículo, 'tu'...).
+    Si trae puntuación al final ('tu,'), sí puede: ahí la voz hace pausa."""
+    p = (palabra or "").rstrip("\"'»)")
+    if p.endswith(_FIN_FUERTE + (",",)):
+        return False
+    return _base(p) in _DEBILES
+
+
+def _costo_grupo(pals, maxw):
+    n = len(pals)
+    c = 0.0
+    if n > maxw:
+        c += 6.0 * (n - maxw)
+    elif n == 2:
+        c += 2.0
+    elif n == 1:
+        c += 7.0
+    largo = len(" ".join(pals))
+    if largo > MAX_CHARS_CUE:
+        c += 0.5 * (largo - MAX_CHARS_CUE)
+    c += 3.0 * sum(1 for w in pals[:-1] if w.endswith(","))
+    if _debil(pals[-1]):
+        c += 9.0
+    return c
+
+
+def _partir_clausula(pals, maxw):
+    """Programación dinámica: el reparto de la cláusula en grupos con menor costo."""
+    n = len(pals)
+    inf = float("inf")
+    mejor, previo = [0.0] + [inf] * n, [0] * (n + 1)
+    for j in range(1, n + 1):
+        for i in range(max(0, j - (maxw + 1)), j):
+            c = mejor[i] + _costo_grupo(pals[i:j], maxw)
+            if c < mejor[j]:
+                mejor[j], previo[j] = c, i
+    cortes, j = [], n
+    while j > 0:
+        cortes.append((previo[j], j))
+        j = previo[j]
+    return cortes[::-1]
+
+
+def agrupar(palabras, maxw=None):
+    """Lista de palabras -> lista de (inicio, fin) para cada subtítulo.
+    1) Corta SIEMPRE después de punto, pregunta, exclamación, ';' o ':' y antes de '¿'/'¡'.
+    2) Dentro de cada cláusula reparte en grupos de hasta WORDS_PER_CUE palabras, parejos,
+       prefiriendo cortar en comas y sin dejar una preposición/artículo colgando al final."""
+    maxw = maxw or WORDS_PER_CUE
+    clausulas, ini = [], 0
+    for k, w in enumerate(palabras):
+        sig = palabras[k + 1] if k + 1 < len(palabras) else ""
+        if w.rstrip("\"'»)").endswith(_FIN_FUERTE) or sig[:1] in ("¿", "¡"):
+            clausulas.append((ini, k + 1))
+            ini = k + 1
+    if ini < len(palabras):
+        clausulas.append((ini, len(palabras)))
+    grupos = []
+    for a, b in clausulas:
+        for i, j in _partir_clausula(palabras[a:b], maxw):
+            grupos.append((a + i, a + j))
+    return grupos
+
+
 def _animated_lines_from_boundaries(boundaries):
     """Una línea Dialogue por palabra activa: muestra el grupo con esa palabra
     resaltada, durante el intervalo en que se pronuncia."""
     lines = []
-    for i in range(0, len(boundaries), WORDS_PER_CUE):
-        group = boundaries[i:i + WORDS_PER_CUE]
+    for gi, gj in agrupar([b[2] for b in boundaries]):
+        group = boundaries[gi:gj]
         if not group:
             continue
         words = [_limpio(w[2]).upper() for w in group]
@@ -171,13 +254,8 @@ def _static_lines_from_text(text, duration):
     """Reparte los subtítulos por el audio SIN tiempos de palabra reales, estimando
     la duración de cada grupo por sus SÍLABAS (+ una pausa extra si termina en signo).
     Deja un pequeño respiro inicial para que no arranque antes que la voz."""
-    import re
-    oraciones = [s for s in re.split(r'(?<=[\.\?\!])\s+', text.strip()) if s]
-    groups = []
-    for s in oraciones:
-        pals = s.split()
-        for i in range(0, len(pals), WORDS_PER_CUE):
-            groups.append(pals[i:i + WORDS_PER_CUE])
+    pals = text.split()
+    groups = [pals[i:j] for i, j in agrupar(pals)]
 
     def peso(g):
         sil = sum(_silabas(w) for w in g) or 1
@@ -218,7 +296,7 @@ def _cues_en_ventana(texto, t0, t1):
     pals = (texto or "").split()
     if not pals:
         return []
-    grupos = [pals[i:i + WORDS_PER_CUE] for i in range(0, len(pals), WORDS_PER_CUE)]
+    grupos = [pals[i:j] for i, j in agrupar(pals)]
 
     def peso(g):
         sil = sum(_silabas(w) for w in g) or 1
