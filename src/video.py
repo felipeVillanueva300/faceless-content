@@ -104,6 +104,8 @@ def _brightness_delta(bg_video: str) -> float:
     return delta
 
 
+# Volumen final estándar de Reels/Shorts/TikTok (~-14 LUFS). Antes salía a ~-19 LUFS
+# y se oía bajito junto a otros videos. "0"/"off" lo apaga.
 AUDIO_LUFS = os.environ.get("AUDIO_LUFS", "-14").strip()
 
 
@@ -301,6 +303,7 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         vf = vf + ";" + amix
         print(f"    música de fondo: {os.path.basename(music)} (vol {MUSIC_VOLUME})")
 
+    # Normalización de volumen al final de la mezcla (voz + música).
     norm = _loudnorm()
     if norm:
         src = audio_map if audio_map.startswith("[") else f"[{audio_map}]"
@@ -320,6 +323,20 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         out,
     ]
     subprocess.run(cmd, check=True, cwd=work_dir)
+
+
+def _eq_por_clip(path) -> str:
+    """Filtro eq para acercar ESTE clip al brillo objetivo. Los oscuros suben con gamma
+    (aclara medios tonos sin lavar los negros); los muy claros bajan un poco."""
+    y = _measure_luma(path)
+    if y is None:
+        return ""
+    if y < BG_TARGET_LUMA:
+        gamma = min(1.45, 1.0 + (BG_TARGET_LUMA - y) / 255 * 1.6)
+        bright = min(0.08, (BG_TARGET_LUMA - y) / 255 * 0.5)
+        return f",eq=brightness={bright:.3f}:gamma={gamma:.3f}"
+    bright = max(-0.12, (BG_TARGET_LUMA - y) / 255)
+    return f",eq=brightness={bright:.3f}"
 
 
 def build_multi_background(clips, duration, out_path, durations=None):
@@ -343,9 +360,12 @@ def build_multi_background(clips, duration, out_path, durations=None):
     parts, labels = [], []
     for i in range(n):
         labels.append(f"[v{i}]")
+        # Brillo POR CLIP: antes se medía solo el primero y el mismo ajuste se aplicaba a
+        # todos (un inicio oscuro dejaba sobreexpuestos los clips claros).
+        eq = _eq_por_clip(clips[i])
         parts.append(
             f"[{i}:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-            f"crop=1080:1920,setsar=1,fps=30,trim=0:{segs[i]:.3f},setpts=PTS-STARTPTS[v{i}]"
+            f"crop=1080:1920,setsar=1,fps=30{eq},trim=0:{segs[i]:.3f},setpts=PTS-STARTPTS[v{i}]"
         )
     concat = "".join(labels) + f"concat=n={n}:v=1:a=0[bg]"
     filtro = ";".join(parts + [concat])

@@ -86,6 +86,18 @@ VISION_ON = os.environ.get("BROLL_VISION", "1").strip().lower() in ("1", "true",
 VISION_MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-3.5-flash-lite").strip()
 VISION_TRIES = max(1, int(os.environ.get("BROLL_VISION_TRIES", "3")))
 VISION_FALLBACK = os.environ.get("BROLL_VISION_FALLBACK", "gemini-3.6-flash").strip()
+MIN_LUMA = float(os.environ.get("BROLL_MIN_LUMA", "60"))
+
+
+def _luma_cuadros(cuadros):
+    """Brillo promedio (0-255) de los cuadros JPG. None si no se puede medir."""
+    try:
+        import io
+        from PIL import Image, ImageStat
+        vals = [ImageStat.Stat(Image.open(io.BytesIO(c)).convert("L")).mean[0] for c in cuadros]
+        return sum(vals) / len(vals) if vals else None
+    except Exception:
+        return None
 _FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
 
 _VISION_PROMPT = """Eres revisor de fondos de video para una cuenta de finanzas de MÉXICO.
@@ -202,6 +214,10 @@ def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
             _download(link, out_path)
         except Exception as e:
             print(f"    (descarga falló {etiqueta}: {e})")
+            continue
+        luma = _luma_cuadros(_frames(out_path))
+        if luma is not None and luma < MIN_LUMA:
+            print(f"    clip muy oscuro, se descarta {etiqueta} (brillo {luma:.0f} < {MIN_LUMA:.0f})")
             continue
         if _vision_ok(out_path, etiqueta, keywords):
             print(f"    b-roll ({etiqueta}) para '{keywords}'")
