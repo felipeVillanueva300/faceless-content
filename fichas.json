@@ -105,6 +105,21 @@
       ],
       "fuente": "Xataka México / Merca2.0 / reforma vigente desde 15-ago-2025 — confirmar en anam.gob.mx o sat.gob.mx",
       "verificado": "2026-10-01"
+    },
+    "imss_rpci": {
+      "nombre": "IMSS Digital (RPCI)",
+      "claves": [
+        "rpci",
+        "reporte personalizado de cotizacion",
+        "imss digital"
+      ],
+      "link": "https://www.imss.gob.mx/imssdigital",
+      "datos": [
+        "El RPCI (Reporte Personalizado de Cotización IMSS) es gratis y se activa en la app IMSS Digital, en el ícono RPCI: pide tu Número de Seguridad Social (NSS), tu CURP y un correo, y aceptar los términos. NO basta solo con la CURP.",
+        "Cada mes te dice si estás dado de alta, qué patrón te registró, los días cotizados y el último salario registrado. Con ese salario registrado se calculan incapacidades, crédito Infonavit y pensión."
+      ],
+      "fuente": "IMSS (imss.gob.mx, página del Reporte Personalizado de Cotización) e IDC Online",
+      "verificado": "2026-10-04"
     }
   }
 }

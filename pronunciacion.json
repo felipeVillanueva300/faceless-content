@@ -1,0 +1,156 @@
+{
+  "_como_usar": "Diccionario de pronunciación de la VOZ (no cambia subtítulos ni cards). 'terminos' SÍ se aplica en cada video: palabra tal cual se escribe en el guion -> cómo debe decirla la voz (respeta mayúsculas: si quieres 'App' y 'app', pon las dos). 'candidatos' NO se aplica: son propuestas para probar con  python tts_prueba.py --candidatos  (genera un mp3 'tal_cual' y otro 'con_cambio' por palabra en build/pronunciacion). Si 'con_cambio' se oye mejor, pasa la palabra a 'terminos' con su 'dice'. Para probar una frase suelta:  python tts_prueba.py \"Entra a la app IMSS Digital\".",
+  "terminos": {
+    "SPEI": "spéi",
+    "CoDi": "códi",
+    "CODI": "códi",
+    "CLABE": "clábe",
+    "app": "aplicación",
+    "App": "aplicación",
+    "APP": "aplicación",
+    "apps": "aplicaciones",
+    "Apps": "aplicaciones",
+    "APPS": "aplicaciones",
+    "el app": "la aplicación",
+    "un app": "una aplicación",
+    "MSI": "meses sin intereses"
+  },
+  "candidatos": {
+    "IMSS": {
+      "dice": "ims",
+      "ejemplo": "Revisa si tu patrón te dio de alta en el IMSS."
+    },
+    "ISSSTE": {
+      "dice": "íste",
+      "ejemplo": "Si trabajas para el gobierno, cotizas en el ISSSTE."
+    },
+    "FOVISSSTE": {
+      "dice": "fobíste",
+      "ejemplo": "Con FOVISSSTE puedes pedir crédito para tu casa."
+    },
+    "SAT": {
+      "dice": "sat",
+      "ejemplo": "La declaración anual del SAT vence en abril."
+    },
+    "NSS": {
+      "dice": "ene ese ese",
+      "ejemplo": "Ten a la mano tu NSS y tu CURP."
+    },
+    "CURP": {
+      "dice": "curp",
+      "ejemplo": "Solo necesitas tu CURP y un correo."
+    },
+    "RFC": {
+      "dice": "erre efe ce",
+      "ejemplo": "Saca tu RFC gratis en la página del SAT."
+    },
+    "RPCI": {
+      "dice": "erre pe ce i",
+      "ejemplo": "Activa el reporte llamado RPCI."
+    },
+    "SBC": {
+      "dice": "salario base de cotización",
+      "ejemplo": "Tu pensión se calcula con tu SBC."
+    },
+    "UMA": {
+      "dice": "úma",
+      "ejemplo": "Las multas se calculan en UMA, no en salarios mínimos."
+    },
+    "CAT": {
+      "dice": "cat",
+      "ejemplo": "Antes de firmar, compara el CAT del crédito."
+    },
+    "IA": {
+      "dice": "i a",
+      "ejemplo": "Usa la IA para armar tu presupuesto."
+    },
+    "OXXO": {
+      "dice": "ókso",
+      "ejemplo": "Puedes depositar en OXXO con tu número de tarjeta."
+    },
+    "Banxico": {
+      "dice": "banjíco",
+      "ejemplo": "Según Banxico, la inflación bajó este mes."
+    },
+    "INEGI": {
+      "dice": "inéji",
+      "ejemplo": "El INEGI publica la inflación cada quincena."
+    },
+    "IPAB": {
+      "dice": "i páb",
+      "ejemplo": "El IPAB protege tus ahorros en el banco."
+    },
+    "CNBV": {
+      "dice": "ce ene be uve",
+      "ejemplo": "Revisa que esté autorizada por la CNBV."
+    },
+    "BBVA": {
+      "dice": "be be uve a",
+      "ejemplo": "Abre la app de BBVA y busca la opción."
+    },
+    "NIP": {
+      "dice": "nip",
+      "ejemplo": "Nunca compartas tu NIP con nadie."
+    },
+    "CVV": {
+      "dice": "ce uve uve",
+      "ejemplo": "El CVV viene atrás de tu tarjeta."
+    },
+    "UDI": {
+      "dice": "údi",
+      "ejemplo": "Algunos créditos se cobran en UDI."
+    },
+    "Afore": {
+      "dice": "afóre",
+      "ejemplo": "Revisa en qué Afore está tu ahorro para el retiro."
+    },
+    "AFORE": {
+      "dice": "afóre",
+      "ejemplo": "Revisa en qué AFORE está tu ahorro para el retiro."
+    },
+    "SOFIPO": {
+      "dice": "sofípo",
+      "ejemplo": "Una SOFIPO regulada también tiene seguro de depósito."
+    },
+    "CETES": {
+      "dice": "cétes",
+      "ejemplo": "Con CETES le prestas al gobierno desde cien pesos."
+    },
+    "ISR": {
+      "dice": "i ese erre",
+      "ejemplo": "Del aguinaldo, una parte está exenta de ISR."
+    },
+    "IVA": {
+      "dice": "íva",
+      "ejemplo": "El precio ya debe incluir el IVA."
+    },
+    "PTU": {
+      "dice": "pe te u",
+      "ejemplo": "El reparto de utilidades, la PTU, se paga en mayo."
+    },
+    "DiMo": {
+      "dice": "dímo",
+      "ejemplo": "Con DiMo transfieres usando el número de celular."
+    },
+    "SIPRES": {
+      "dice": "sípres",
+      "ejemplo": "Búscala en el SIPRES de CONDUSEF."
+    },
+    "REDECO": {
+      "dice": "redéco",
+      "ejemplo": "Si te acosan por una deuda, quéjate en el REDECO."
+    },
+    "WhatsApp": {
+      "dice": "guátsap",
+      "ejemplo": "Activa la verificación en dos pasos de WhatsApp."
+    },
+    "PayPal": {
+      "dice": "péipal",
+      "ejemplo": "Paga con PayPal si no confías en la tienda."
+    },
+    "e.firma": {
+      "dice": "e firma",
+      "ejemplo": "Tramita tu e.firma en una oficina del SAT."
+    }
+  }
+}

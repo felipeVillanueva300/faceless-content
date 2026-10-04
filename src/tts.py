@@ -9,17 +9,43 @@ PITCH = os.environ.get("TTS_PITCH", "+0Hz")
 
 _PRONUNCIA_BASE = {"SPEI": "spéi", "CoDi": "códi", "CODI": "códi", "CLABE": "clábe"}
 
+PRONUNCIA_JSON = os.environ.get("PRONUNCIA_JSON", "pronunciacion.json")
 
-def _pronunciar(text: str) -> str:
-    import re
+
+def tabla_pronunciacion(incluir_json: bool = True) -> dict:
+    """Base + pronunciacion.json ("terminos") + variable TTS_PRONUNCIA ("A=b;C=d").
+    Lo de más abajo gana si una palabra se repite."""
+    import json
     tabla = dict(_PRONUNCIA_BASE)
+    if incluir_json:
+        try:
+            with open(PRONUNCIA_JSON, encoding="utf-8") as f:
+                data = json.load(f) or {}
+            for k, v in (data.get("terminos") or {}).items():
+                if k and not k.startswith("_") and isinstance(v, str) and v.strip():
+                    tabla[k.strip()] = v.strip()
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            print(f"    ({PRONUNCIA_JSON} no se pudo leer: {e}; sigo con la tabla base)")
     for par in os.environ.get("TTS_PRONUNCIA", "").split(";"):
         if "=" in par:
             k, v = par.split("=", 1)
             if k.strip():
                 tabla[k.strip()] = v.strip()
-    for sigla, dicho in tabla.items():
-        text = re.sub(rf"\b{re.escape(sigla)}\b", dicho, text)
+    return tabla
+
+
+def _pronunciar(text: str, tabla: dict = None) -> str:
+    """Cambia cada palabra del diccionario por cómo se debe DECIR. Palabra completa y
+    respetando mayúsculas ("app" no toca "apple" ni "happy"). Una sola pasada: lo que ya se
+    reemplazó no se vuelve a reemplazar."""
+    import re
+    tabla = tabla_pronunciacion() if tabla is None else tabla
+    if tabla:
+        claves = sorted(tabla, key=len, reverse=True)      # "apps" antes que "app"
+        patron = re.compile(r"(?<!\w)(" + "|".join(re.escape(k) for k in claves) + r")(?!\w)")
+        text = patron.sub(lambda m: tabla[m.group(1)], text)
     text = re.sub(r"(\$\s?\d[\d,\.]*)\s*(?:pesos|mxn|m\.n\.)(?![a-záéíóú])", r"\1", text,
                   flags=re.IGNORECASE)
     return text
