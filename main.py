@@ -321,6 +321,7 @@ def generar_borrador():
     else:
         durs_bloque = [dur / len(escenas)] * len(escenas)
 
+    broll.TEMA_VIDEO = (title or topic or "").strip()
     tomas = _armar_tomas(escenas, escenas2, durs_bloque,
                          respaldo_kw=(data.get("broll_keywords") or "personal finance").strip())
 

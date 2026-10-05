@@ -49,6 +49,46 @@ def cta_hablado_fraude(data: dict) -> dict:
     return data
 
 
+_NUM_PALABRA = {2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho"}
+
+
+def asegurar_adelanto(data: dict, plan: dict) -> dict:
+    """Capítulo de serie que NO es el último: el cierre tiene que adelantar la siguiente
+    parte (es lo que convierte vistas en seguidores). La Parte 2 de "Que no te roben" cerró
+    con "Sígueme, mañana va otro" y no dijo que venía el préstamo falso. Si Gemini lo olvida,
+    se cambia ese "Sígueme…" final por "Sígueme: mañana va la Parte N, <tema corto>.".
+    Va ANTES de la voz, así que se oye igual que se lee."""
+    try:
+        parte, total = int(plan.get("serie_parte")), int(plan.get("serie_total"))
+    except (TypeError, ValueError):
+        return data
+    corto = (plan.get("serie_siguiente_corto") or "").strip().rstrip(".")
+    if parte >= total or not corto:
+        return data
+    beats = [b for b in (data.get("beats") or []) if isinstance(b, dict) and b.get("narration")]
+    if not beats:
+        return data
+    ult = beats[-1]
+    texto = _sin_acentos(ult["narration"]).lower()
+    sig = parte + 1
+    menciona_parte = re.search(rf"\bparte\s+({sig}|{_NUM_PALABRA.get(sig, '-')})\b", texto)
+    claves = [w for w in re.findall(r"[a-z0-9]+", _sin_acentos(corto).lower()) if len(w) >= 5]
+    menciona_tema = any(w in texto for w in claves) and re.search(r"manana|siguiente|proxim", texto)
+    if menciona_parte or menciona_tema:
+        return data
+    adelanto = f"Sígueme: mañana va la Parte {sig}, {corto}."
+    # quita del final las frases de cierre que ya traía ("Sígueme, mañana va otro.",
+    # "Y sígueme, que mañana vemos <otro tema>.") y pone el adelanto correcto
+    frases = re.split(r"(?<=[.!?…])\s+", ult["narration"].strip())
+    while frases and re.search(r"s[ií]gueme|ma[nñ]ana|siguiente parte|pr[oó]xim",
+                               frases[-1], re.IGNORECASE):
+        frases.pop()
+    nuevo = " ".join(frases + [adelanto])
+    print(f"    (adelanto de serie agregado: '{adelanto}')")
+    ult["narration"] = nuevo.strip()
+    return data
+
+
 # líneas de llamado que Gemini a veces agrega solo; las quitamos para no duplicar
 _CTA_VIEJO = re.compile(r"^\s*(s[ií]gueme|guarda (este|el video)|gu[aá]rdalo|comp[aá]rtelo|"
                         r"m[aá]ndaselo)\b.*$", re.IGNORECASE)
@@ -114,6 +154,8 @@ def finalizar(data: dict, plan: dict) -> dict:
     data["tema_fraude"] = fraude
     if fraude and not es_serie:
         data = cta_hablado_fraude(data)
+    if es_serie:
+        data = asegurar_adelanto(data, plan)
     cta = _cta_serie(serie_nombre, parte, total) if es_serie else _cta_del_dia(fraude)
     if es_serie:
         tag = hashtag_serie(serie_nombre)

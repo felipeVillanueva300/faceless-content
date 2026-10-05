@@ -99,6 +99,9 @@ def _luma_cuadros(cuadros):
     except Exception:
         return None
 _FFMPEG = os.environ.get("FFMPEG_BIN", "ffmpeg")
+# Tema del video (título): main.py lo pone antes de buscar clips, para que la revisión con
+# visión sepa el TONO correcto aunque la escena pedida sea neutra ("incoming call phone").
+TEMA_VIDEO = ""
 
 _VISION_PROMPT = """Eres revisor de fondos de video para una cuenta de finanzas de MÉXICO.
 Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
@@ -114,8 +117,12 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
   (maquillarse, parches o mascarillas faciales, hacer ejercicio, bailar);
 - criptomonedas (Bitcoin, logos cripto) o apps de trading con velas y botones BUY/SELL,
   SALVO que la escena pedida hable de inversión, bolsa o cripto;
-- el TONO contradice la escena pedida: gente riendo, celebrando o muy sonriente cuando la
-  escena pedida es de preocupación, fraude, estafa, robo, deuda o un problema;
+- el TONO contradice la escena pedida o el TEMA del video: gente riendo, celebrando o muy
+  sonriente cuando la escena o el tema son de preocupación, fraude, estafa, robo, deuda,
+  multa o un problema;
+- caricaturas, personajes animados o 3D, o ilustraciones (se ven baratos y no son reales);
+- la pantalla o el logo de un servicio que NO tiene que ver con el tema ocupa buena parte
+  del cuadro (Netflix, apps de comida a domicilio, redes sociales, videojuegos);
 - el clip no se parece EN NADA a la escena pedida (ej. se pidió "worried woman phone call"
   y se ve una app de edición de video en un celular sobre un soporte).
 Si no ves nada de eso, "rechazar": false.
@@ -177,6 +184,8 @@ def _vision_ok(path: str, etiqueta: str, escena: str = "") -> bool:
     client = genai.Client(api_key=key)
     partes = [types.Part.from_bytes(data=c, mime_type="image/jpeg") for c in cuadros]
     prompt = _VISION_PROMPT + (f"\nLa escena pedida era: \"{escena}\"." if escena else "")
+    if TEMA_VIDEO:
+        prompt += f"\nEl tema del video es: \"{TEMA_VIDEO}\"."
     modelos = [m for m in (VISION_MODEL, VISION_FALLBACK) if m]
     modelos = list(dict.fromkeys(modelos))          # sin duplicados
     ultimo = None

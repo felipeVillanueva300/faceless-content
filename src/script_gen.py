@@ -79,7 +79,8 @@ NO te dicen, yo sí". Tono: directo, cómplice y protector — como un amigo que
 verdad que otros te esconden, con un toque de "no te dejes". NADA de conspiración,
 alarmismo falso ni odio; es defender al usuario con datos reales y consejos accionables.
 Frases que reflejan la voz (úsalas de vez en cuando, no forzadas): "que no te vean la
-cara", "el banco no te lo va a decir", "no te dejes cobrar de más".
+cara", "el banco no te lo va a decir", "no te dejes cobrar de más". Úsalas EXACTAMENTE así,
+sin mezclarlas ni cambiarlas (mal: "para que no te dejes ver la cara").
 Es una SERIE diaria: UN truco corto CADA DÍA. Que se sienta continua ("hoy te toca…",
 "el de hoy…") para dar razón de seguir y esperar el de mañana.
 
@@ -117,7 +118,8 @@ CALIDAD DEL CONSEJO (lo más importante): da el consejo MÁS ÚTIL y COMPLETO, n
 ni el técnicamente-correcto-pero-flojo. Incluye SIEMPRE el matiz práctico que ayuda a
 quien NO está en el caso ideal. Ejemplos del nivel que quiero:
 - Tarjeta: no digas solo "paga el total". Di que si no puedes el total, pagues al menos
-  el monto que EVITA intereses (el saldo al corte), y dónde ver esa opción en la app.
+  el "pago para no generar intereses" (se llama así en el estado de cuenta; si tienes
+  compras a meses puede ser MENOR que el saldo total), y dónde verlo en la app.
 - Ahorro: no digas solo "ahorra". Di cuánto, cómo automatizarlo y dónde.
 EXPLICA EL PORQUÉ, NO SOLO EL QUÉ: si el tema es un concepto (inflación, intereses,
 CAT, Afore...), dedica UN bloque al mecanismo causa → efecto en palabras de la calle y con
@@ -145,18 +147,22 @@ banco...) y UN paso concreto para empezar ("descárgala, conecta tu cuenta y act
   para que se LEA en pantalla, no solo se escuche.
 - Las frases de la marca ("no te dejes cobrar", "que no te vean la cara") solo si vienen
   al caso; si nadie te está cobrando nada en el tema, no las uses.
+- PROHIBIDO inventar términos que no se usan en México (mal: "recargos hormiga", mezcla de
+  "gastos hormiga" con recargos). Usa los nombres reales: intereses, comisiones, IVA,
+  gastos hormiga, pago mínimo. Si un término no lo diría cualquiera en la sobremesa, no va.
 Si el consejo cabe en una frase obvia, te faltó el matiz. Un solo consejo, bien explicado,
 mejor que tres a medias.
 
 EL GANCHO (lo más importante — decide si te ven o te saltan en 1 segundo):
 El "hook" NO es el título del tema. Es un FRENO DE SCROLL. Debe hacer que la persona
-piense "espera, ¿qué?". Usa UNA de estas fórmulas:
-- Cifra + consecuencia concreta: "Pagar el mínimo puede costarte 3 años y el doble de tu deuda."
-- Callout que pica (háblale directo y con algo en juego): "Si pagas el mínimo de tu tarjeta, el banco te lo agradece — y tú lo pagas carísimo."
-- Error/pérdida con la que se identifican: "Estás regalándole dinero a tu banco cada mes sin darte cuenta."
-- Pregunta que incomoda: "¿Sabes cuánto de tu pago mínimo se va SOLO a intereses? Te va a doler."
-PROHIBIDO como gancho: enunciar el tema ("El error del pago mínimo", "Hoy hablaremos de…",
-"El pago mínimo de la tarjeta"). Eso NO engancha. Prohibido el preámbulo.
+piense "espera, ¿qué?". Usa UNA de estas fórmulas (los ejemplos son de FORMA y de temas
+distintos a propósito: NO copies su tema ni sus palabras, el tema lo pone el PILAR de hoy):
+- Cifra + consecuencia concreta: "Un café de $45 al día son más de $16,000 al año."
+- Callout que pica (háblale directo y con algo en juego): "Si tu aguinaldo se va completo en diciembre, enero te va a pasar la factura."
+- Error/pérdida con la que se identifican: "Ese mensaje del banco que te pide 'confirmar tus datos' no es del banco."
+- Pregunta que incomoda: "¿Sabes en qué Afore está tu ahorro para el retiro? Si no la elegiste, alguien eligió por ti."
+PROHIBIDO como gancho: enunciar el tema ("Qué es una Afore", "Hoy hablaremos de…",
+"El aguinaldo"). Eso NO engancha. Prohibido el preámbulo.
 PROHIBIDO arrancar con muletillas de video escolar: "¿Sabías que…?", "Muchos no saben…",
 "¿Alguna vez te has preguntado…?", "En este video…", "Hoy te voy a…". Son los arranques que
 más se saltan. Di el dato DIRECTO como afirmación o como situación con algo en juego.
@@ -227,9 +233,9 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
   "hook": "FRENO DE SCROLL de 1 línea (ver EL GANCHO arriba): cifra+consecuencia, callout que pica, o pregunta que incomoda. En segunda persona. NUNCA el título del tema. NUNCA empieza con '¿Sabías que'.",
-  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿3 AÑOS PAGANDO?', 'LE REGALAS DINERO AL BANCO', 'TE VA A DOLER'. Mal: 'EL ERROR DEL PAGO MÍNIMO' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
+  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿$16,000 EN CAFÉ?', 'NO ES TU BANCO', 'TE VA A DOLER' (son ejemplos de forma: NO los copies). Mal: 'QUÉ ES UNA AFORE' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
   "beats": [
-    {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "worried man credit card bill", "scene2": "bank app phone screen"}},
+    {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "worried woman reading phone", "scene2": "hands calculator receipts table"}},
     {{"narration": "frase del bloque 2", "scene": "calendar planner desk"}},
     {{"narration": "frase del bloque 3", "scene": "online banking phone"}},
     {{"narration": "frase del bloque 4, cierra con el llamado a seguir", "scene": "shopping online laptop"}}

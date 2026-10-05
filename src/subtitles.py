@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 
 FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
@@ -72,6 +73,7 @@ _DEBILES = {
     "unos", "unas", "y", "e", "o", "u", "ni", "que", "si", "tu", "tus", "su", "sus", "mi", "mis",
     "se", "te", "me", "le", "les", "nos", "cada", "muy", "mas", "no", "como", "cuando", "donde",
     "porque", "pero", "este", "esta", "estos", "estas", "ese", "esa", "tan",
+    "parte",
 }
 _FIN_FUERTE = (".", "?", "!", "…", ";", ":")
 MAX_CHARS_CUE = int(os.environ.get("SUB_MAX_CHARS", "26"))
@@ -97,7 +99,7 @@ def _costo_grupo(pals, maxw):
     n = len(pals)
     c = 0.0
     if n > maxw:
-        c += 6.0 * (n - maxw)
+        c += (2.0 if len(" ".join(pals)) <= 20 else 6.0) * (n - maxw)
     elif n == 2:
         c += 2.0
     elif n == 1:
@@ -111,14 +113,34 @@ def _costo_grupo(pals, maxw):
     return c
 
 
+_PEGADOS = {"artificial", "movil", "minimo", "minima", "comun", "digital", "personal",
+            "bancaria", "bancario", "financiera", "financiero", "social", "fiscal", "real",
+            "total", "segura", "seguro", "falso", "falsa", "falsos", "falsas", "oficial",
+            "sospechosa", "sospechoso", "cotizadas", "exactas"}
+
+
+def _costo_corte(pals, j):
+    """Costo de cortar ENTRE pals[j-1] y pals[j]."""
+    if j >= len(pals) or pals[j - 1].rstrip("\"'»)").endswith(_FIN_FUERTE + (",",)):
+        return 0.0
+    sig = _base(pals[j])
+    if sig in _PEGADOS:
+        return 5.0
+    # "PARTE 1 / DE 5": un número seguido de "de" + número va junto
+    if re.match(r"\d", _base(pals[j - 1])) and sig == "de" and j + 1 < len(pals) \
+            and re.match(r"\d", _base(pals[j + 1])):
+        return 9.0
+    return 0.0
+
+
 def _partir_clausula(pals, maxw):
     """Programación dinámica: el reparto de la cláusula en grupos con menor costo."""
     n = len(pals)
     inf = float("inf")
     mejor, previo = [0.0] + [inf] * n, [0] * (n + 1)
     for j in range(1, n + 1):
-        for i in range(max(0, j - (maxw + 1)), j):
-            c = mejor[i] + _costo_grupo(pals[i:j], maxw)
+        for i in range(max(0, j - (maxw + 2)), j):
+            c = mejor[i] + _costo_grupo(pals[i:j], maxw) + _costo_corte(pals, j)
             if c < mejor[j]:
                 mejor[j], previo[j] = c, i
     cortes, j = [], n

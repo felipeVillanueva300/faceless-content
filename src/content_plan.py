@@ -248,7 +248,32 @@ def serie_override():
         "formato_id": os.environ.get("SERIE_FORMATO", "").strip().lower(),
         "siguiente": os.environ.get("SERIE_SIGUIENTE", "").strip(),
         "nombre": os.environ.get("SERIE_NOMBRE", "").strip(),
+        "siguiente_corto": _siguiente_corto(os.environ.get("SERIE_PARTE", "").strip(),
+                                            os.environ.get("SERIE_SIGUIENTE", "").strip()),
     }
+
+
+def _siguiente_corto(parte: str, siguiente: str) -> str:
+    """Nombre CORTO del próximo capítulo para el adelanto final ("robo de WhatsApp").
+    1) "concepto" (o "titulo") del episodio siguiente en serie.json;
+    2) si no hay, las primeras palabras del subtema siguiente, sin relleno."""
+    import json
+    try:
+        n = int(parte)
+    except (TypeError, ValueError):
+        n = 0
+    if n > 0:
+        try:
+            with open(os.environ.get("SERIE_JSON", "serie.json"), encoding="utf-8") as f:
+                eps = [e for e in ((json.load(f) or {}).get("episodios") or []) if isinstance(e, dict)]
+            if n < len(eps):
+                corto = (eps[n].get("concepto") or eps[n].get("titulo") or "").strip()
+                if corto:
+                    return corto
+        except Exception:
+            pass
+    pals = _primera_clausula(siguiente).split()
+    return " ".join(pals[:7])
 
 
 SERIE_JSON = os.environ.get("SERIE_JSON", "serie.json")
@@ -347,6 +372,7 @@ def plan_del_dia(today=None, offset=0):
             "serie_anterior": serie["anterior"],
             "serie_total": serie["total"],
             "serie_siguiente": serie["siguiente"],
+            "serie_siguiente_corto": serie["siguiente_corto"],
             "serie_nombre": serie["nombre"] or _nombre_corto(serie["tema"]),
         }
 

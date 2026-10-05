@@ -305,7 +305,7 @@ def build_video(audio_path, ass_path, out_path, bg_video=None, cards=None,
         raw_big = str(card.get("big", ""))
         raw_small = str(card.get("small", ""))
         big_fs = _fit_fontsize(raw_big, CARD_MAX_W, 170, 70)
-        small_fs = _fit_fontsize(raw_small, CARD_MAX_W, 52, 34)
+        small_fs = _fit_fontsize(raw_small, CARD_MAX_W, 64, 40)   # antes 52-34: no se leía
         big = _escape_drawtext(raw_big)
         small = _escape_drawtext(raw_small)
         st, en = float(card["start"]), float(card["end"])
