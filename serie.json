@@ -2,11 +2,31 @@
   "tema": "las comisiones y cobros ocultos que tu banco no te menciona",
   "nombre": "Lo que tu banco no te dice",
   "total": 4,
-  "siguiente": 0,
+  "siguiente": 1,
   "episodios": [
-    {"concepto": "comisión por saldo mínimo", "subtema": "la comisión por no mantener el saldo promedio mínimo: cómo encontrarla en tu estado de cuenta o en la app (aparece como 'comisión por saldo promedio mínimo' o 'manejo de cuenta') y cómo evitarla pidiendo la cuenta básica, que por ley (artículo 48 Bis 2 de la Ley de Instituciones de Crédito) todos los bancos deben ofrecer sin comisión por apertura, manejo ni saldo mínimo, o cambiándote a una cuenta digital sin comisiones", "anterior": "", "formato": "error"},
-    {"concepto": "seguros no solicitados", "subtema": "seguros, asistencias o 'membresías' que te cobran cada mes en tu cuenta o tarjeta y que nunca pediste: cómo detectarlos en el estado de cuenta (cargo fijo mensual con nombre de seguro o asistencia) y cómo cancelarlos llamando al banco o en sucursal; si no te los quitan, presenta tu queja en CONDUSEF", "anterior": "Parte 1: la comisión por saldo mínimo y la cuenta básica", "formato": "howto"},
-    {"concepto": "comisión de cajero ajeno", "subtema": "la comisión (más IVA) por sacar dinero en un cajero de otro banco y cómo no pagarla: usa cajeros de tu banco o de su red (búscalos en la app) o pide efectivo al pagar en tiendas que lo permiten, preguntando antes si cobran comisión", "anterior": "Partes 1-2: comisión por saldo mínimo y seguros que no pediste", "formato": "tip"},
-    {"concepto": "cuenta digital vs banco tradicional", "subtema": "cuentas digitales sin comisiones contra tu banco de siempre: qué revisar antes de cambiarte (que sea banco con seguro del IPAB o SOFIPO autorizada con su propio seguro, transferencias SPEI gratis, dónde retiras efectivo sin costo y cómo te atienden si hay un problema)", "anterior": "Partes 1-3: saldo mínimo, seguros no pedidos y cajero de otro banco", "formato": "comparativa"}
+    {
+      "concepto": "comisión por saldo mínimo",
+      "subtema": "la comisión por no mantener el saldo promedio mínimo: cómo encontrarla en tu estado de cuenta o en la app (aparece como 'comisión por saldo promedio mínimo' o 'manejo de cuenta') y cómo evitarla pidiendo la cuenta básica, que por ley (artículo 48 Bis 2 de la Ley de Instituciones de Crédito) todos los bancos deben ofrecer sin comisión por apertura, manejo ni saldo mínimo, o cambiándote a una cuenta digital sin comisiones",
+      "anterior": "",
+      "formato": "error"
+    },
+    {
+      "concepto": "seguros no solicitados",
+      "subtema": "seguros, asistencias o 'membresías' que te cobran cada mes en tu cuenta o tarjeta y que nunca pediste: cómo detectarlos en el estado de cuenta (cargo fijo mensual con nombre de seguro o asistencia) y cómo cancelarlos llamando al banco o en sucursal; si no te los quitan, presenta tu queja en CONDUSEF",
+      "anterior": "Parte 1: la comisión por saldo mínimo y la cuenta básica",
+      "formato": "howto"
+    },
+    {
+      "concepto": "comisión de cajero ajeno",
+      "subtema": "la comisión (más IVA) por sacar dinero en un cajero de otro banco y cómo no pagarla: usa cajeros de tu banco o de su red (búscalos en la app) o pide efectivo al pagar en tiendas que lo permiten, preguntando antes si cobran comisión",
+      "anterior": "Partes 1-2: comisión por saldo mínimo y seguros que no pediste",
+      "formato": "tip"
+    },
+    {
+      "concepto": "cuenta digital vs banco tradicional",
+      "subtema": "cuentas digitales sin comisiones contra tu banco de siempre: qué revisar antes de cambiarte (que sea banco con seguro del IPAB o SOFIPO autorizada con su propio seguro, transferencias SPEI gratis, dónde retiras efectivo sin costo y cómo te atienden si hay un problema)",
+      "anterior": "Partes 1-3: saldo mínimo, seguros no pedidos y cajero de otro banco",
+      "formato": "comparativa"
+    }
   ]
 }
