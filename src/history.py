@@ -93,6 +93,21 @@ def recent_conceptos(dias: int = 120):
     return out
 
 
+def recent_clips(dias: int = 14):
+    """Clips de b-roll usados en los últimos 'dias' ("pexels:123"), para no repetir el mismo
+    clip en videos de días seguidos (el hombre del celular y la tarjeta salió en 3 videos)."""
+    hoy = datetime.date.today()
+    out = set()
+    for c in (_data().get("clips") or []):
+        try:
+            if (hoy - datetime.date.fromisoformat(c.get("fecha", ""))).days <= dias:
+                out.add(c.get("id"))
+        except Exception:
+            continue
+    out.discard(None)
+    return out
+
+
 def recent_formatos(n: int = 2):
     """Nombres de los últimos n formatos usados (para no repetir seguido)."""
     recs = _data().get("records", []) or []
@@ -101,7 +116,7 @@ def recent_formatos(n: int = 2):
 
 
 def add(topic: str, categoria=None, formato=None, keep: int = 200,
-        concepto=None, titulo=None):
+        concepto=None, titulo=None, clips=None):
     """Agrega un registro al historial (conserva los últimos 'keep').
     Mantiene la lista 'topics' (compatibilidad) y una lista 'records' con
     fecha + categoría + formato para el enfriamiento y la rotación."""
@@ -131,7 +146,11 @@ def add(topic: str, categoria=None, formato=None, keep: int = 200,
         })
         recs = recs[-keep:]
 
-        body = json.dumps({"topics": temas, "records": recs}, ensure_ascii=False)
+        hoy = datetime.date.today().isoformat()
+        usados = [c for c in (data.get("clips") or []) if isinstance(c, dict)]
+        usados += [{"fecha": hoy, "id": c} for c in (clips or []) if c]
+        data["topics"], data["records"], data["clips"] = temas, recs, usados[-400:]
+        body = json.dumps(data, ensure_ascii=False)   # conserva cualquier otra clave
         if rel:
             requests.patch(
                 f"https://api.github.com/repos/{_repo()}/releases/{rel['id']}",

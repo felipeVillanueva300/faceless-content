@@ -8,6 +8,8 @@ from google.genai import errors
 
 from src import content_plan, script_review, fichas, caption
 
+VERIFICAR_REESCRIBE = os.environ.get("VERIFICAR_REESCRIBE", "1").strip().lower() in ("1", "true", "yes")
+
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
     if lista:
@@ -233,7 +235,7 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
 Devuelve SOLO un objeto JSON válido, sin markdown ni texto adicional, con estas claves EXACTAS:
 {{
   "hook": "FRENO DE SCROLL de 1 línea (ver EL GANCHO arriba): cifra+consecuencia, callout que pica, o pregunta que incomoda. En segunda persona. NUNCA el título del tema. NUNCA empieza con '¿Sabías que'.",
-  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿$16,000 EN CAFÉ?', 'NO ES TU BANCO', 'TE VA A DOLER' (son ejemplos de forma: NO los copies). Mal: 'QUÉ ES UNA AFORE' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos')",
+  "hook_card": "versión MUY CORTA del hook para mostrarla GRANDE los primeros ~2.5s: 3-6 palabras con TENSIÓN, no el nombre del tema. Bien: '¿$16,000 EN CAFÉ?', 'NO ES TU BANCO', 'TE VA A DOLER' (son ejemplos de forma: NO los copies). Mal: 'QUÉ ES UNA AFORE' (eso es el tema, no engancha). Debe entenderse SOLA y NO cambiar el sentido por acortar (mal: 'para médicos'; bien: 'gastos médicos'). Usa SOLO palabras y nombres que también dice la voz (si la voz dice 'Google Sheets', NO pongas 'EXCEL')",
   "beats": [
     {{"narration": "frase del bloque 1 (continúa el hook, entra al desarrollo)", "scene": "worried woman reading phone", "scene2": "hands calculator receipts table"}},
     {{"narration": "frase del bloque 2", "scene": "calendar planner desk"}},
@@ -270,59 +272,88 @@ EXACTAMENTE uno de estos dos formatos, con números planos (sin comas ni signo $
 Opcional en ambos: "beat": número del bloque donde la voz dice ese dato (ahí aparece).
 No uses otros tipos ni omitas claves de estos formatos."""
 
-    modelos = _model_ladder()
-    agotados = []
-    last_err = None
-    for mi, model in enumerate(modelos):
-        for attempt in range(max_retries):
-            try:
-                resp = client.models.generate_content(
-                    model=model,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=1.0,
-                        response_mime_type="application/json",
-                    ),
-                )
-                data = _extract_json(resp.text)
-                data = script_review.revisar(data, client)
-                data = caption.finalizar(data, plan)
-                data = fichas.agregar_links(data)
-                data["categoria"] = plan["categoria_id"]
-                data["formato"] = plan["formato_nombre"]
-                data["publicar_borrador"] = plan.get("publicar_borrador", False)
-                if mi > 0:
-                    print(f"    (se usó el modelo de respaldo '{model}')")
-                return data
-            except errors.APIError as e:
-                code = getattr(e, "code", None) or getattr(e, "status_code", None)
-                last_err = e
+    def _generar(texto):
+        modelos = _model_ladder()
+        agotados = []
+        last_err = None
+        for mi, model in enumerate(modelos):
+            for attempt in range(max_retries):
+                try:
+                    resp = client.models.generate_content(
+                        model=model,
+                        contents=texto,
+                        config=types.GenerateContentConfig(
+                            temperature=1.0,
+                            response_mime_type="application/json",
+                        ),
+                    )
+                    data = _extract_json(resp.text)
+                    data = script_review.revisar(data, client)
+                    data = caption.finalizar(data, plan)
+                    data = fichas.agregar_links(data)
+                    data["categoria"] = plan["categoria_id"]
+                    data["formato"] = plan["formato_nombre"]
+                    data["publicar_borrador"] = plan.get("publicar_borrador", False)
+                    if mi > 0:
+                        print(f"    (se usó el modelo de respaldo '{model}')")
+                    return data
+                except errors.APIError as e:
+                    code = getattr(e, "code", None) or getattr(e, "status_code", None)
+                    last_err = e
 
-                if code == 429 and _is_daily_quota(e):
-                    agotados.append(model)
-                    if mi < len(modelos) - 1:
-                        print(f"Cuota diaria agotada en '{model}'. Salto al siguiente "
-                              f"modelo: '{modelos[mi + 1]}'...")
-                    break  # rompe el bucle de intentos -> siguiente modelo
+                    if code == 429 and _is_daily_quota(e):
+                        agotados.append(model)
+                        if mi < len(modelos) - 1:
+                            print(f"Cuota diaria agotada en '{model}'. Salto al siguiente "
+                                  f"modelo: '{modelos[mi + 1]}'...")
+                        break  # rompe el bucle de intentos -> siguiente modelo
 
-                if code in (429, 500, 502, 503) and attempt < max_retries - 1:
-                    wait = 8 * (attempt + 1)
-                    print(f"Gemini respondió {code} (transitorio) en '{model}'. "
-                          f"Reintento en {wait}s...")
-                    time.sleep(wait)
-                    continue
+                    if code in (429, 500, 502, 503) and attempt < max_retries - 1:
+                        wait = 8 * (attempt + 1)
+                        print(f"Gemini respondió {code} (transitorio) en '{model}'. "
+                              f"Reintento en {wait}s...")
+                        time.sleep(wait)
+                        continue
 
-                if code in (429, 500, 502, 503):
-                    print(f"'{model}' sigue fallando ({code}); pruebo el siguiente modelo.")
-                    break
+                    if code in (429, 500, 502, 503):
+                        print(f"'{model}' sigue fallando ({code}); pruebo el siguiente modelo.")
+                        break
 
-                raise
+                    raise
 
-    if agotados:
-        raise RuntimeError(
-            "Cuota DIARIA del free tier de Gemini agotada en TODOS los modelos del "
-            f"escalón ({', '.join(agotados)}). Se resetea a medianoche hora del "
-            "Pacífico (~08:00 UTC / ~01:00 CDMX). Opciones: ampliar GEMINI_MODELS con "
-            "otro modelo/flash-lite, o habilitar billing."
-        )
-    raise last_err
+        if agotados:
+            raise RuntimeError(
+                "Cuota DIARIA del free tier de Gemini agotada en TODOS los modelos del "
+                f"escalón ({', '.join(agotados)}). Se resetea a medianoche hora del "
+                "Pacífico (~08:00 UTC / ~01:00 CDMX). Opciones: ampliar GEMINI_MODELS con "
+                "otro modelo/flash-lite, o habilitar billing."
+            )
+        raise last_err
+
+    data = _generar(prompt)
+
+    problemas = script_review.verificar(data, client)
+    if problemas and VERIFICAR_REESCRIBE:
+        print(f"    verificador: {len(problemas)} problema(s); reescribo el guion una vez")
+        for pr in problemas:
+            print(f"      - {pr}")
+        previo = {"hook": data.get("hook", ""),
+                  "beats": [b.get("narration", "") for b in (data.get("beats") or [])
+                            if isinstance(b, dict)]}
+        feedback = ("\n\nTU BORRADOR ANTERIOR TENÍA ESTOS PROBLEMAS. Escribe una versión NUEVA del "
+                    "mismo tema que los corrija TODOS (no los repitas ni los cambies por otros):\n- "
+                    + "\n- ".join(problemas)
+                    + "\nBorrador anterior, solo como referencia (NO lo copies): "
+                    + json.dumps(previo, ensure_ascii=False))
+        try:
+            data2 = _generar(prompt + feedback)
+            problemas2 = script_review.verificar(data2, client)
+            if len(problemas2) <= len(problemas):
+                data, problemas = data2, problemas2
+                print(f"    verificador: versión nueva con {len(problemas)} problema(s)")
+            else:
+                print("    verificador: la versión nueva salió peor; me quedo con la primera")
+        except Exception as e:
+            print(f"    (no se pudo reescribir el guion: {str(e)[:120]}; sigo con el primero)")
+    data["avisos"] = problemas
+    return data

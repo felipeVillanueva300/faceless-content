@@ -1,0 +1,395 @@
+{
+  "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
+  "series": [
+    {
+      "nombre": "Tu Afore sin misterio",
+      "tema": "tu Afore y tu retiro explicados fácil",
+      "total": 5,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "qué es la Afore",
+          "subtema": "qué es la Afore, de dónde sale ese dinero (aportan tú, tu patrón y el gobierno) y cómo ver cuánto tienes y en qué Afore estás con la app AforeMóvil",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "comparar y cambiar de Afore",
+          "subtema": "cómo saber si tu Afore te conviene: comparar su rendimiento neto en la página de la CONSAR y cómo pedir el cambio (traspaso) desde AforeMóvil; sin prometer plazos ni rendimientos",
+          "anterior": "Parte 1: qué es la Afore",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "aportaciones voluntarias",
+          "subtema": "aportaciones voluntarias: cómo hacerlas desde AforeMóvil o en tiendas y por qué poco cada mes cuenta, con un ejemplo de $200 al mes marcado claramente como ejemplo (sin prometer rendimientos)",
+          "anterior": "Partes 1-2: qué es la Afore, comparar y cambiar de Afore",
+          "formato": "dato"
+        },
+        {
+          "concepto": "deducir aportaciones al retiro",
+          "subtema": "la deducción de impuestos por aportaciones voluntarias a tu retiro: cómo te puede regresar dinero el SAT en tu declaración anual (se presenta en abril) y qué constancia te da tu Afore",
+          "anterior": "Partes 1-3: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias",
+          "formato": "howto"
+        },
+        {
+          "concepto": "semanas cotizadas",
+          "subtema": "semanas cotizadas: qué son, por qué de ellas depende tu pensión y cómo pedir gratis tu constancia de semanas cotizadas en el IMSS con tu CURP y un correo",
+          "anterior": "Partes 1-4: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias, deducir aportaciones al retiro",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "IA para tu dinero",
+      "tema": "cómo usar la inteligencia artificial para cuidar tu dinero (con seguridad)",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "presupuesto con IA",
+          "subtema": "cómo pedirle a una IA (ChatGPT, Gemini o la que uses) que te arme un presupuesto de quincena con tus ingresos y gastos, con un ejemplo de lo que le escribes",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "letra chiquita con IA",
+          "subtema": "usar la IA para entender la letra chiquita de un contrato o de un crédito antes de firmar: copiar el texto y pedirle que te explique comisiones, penalizaciones y CAT en palabras simples",
+          "anterior": "Parte 1: presupuesto con IA",
+          "formato": "howto"
+        },
+        {
+          "concepto": "datos que no se comparten con la IA",
+          "subtema": "la regla de oro: NUNCA le des a una IA tu NIP, CVV, contraseñas, códigos que te llegan por SMS ni tu número de tarjeta completo",
+          "anterior": "Partes 1-2: presupuesto con IA, letra chiquita con IA",
+          "formato": "mito"
+        },
+        {
+          "concepto": "comparar créditos con IA",
+          "subtema": "cómo pedirle a la IA que compare dos créditos por su CAT y te explique cuál sale más caro al final, y por qué siempre debes revisar tú los números en el documento oficial",
+          "anterior": "Partes 1-3: presupuesto con IA, letra chiquita con IA, datos que no se comparten con la IA",
+          "formato": "comparativa"
+        }
+      ]
+    },
+    {
+      "nombre": "Tu buró sin miedo",
+      "tema": "entender y mejorar tu buró de crédito",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "qué es el buró",
+          "subtema": "qué es realmente el buró de crédito y el mito de que 'estar en buró' es malo: ahí está cualquiera que haya tenido un crédito; lo que importa es cómo pagaste",
+          "anterior": "",
+          "formato": "mito"
+        },
+        {
+          "concepto": "reporte de crédito gratis",
+          "subtema": "cómo pedir tu Reporte de Crédito Especial gratis una vez cada 12 meses en burodecredito.com.mx, paso a paso",
+          "anterior": "Parte 1: qué es el buró",
+          "formato": "howto"
+        },
+        {
+          "concepto": "qué mueve tu score",
+          "subtema": "qué sube y qué baja tu score: pagar a tiempo, qué parte de tu línea de crédito usas y abrir muchos créditos juntos; sin inventar porcentajes",
+          "anterior": "Partes 1-2: qué es el buró, reporte de crédito gratis",
+          "formato": "dato"
+        },
+        {
+          "concepto": "corregir tu historial",
+          "subtema": "cómo mejorar tu historial si está dañado y qué hacer si hay un error en tu reporte: presentar una reclamación ante Buró de Crédito",
+          "anterior": "Partes 1-3: qué es el buró, reporte de crédito gratis, qué mueve tu score",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Casa o auto sin que te vean la cara",
+      "tema": "comprar casa o auto sin que te vean la cara",
+      "total": 5,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "qué es el CAT",
+          "subtema": "qué es el CAT y por qué es el número que debes comparar entre créditos (no solo la tasa ni la mensualidad), con dos ejemplos en pesos marcados como ejemplo",
+          "anterior": "",
+          "formato": "dato"
+        },
+        {
+          "concepto": "cuánto te presta Infonavit",
+          "subtema": "cuánto te presta Infonavit y cómo consultarlo en Mi Cuenta Infonavit, paso a paso",
+          "anterior": "Parte 1: qué es el CAT",
+          "formato": "howto"
+        },
+        {
+          "concepto": "el enganche",
+          "subtema": "el enganche: por qué dar más enganche te ahorra intereses, con el mismo crédito y dos enganches distintos como ejemplo",
+          "anterior": "Partes 1-2: qué es el CAT, cuánto te presta Infonavit",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "costos del crédito automotriz",
+          "subtema": "crédito de auto: los costos que no ves en la mensualidad (seguro que te exige el crédito, comisión por apertura) y revisar el CAT antes de firmar",
+          "anterior": "Partes 1-3: qué es el CAT, cuánto te presta Infonavit, el enganche",
+          "formato": "error"
+        },
+        {
+          "concepto": "simulador de crédito CONDUSEF",
+          "subtema": "comparar créditos en los simuladores de CONDUSEF antes de firmar, paso a paso",
+          "anterior": "Partes 1-4: qué es el CAT, cuánto te presta Infonavit, el enganche, costos del crédito automotriz",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Fugas de dinero",
+      "tema": "fugas de dinero que no notas cada mes",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "suscripciones olvidadas",
+          "subtema": "suscripciones olvidadas: cómo encontrar todas las que pagas (estado de cuenta, App Store, Google Play) en 10 minutos",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "pruebas gratis que se cobran",
+          "subtema": "las 'pruebas gratis' que se cobran solas: ponerles recordatorio de cancelación y usar una tarjeta digital para que no te agarren",
+          "anterior": "Parte 1: suscripciones olvidadas",
+          "formato": "tip"
+        },
+        {
+          "concepto": "gastos hormiga",
+          "subtema": "gastos hormiga: la cuenta real de un antojo diario al año con un ejemplo en pesos, y cómo recortar sin sufrir (apartado automático con lo que ahorras)",
+          "anterior": "Partes 1-2: suscripciones olvidadas, pruebas gratis que se cobran",
+          "formato": "dato"
+        },
+        {
+          "concepto": "cancelar cargos recurrentes",
+          "subtema": "cargos recurrentes que ya no usas: cómo cancelarlos y, si te siguen cobrando, cómo pedir la aclaración del cargo con tu banco",
+          "anterior": "Partes 1-3: suscripciones olvidadas, pruebas gratis que se cobran, gastos hormiga",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "La economía en tu bolsillo",
+      "tema": "la economía de México explicada fácil (y cómo te pega en el bolsillo)",
+      "total": 5,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "tasa de Banxico",
+          "subtema": "qué es Banxico y por qué cuando 'sube o baja la tasa' cambia lo que pagas en créditos y lo que ganas en tus ahorros (como CETES); usa solo los DATOS VIGENTES para cifras",
+          "anterior": "",
+          "formato": "dato"
+        },
+        {
+          "concepto": "tipo de cambio",
+          "subtema": "por qué sube o baja el dólar en palabras simples y cómo te afecta aunque nunca compres dólares: celulares, productos importados, viajes",
+          "anterior": "Parte 1: tasa de Banxico",
+          "formato": "dato"
+        },
+        {
+          "concepto": "PIB y recesión",
+          "subtema": "qué es el PIB y qué significa que el país 'entre en recesión': qué le pasa al empleo y qué puedes hacer tú (fondo de emergencia, no endeudarte de más)",
+          "anterior": "Partes 1-2: tasa de Banxico, tipo de cambio",
+          "formato": "mito"
+        },
+        {
+          "concepto": "precio de la gasolina",
+          "subtema": "quién decide el precio de la gasolina en México y qué parte de lo que pagas son impuestos (IEPS e IVA), sin dar cifras exactas que no estén en los DATOS VIGENTES",
+          "anterior": "Partes 1-3: tasa de Banxico, tipo de cambio, PIB y recesión",
+          "formato": "dato"
+        },
+        {
+          "concepto": "salario mínimo e inflación",
+          "subtema": "quién decide el salario mínimo (la CONASAMI) y por qué cuando sube no siempre alcanza más: la relación entre salario, inflación y precios",
+          "anterior": "Partes 1-4: tasa de Banxico, tipo de cambio, PIB y recesión, precio de la gasolina",
+          "formato": "mito"
+        }
+      ]
+    },
+    {
+      "nombre": "Trucos de la app de tu banco",
+      "tema": "trucos de la app de tu banco que casi nadie usa",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "tarjeta digital",
+          "subtema": "la tarjeta digital o virtual de la app de tu banco para comprar en línea sin exponer tu tarjeta física, y cómo cambiarla si se filtra",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "límites y alertas de compra",
+          "subtema": "poner límites de compra por internet y alertas por cada cargo en la app de tu banco para detectar un cargo raro en segundos",
+          "anterior": "Parte 1: tarjeta digital",
+          "formato": "tip"
+        },
+        {
+          "concepto": "apartados o cajitas",
+          "subtema": "apartados o cajitas: separar tu dinero dentro de la app para no gastarlo sin querer (renta, colegiatura, fondo de emergencia)",
+          "anterior": "Partes 1-2: tarjeta digital, límites y alertas de compra",
+          "formato": "howto"
+        },
+        {
+          "concepto": "domiciliación",
+          "subtema": "pagos domiciliados: cómo automatizar un pago y, sobre todo, cómo CANCELAR una domiciliación que ya no quieres desde la app o en el banco",
+          "anterior": "Partes 1-3: tarjeta digital, límites y alertas de compra, apartados o cajitas",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Buen Fin sin deudas",
+      "tema": "cómo aprovechar el Buen Fin 2026 (13 al 17 de noviembre) sin endeudarte",
+      "total": 3,
+      "siguiente": 0,
+      "no_antes_de": "2026-11-10",
+      "no_despues_de": "2026-11-11",
+      "episodios": [
+        {
+          "concepto": "ofertas falsas del Buen Fin",
+          "subtema": "cómo saber si una oferta del Buen Fin es real: revisar el precio desde antes (capturas, historial de precios) y quejarte en Profeco si no respetan el precio anunciado",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "meses sin intereses en el Buen Fin",
+          "subtema": "meses sin intereses en el Buen Fin: la regla para que sí convengan (que la mensualidad quepa en tu presupuesto y no juntar varios) con un ejemplo en pesos",
+          "anterior": "Parte 1: ofertas falsas del Buen Fin",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "lista y tope de gasto",
+          "subtema": "la lista antes de comprar: qué necesitas, tope de gasto y qué hacer si te arrepientes (devoluciones, garantía, queja en Profeco)",
+          "anterior": "Partes 1-2: ofertas falsas del Buen Fin, meses sin intereses en el Buen Fin",
+          "formato": "tip"
+        }
+      ]
+    },
+    {
+      "nombre": "Lo que te toca por ley",
+      "tema": "tu nómina y tus prestaciones: lo que te toca por ley",
+      "total": 5,
+      "siguiente": 0,
+      "no_antes_de": "2026-11-18",
+      "no_despues_de": "2026-12-10",
+      "episodios": [
+        {
+          "concepto": "leer tu recibo de nómina",
+          "subtema": "cómo leer tu recibo de nómina: sueldo bruto vs neto, qué es el ISR y la cuota del IMSS que te descuentan, con un recibo de ejemplo",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "aguinaldo",
+          "subtema": "el aguinaldo: mínimo 15 días de salario por ley, se paga a más tardar el 20 de diciembre, cómo calcular el tuyo y el proporcional si no trabajaste el año completo",
+          "anterior": "Parte 1: leer tu recibo de nómina",
+          "formato": "dato"
+        },
+        {
+          "concepto": "vacaciones y prima vacacional",
+          "subtema": "vacaciones y prima vacacional con la ley vigente desde 2023: 12 días el primer año y suben con la antigüedad; la prima es de al menos 25% de esos días",
+          "anterior": "Partes 1-2: leer tu recibo de nómina, aguinaldo",
+          "formato": "dato"
+        },
+        {
+          "concepto": "reparto de utilidades",
+          "subtema": "el reparto de utilidades (PTU): quién lo recibe, cuándo se paga (mayo o junio) y por qué no a todos les toca",
+          "anterior": "Partes 1-3: leer tu recibo de nómina, aguinaldo, vacaciones y prima vacacional",
+          "formato": "mito"
+        },
+        {
+          "concepto": "finiquito vs liquidación",
+          "subtema": "finiquito vs liquidación: el finiquito te toca siempre (sueldo pendiente, aguinaldo y vacaciones proporcionales con su prima); la liquidación solo si te despiden sin causa justificada; no prometas montos fijos de indemnización: para tu caso, la PROFEDET asesora gratis",
+          "anterior": "Partes 1-4: leer tu recibo de nómina, aguinaldo, vacaciones y prima vacacional, reparto de utilidades",
+          "formato": "comparativa"
+        }
+      ]
+    },
+    {
+      "nombre": "Que enero no te agarre",
+      "tema": "diciembre sin cruda financiera: aguinaldo, regalos y cuesta de enero",
+      "total": 5,
+      "siguiente": 0,
+      "no_antes_de": "2026-12-01",
+      "no_despues_de": "2026-12-12",
+      "episodios": [
+        {
+          "concepto": "plan para el aguinaldo",
+          "subtema": "antes de que llegue el aguinaldo: dividirlo en tres partes (deudas o pendientes, ahorro para enero y un gusto de diciembre) con un ejemplo en pesos marcado como ejemplo",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "presupuesto de regalos",
+          "subtema": "regalos sin endeudarte: lista de personas con tope por persona, intercambios y por qué no conviene comprar todo con tarjeta",
+          "anterior": "Parte 1: plan para el aguinaldo",
+          "formato": "tip"
+        },
+        {
+          "concepto": "meses sin intereses en diciembre",
+          "subtema": "el error de diciembre: comprar todo a meses sin intereses y llegar a enero con varias mensualidades juntas; cómo sumar lo que ya debes antes de comprar algo más",
+          "anterior": "Partes 1-2: plan para el aguinaldo, presupuesto de regalos",
+          "formato": "error"
+        },
+        {
+          "concepto": "cuesta de enero",
+          "subtema": "la cuesta de enero: qué gastos llegan juntos (inscripciones, útiles, predial, pagos de diciembre) y por qué conviene apartar desde diciembre; sin inventar cifras",
+          "anterior": "Partes 1-3: plan para el aguinaldo, presupuesto de regalos, meses sin intereses en diciembre",
+          "formato": "dato"
+        },
+        {
+          "concepto": "apartado para enero",
+          "subtema": "cómo apartar desde hoy para enero en un apartado o cajita de la app de tu banco o en CETES desde CetesDirecto, con un ejemplo semanal",
+          "anterior": "Partes 1-4: plan para el aguinaldo, presupuesto de regalos, meses sin intereses en diciembre, cuesta de enero",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Sal de deudas",
+      "tema": "cómo salir de deudas sin ahogarte",
+      "total": 5,
+      "siguiente": 0,
+      "no_antes_de": "2027-01-04",
+      "no_despues_de": "2027-01-31",
+      "episodios": [
+        {
+          "concepto": "lista de deudas",
+          "subtema": "el primer paso: hacer la lista de TODAS tus deudas (cuánto debes, tasa y pago mínimo) y por qué verla completa cambia todo",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "bola de nieve vs avalancha",
+          "subtema": "bola de nieve vs avalancha: dos métodos para pagar, explicados con el mismo ejemplo en pesos, y cuál elegir según tu caso",
+          "anterior": "Parte 1: lista de deudas",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "negociar con el banco",
+          "subtema": "cómo negociar con el banco: reestructura, quita o convenio de pago, qué pedir por escrito y cómo se ve en tu buró",
+          "anterior": "Partes 1-2: lista de deudas, bola de nieve vs avalancha",
+          "formato": "howto"
+        },
+        {
+          "concepto": "derechos ante cobranza",
+          "subtema": "tus derechos con los despachos de cobranza: qué pueden y qué NO pueden hacer, y cómo quejarte en el REDECO de CONDUSEF",
+          "anterior": "Partes 1-3: lista de deudas, bola de nieve vs avalancha, negociar con el banco",
+          "formato": "mito"
+        },
+        {
+          "concepto": "consolidar deudas",
+          "subtema": "consolidar deudas con un préstamo de menor costo: cuándo conviene, cuándo es trampa y cómo comparar el CAT",
+          "anterior": "Partes 1-4: lista de deudas, bola de nieve vs avalancha, negociar con el banco, derechos ante cobranza",
+          "formato": "comparativa"
+        }
+      ]
+    }
+  ]
+}

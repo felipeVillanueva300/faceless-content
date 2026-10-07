@@ -242,3 +242,71 @@ def revisar(data: dict, client=None) -> dict:
         print(f"    (revisor: {rechazados} cambio(s) descartado(s) por tocar cifras/largo)")
     data["revision"] = aplicados
     return data
+
+VERIFY_ON = os.environ.get("SCRIPT_VERIFY", "1").strip().lower() in ("1", "true", "yes")
+
+_PROMPT_VERIFICA = """Eres editor de contenido de una cuenta de finanzas personales para MÉXICO.
+Revisa este guion de video corto y lista SOLO problemas REALES de contenido de estos tipos:
+
+1. CONTRADICCIÓN: el gancho dice una cosa y el desarrollo otra, o el mensaje se contradice
+   (ej. "dejar de usar la tarjeta te afecta" y luego "es un mito que te afecte").
+2. TÉRMINO INVENTADO o mal usado (ej. "recargos hormiga", "historial disponible": lo que baja
+   es el CRÉDITO disponible; el historial no se borra).
+3. CONFUSIONES TÍPICAS de finanzas en México:
+   - fecha de corte vs fecha LÍMITE DE PAGO (la que importa para pagar es la límite de pago);
+   - "saldo al corte" vs "pago para no generar intereses" (así se llama en el estado de cuenta);
+   - reportar al 088 vs DENUNCIA formal ante el Ministerio Público / Fiscalía;
+   - tasa de interés vs CAT; SOFIPO vs banco; Afore vs IMSS; quincena vs mes.
+4. Algo que una app o herramienta NO hace sola y el guion dice que sí
+   (ej. "Google Sheets te avisa cuando te pasas" sin decir cómo configurarlo).
+5. El texto grande ("hook_card") o una card mencionan algo que la voz NO dice
+   (ej. card "EXCEL" y la voz habla de Google Sheets).
+6. Un dato o afirmación que suena falso o exagerado para México.
+
+NO reportes estilo, gustos, longitud ni cosas que ya están bien. Si no hay problemas reales,
+devuelve una lista vacía. Máximo 4 problemas, cada uno en UNA frase que cite el texto exacto
+y diga qué es lo correcto.
+Devuelve SOLO JSON: {"problemas": ["...", "..."]}
+
+GUION:
+"""
+
+
+def verificar(data: dict, client=None) -> list:
+    """Lista de problemas de contenido ([] si todo bien o si el verificador no responde)."""
+    if not VERIFY_ON:
+        return []
+    beats = [b for b in (data.get("beats") or []) if isinstance(b, dict)]
+    payload = {
+        "hook": data.get("hook", ""),
+        "hook_card": data.get("hook_card", ""),
+        "beats": [b.get("narration", "") for b in beats],
+        "cards": [{"big": c.get("big", ""), "small": c.get("small", "")}
+                  for c in (data.get("cards") or []) if isinstance(c, dict)],
+        "title": data.get("title", ""),
+    }
+    try:
+        if client is None:
+            from google import genai
+            client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        from google.genai import types
+        prompt = _PROMPT_VERIFICA + json.dumps(payload, ensure_ascii=False, indent=1)
+        ultimo = None
+        for intento in range(2):
+            try:
+                resp = client.models.generate_content(
+                    model=REVIEW_MODEL, contents=prompt,
+                    config=types.GenerateContentConfig(temperature=0,
+                                                       response_mime_type="application/json"))
+                txt = (resp.text or "").strip()
+                rev = json.loads(txt[txt.find("{"): txt.rfind("}") + 1])
+                probs = [str(p).strip() for p in (rev.get("problemas") or []) if str(p).strip()]
+                return probs[:4]
+            except Exception as e:
+                ultimo = e
+                if intento == 0:
+                    time.sleep(6)
+        raise ultimo
+    except Exception as e:
+        print(f"    (verificador de contenido no disponible: {str(e)[:120]})")
+        return []

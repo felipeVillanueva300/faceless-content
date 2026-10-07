@@ -36,6 +36,16 @@ def _momento_mencion(claves, segmentos, beat=None):
             pos = comp.find(c)
             if pos >= 0 and comp:
                 return t0 + d * (pos / len(comp))
+    for clave in claves:
+        pals = [_compacto(w) for w in str(clave).split()]
+        pals = [w for w in pals if len(w) >= 3]
+        pals.sort(key=lambda w: (not any(ch.isdigit() for ch in w), -len(w)))
+        for w in pals:
+            for texto, t0, d in segmentos:
+                comp = _compacto(texto)
+                pos = comp.find(w)
+                if pos >= 0 and comp:
+                    return t0 + d * (pos / len(comp))
     try:
         b = int(beat)
     except (TypeError, ValueError):
@@ -91,7 +101,12 @@ def _armar_tomas(escenas, escenas2, durs_bloque, respaldo_kw="personal finance")
         if not ai_image.ENABLED:
             return None
         img = ai_image.generate_image(esc, os.path.join(BUILD, f"ia_{tag}.png"))
-        return video.image_to_clip(img, os.path.join(BUILD, f"ia_{tag}.mp4")) if img else None
+        clip = video.image_to_clip(img, os.path.join(BUILD, f"ia_{tag}.mp4")) if img else None
+        # La IA también se equivoca (un coche futurista para "queja en CONDUSEF"): misma
+        # revisión con visión que los clips de Pexels/Pixabay.
+        if clip and not broll._vision_ok(clip, f"IA {tag}", esc):
+            return None
+        return clip
 
     def _principal(esc, i):
         if modo_ia == "mix" and ai_image.ENABLED:
@@ -322,6 +337,13 @@ def generar_borrador():
         durs_bloque = [dur / len(escenas)] * len(escenas)
 
     broll.TEMA_VIDEO = (title or topic or "").strip()
+    try:
+        previos = history.recent_clips(int(os.environ.get("CLIPS_SIN_REPETIR_DIAS", "14")))
+    except Exception:
+        previos = set()
+    broll._USADOS.update(previos)
+    if previos:
+        print(f"    ({len(previos)} clips usados en días anteriores: no se repiten)")
     tomas = _armar_tomas(escenas, escenas2, durs_bloque,
                          respaldo_kw=(data.get("broll_keywords") or "personal finance").strip())
 
@@ -380,7 +402,8 @@ def generar_borrador():
 
     if not rehacer:
         history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"),
-                    concepto=data.get("concepto"), titulo=title)
+                    concepto=data.get("concepto"), titulo=title,
+                    clips=sorted(broll._USADOS - previos))
 
     publicar = os.environ.get("PUBLISH", "false").strip().lower() not in ("false", "0", "no")
 
@@ -398,7 +421,8 @@ def generar_borrador():
         print("=" * 60)
         _write_summary(url, title, caption, publicado=False)
         notify.notify_telegram(title, caption, url,
-                               publicado=False, publish_id=tag)
+                               publicado=False, publish_id=tag,
+                               avisos=data.get("avisos") or [])
         return
 
     print("[7/7] Publicando (cron directo)")

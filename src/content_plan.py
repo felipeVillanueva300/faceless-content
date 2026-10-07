@@ -309,7 +309,15 @@ def serie_pendiente():
     except (TypeError, ValueError):
         total = len(eps)
     out = []
-    for ep in eps[i:total]:
+    pendientes = list(eps[i:total])
+    try:
+        import serie_queue
+        prox = serie_queue.proxima_serie()
+        if prox:
+            pendientes += [e for e in (prox.get("episodios") or []) if isinstance(e, dict)]
+    except Exception:
+        pass
+    for ep in pendientes:
         resumen = _primera_clausula(ep.get("subtema", ""))
         concepto = (ep.get("concepto") or "").strip() or _sin_genericas(resumen)
         if concepto:
