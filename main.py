@@ -10,47 +10,97 @@ CARD_DUR = float(os.environ.get("CARD_DUR", "4.5"))
 GRAPHIC_DUR = float(os.environ.get("GRAPHIC_DUR", "4.0"))
 
 
-def _compacto(texto: str) -> str:
-    """minúsculas, sin acentos ni espacios/puntuación: 'Cetes Directo' == 'CETESDIRECTO',
-    '$24,000' == '24000'. Sirve para encontrar en qué punto de la voz se dice algo."""
+def _palabras(texto) -> list:
+    """Palabras normalizadas: minúsculas, sin acentos, '$24,000' -> '24000'."""
     import re
     import unicodedata
-    t = unicodedata.normalize("NFD", (texto or "").lower())
+    t = unicodedata.normalize("NFD", str(texto or "").lower())
     t = "".join(ch for ch in t if unicodedata.category(ch) != "Mn")
-    return re.sub(r"[^a-z0-9]", "", t)
+    t = re.sub(r"(?<=\d)[,.](?=\d{3}\b)", "", t)
+    return re.findall(r"[a-z0-9]+", t)
+
+
+def _coincide(tok: str, pal: str) -> bool:
+    """Palabra COMPLETA; las de 3+ letras también como inicio de palabra
+    ('art' -> 'artículo', 'cuenta' -> 'cuentas'), pero nunca a media palabra
+    ('art' NO es 'parte'). Números y palabras cortas: solo iguales."""
+    if tok.isdigit() or len(tok) < 3:
+        return pal == tok
+    return pal.startswith(tok)
+
+
+def _pos_tokens(tokens, texto, minimo):
+    """Fracción (0-1) del bloque donde empiezan 'minimo' palabras de la card juntas
+    (en una ventana corta), o None si no aparecen."""
+    pals = _palabras(texto)
+    total = sum(len(p) for p in pals)
+    if not pals or not tokens or not total:
+        return None
+    unicos = list(dict.fromkeys(tokens))
+    ventana = len(unicos) + 2 
+    for i, p in enumerate(pals):
+        if not any(_coincide(t, p) for t in unicos):
+            continue
+        tramo = pals[i:i + ventana]
+        n = sum(1 for t in unicos if any(_coincide(t, q) for q in tramo))
+        if n >= minimo:
+            return sum(len(q) for q in pals[:i]) / total
+    return None
+
+
+_VACIAS_CARD = {"que", "por", "para", "con", "los", "las", "del", "una", "uno", "sin",
+                "tus", "mas", "hoy", "cada", "como", "este", "esta", "pero"}
+
+
+def _distintivas(tokens) -> list:
+    """Palabras de la card que sirven solas: números de 2+ dígitos y palabras de 4+ letras."""
+    out = [t for t in dict.fromkeys(tokens)
+           if (t.isdigit() and len(t) >= 2) or (not t.isdigit() and len(t) >= 4
+                                                 and t not in _VACIAS_CARD)]
+    return sorted(out, key=lambda t: (not t.isdigit(), -len(t)))
 
 
 def _momento_mencion(claves, segmentos, beat=None):
     """Segundo en que la voz dice alguna de 'claves' (card o dato del gráfico).
     segmentos: [(texto, inicio, duración)] de cada bloque de voz.
-    1) busca el texto dentro de los bloques y estima el segundo por la posición
-       de la palabra en el bloque (la voz es de ritmo casi constante);
-    2) si no aparece, usa el 'beat' que mandó Gemini (inicio de ese bloque);
-    3) si tampoco, None (el que llama usa la posición fija de antes)."""
-    for clave in claves:
-        c = _compacto(str(clave))
-        if len(c) < 3:
-            continue
-        for texto, t0, d in segmentos:
-            comp = _compacto(texto)
-            pos = comp.find(c)
-            if pos >= 0 and comp:
-                return t0 + d * (pos / len(comp))
-    for clave in claves:
-        pals = [_compacto(w) for w in str(clave).split()]
-        pals = [w for w in pals if len(w) >= 3]
-        pals.sort(key=lambda w: (not any(ch.isdigit() for ch in w), -len(w)))
-        for w in pals:
-            for texto, t0, d in segmentos:
-                comp = _compacto(texto)
-                pos = comp.find(w)
-                if pos >= 0 and comp:
-                    return t0 + d * (pos / len(comp))
+    Busca por PALABRAS completas (antes buscaba letras sueltas y 'ART 48 BIS 2' se
+    encontraba dentro de "parte" y la card salía en el gancho). Orden:
+    1) todas las palabras de la card juntas (primero en el bloque del 'beat');
+    2) al menos 2 de ellas juntas;
+    3) una sola palabra distintiva, solo dentro del bloque del 'beat' si lo hay;
+    4) el inicio del bloque del 'beat';  5) None (el que llama usa la posición fija)."""
     try:
         b = int(beat)
     except (TypeError, ValueError):
         b = 0
-    if 1 <= b <= len(segmentos) and len(segmentos) > 1:
+    tiene_beat = 1 <= b <= len(segmentos)
+    orden = list(range(len(segmentos)))
+    if tiene_beat:
+        orden.remove(b - 1)
+        orden.insert(0, b - 1)
+    tok_claves = [t for t in (_palabras(c) for c in claves) if t]
+
+    for nivel in ("todas", "dos"):
+        for toks in tok_claves:
+            minimo = len(set(toks)) if nivel == "todas" else 2
+            if nivel == "dos" and len(set(toks)) <= 2:
+                continue                  # con 1-2 palabras "dos" == "todas"
+            for si in orden:
+                texto, t0, d = segmentos[si]
+                frac = _pos_tokens(toks, texto, minimo)
+                if frac is not None:
+                    return t0 + d * frac
+
+    donde = [b - 1] if tiene_beat else orden
+    for toks in tok_claves:
+        for t in _distintivas(toks):
+            for si in donde:
+                texto, t0, d = segmentos[si]
+                frac = _pos_tokens([t], texto, 1)
+                if frac is not None:
+                    return t0 + d * frac
+
+    if tiene_beat and len(segmentos) > 1:
         return segmentos[b - 1][1] + 0.3
     return None
 

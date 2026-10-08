@@ -262,6 +262,9 @@ Revisa este guion de video corto y lista SOLO problemas REALES de contenido de e
 5. El texto grande ("hook_card") o una card mencionan algo que la voz NO dice
    (ej. card "EXCEL" y la voz habla de Google Sheets).
 6. Un dato o afirmación que suena falso o exagerado para México.
+7. CIFRAS QUE NO CUADRAN entre sí (ej. el gancho dice "hasta $300" y luego "entre $150 y
+   $350 más IVA"), o montos precisos de comisiones de bancos privados (manejo de cuenta,
+   saldo mínimo, anualidad) sin decir de qué banco y cuenta: varían por banco.
 
 NO reportes estilo, gustos, longitud ni cosas que ya están bien. Si no hay problemas reales,
 devuelve una lista vacía. Máximo 4 problemas, cada uno en UNA frase que cite el texto exacto

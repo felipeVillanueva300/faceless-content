@@ -49,7 +49,9 @@ def mencionadas(texto: str, fichas=None):
 
 def agregar_links(data: dict, fichas=None) -> dict:
     """Agrega 'Link oficial' al caption para cada institución mencionada en el guion.
-    No duplica si el link ya está. Lo pone antes de la línea de hashtags."""
+    No duplica si el link ya está. Lo pone antes de la línea de hashtags.
+    Se salta las fichas con "link_en_caption": false (empresas privadas como Nu o
+    Mercado Pago): su link parece anuncio y Telegram muestra su logo en la vista previa."""
     fichas = cargar() if fichas is None else fichas
     if not fichas:
         return data
@@ -65,7 +67,8 @@ def agregar_links(data: dict, fichas=None) -> dict:
         claves = [f.get("nombre", "")] + list(f.get("claves") or [])
         return sum(t.count(_norm(c)) for c in claves if c)
 
-    candidatas = sorted(mencionadas(texto, fichas), key=_veces, reverse=True)[:2]
+    candidatas = [f for f in mencionadas(texto, fichas) if f.get("link_en_caption", True) is not False]
+    candidatas = sorted(candidatas, key=_veces, reverse=True)[:2]
     lineas = []
     for f in candidatas:
         link = f.get("link", "")

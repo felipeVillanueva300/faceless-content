@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 
@@ -52,7 +53,7 @@ def notify_telegram(titulo, caption, url, publicado, publish_id=None,
                 "chat_id": chat_id,
                 "text": texto,
                 "parse_mode": "HTML",
-                "disable_web_page_preview": "false",
+                "link_preview_options": json.dumps({"is_disabled": True}),
             },
             timeout=30,
         )

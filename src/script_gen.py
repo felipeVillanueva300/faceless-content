@@ -183,6 +183,10 @@ palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
   Si no estás seguro de la cifra exacta, usa una consecuencia sin número.
+- Comisiones de bancos privados (manejo de cuenta, saldo mínimo, anualidad, cajero): cambian
+  según banco y cuenta. NO des rangos de memoria ("entre $150 y $350"); di "cientos de pesos
+  al año" o "búscala en tu estado de cuenta", o da el monto solo con banco y cuenta concretos.
+- La MISMA cifra en todo el video: si el gancho dice "hasta $300", el desarrollo no dice $350.
 - NUNCA inventes anécdotas, víctimas ni testimonios ("un seguidor cayó…", "a mi primo le pasó…").
   Si el tema trae un caso real, cuéntalo EXACTAMENTE como viene (si alguien solo avisó de una
   estafa, di que nos avisó, no que cayó). Si no hay caso real, usa "imagina que…" o "por ejemplo".

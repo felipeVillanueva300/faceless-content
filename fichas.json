@@ -1,5 +1,5 @@
 {
-  "_como_usar": "Datos VERIFICADOS de instituciones que salen seguido en los videos. El guion los usa como verdad y el caption agrega el link oficial cuando el video menciona la institución. Para agregar una: copia un bloque, llena claves (cómo se escribe/dice), link, datos, fuente y la fecha en que la verificaste. Revisa cada ficha cada ~3 meses.",
+  "_como_usar": "Datos VERIFICADOS de instituciones que salen seguido en los videos. El guion los usa como verdad y el caption agrega el link oficial cuando el video menciona la institución (salvo si la ficha trae 'link_en_caption': false: empresas privadas como Nu o Mercado Pago, para que no parezca anuncio). Para agregar una: copia un bloque, llena claves (cómo se escribe/dice), link, datos, fuente y la fecha en que la verificaste. Revisa cada ficha cada ~3 meses.",
   "fichas": {
     "cetesdirecto": {
       "nombre": "CetesDirecto",
@@ -31,6 +31,7 @@
         "cajita"
       ],
       "link": "https://nu.com.mx",
+      "link_en_caption": false,
       "datos": [
         "Nu México opera como BANCO desde el 6 de agosto de 2026 (antes era SOFIPO: NO digas que es SOFIPO).",
         "Sus depósitos están protegidos por el IPAB hasta 400,000 UDIS por persona (unos $3.5 millones de pesos).",
@@ -47,6 +48,7 @@
         "mercadopago"
       ],
       "link": "https://www.mercadopago.com.mx",
+      "link_en_caption": false,
       "datos": [
         "Mercado Pago opera como Institución de Fondos de Pago Electrónico (IFPE), NO es banco: pidió licencia bancaria y a septiembre de 2026 no está aprobada.",
         "El rendimiento de su cuenta viene de invertir tu saldo en un fondo de deuda; NO es un depósito bancario y NO tiene el seguro del IPAB."
