@@ -2,44 +2,6 @@
   "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
   "series": [
     {
-      "nombre": "Tu Afore sin misterio",
-      "tema": "tu Afore y tu retiro explicados fácil",
-      "total": 5,
-      "siguiente": 0,
-      "episodios": [
-        {
-          "concepto": "qué es la Afore",
-          "subtema": "qué es la Afore, de dónde sale ese dinero (aportan tú, tu patrón y el gobierno) y cómo ver cuánto tienes y en qué Afore estás con la app AforeMóvil",
-          "anterior": "",
-          "formato": "howto"
-        },
-        {
-          "concepto": "comparar y cambiar de Afore",
-          "subtema": "cómo saber si tu Afore te conviene: comparar su rendimiento neto en la página de la CONSAR y cómo pedir el cambio (traspaso) desde AforeMóvil; sin prometer plazos ni rendimientos",
-          "anterior": "Parte 1: qué es la Afore",
-          "formato": "comparativa"
-        },
-        {
-          "concepto": "aportaciones voluntarias",
-          "subtema": "aportaciones voluntarias: cómo hacerlas desde AforeMóvil o en tiendas y por qué poco cada mes cuenta, con un ejemplo de $200 al mes marcado claramente como ejemplo (sin prometer rendimientos)",
-          "anterior": "Partes 1-2: qué es la Afore, comparar y cambiar de Afore",
-          "formato": "dato"
-        },
-        {
-          "concepto": "deducir aportaciones al retiro",
-          "subtema": "la deducción de impuestos por aportaciones voluntarias a tu retiro: cómo te puede regresar dinero el SAT en tu declaración anual (se presenta en abril) y qué constancia te da tu Afore",
-          "anterior": "Partes 1-3: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias",
-          "formato": "howto"
-        },
-        {
-          "concepto": "semanas cotizadas",
-          "subtema": "semanas cotizadas: qué son, por qué de ellas depende tu pensión y cómo pedir gratis tu constancia de semanas cotizadas en el IMSS con tu CURP y un correo",
-          "anterior": "Partes 1-4: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias, deducir aportaciones al retiro",
-          "formato": "howto"
-        }
-      ]
-    },
-    {
       "nombre": "IA para tu dinero",
       "tema": "cómo usar la inteligencia artificial para cuidar tu dinero (con seguridad)",
       "total": 4,
