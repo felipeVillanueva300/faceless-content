@@ -1,6 +1,8 @@
 import os
 import asyncio
 import edge_tts
+from edge_tts import communicate as _ec
+from edge_tts import constants as _ek
 
 VOICE = os.environ.get("TTS_VOICE", "es-MX-JorgeNeural")
 RATE = os.environ.get("TTS_RATE", "+0%")
@@ -51,8 +53,31 @@ def _pronunciar(text: str, tabla: dict = None) -> str:
     return text
 
 
-async def _synth(text: str, audio_path: str):
-    text = _pronunciar(text)
+_DEFAULT_LIB = getattr(_ec, "WSS_URL", "")
+_ENDPOINT_OK = None
+TTS_REINTENTOS = int(os.environ.get("TTS_REINTENTOS", "3"))
+
+
+def _endpoints() -> list:
+    tok = getattr(_ek, "TRUSTED_CLIENT_TOKEN", "6A5AA1D4EAFF4E9FB37E23D68491D6F4")
+    nuevo = ("wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1"
+             f"?Ocp-Apim-Subscription-Key={tok}")
+    viejo = ("wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1"
+             f"?TrustedClientToken={tok}")
+    de_la_lib = _DEFAULT_LIB if _DEFAULT_LIB not in (nuevo, viejo) else ""
+    out = []
+    for u in (os.environ.get("TTS_WSS_URL", "").strip(), _ENDPOINT_OK, de_la_lib, nuevo, viejo):
+        if u and u not in out:
+            out.append(u)
+    return out
+
+
+def _host(url: str) -> str:
+    return url.split("/")[2] if url.count("/") >= 2 else url
+
+
+async def _synth_una(text: str, audio_path: str, url: str):
+    _ec.WSS_URL = url          # edge-tts arma la conexión con esta variable del módulo
     boundaries = []
     communicate = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
     with open(audio_path, "wb") as f:
@@ -61,9 +86,39 @@ async def _synth(text: str, audio_path: str):
                 f.write(chunk["data"])
             elif chunk["type"] == "WordBoundary":
                 boundaries.append((chunk["offset"], chunk["duration"], chunk["text"]))
-    print(f"    voz OK — {len(boundaries)} tiempos de palabra capturados "
-          f"(voz={VOICE}, rate={RATE})")
     return boundaries
+
+
+async def _synth(text: str, audio_path: str):
+    """Sintetiza con reintentos: 401/403/404 -> siguiente servidor; otros errores
+    (503, sin audio, red) -> reintenta el mismo con espera de 5s, 10s, 20s."""
+    global _ENDPOINT_OK
+    text = _pronunciar(text)
+    ultimo = None
+    for url in _endpoints():
+        for intento in range(max(1, TTS_REINTENTOS)):
+            try:
+                boundaries = await _synth_una(text, audio_path, url)
+            except Exception as e:
+                ultimo = e
+                status = getattr(e, "status", None)
+                if status in (401, 403, 404):
+                    print(f"    voz: {_host(url)} respondió {status}; pruebo otro servidor")
+                    break
+                if intento + 1 < max(1, TTS_REINTENTOS):
+                    espera = 5 * (2 ** intento)
+                    print(f"    voz: falló en {_host(url)} ({type(e).__name__}: "
+                          f"{str(e)[:120]}); reintento en {espera}s")
+                    await asyncio.sleep(espera)
+                continue
+            if _ENDPOINT_OK != url:
+                print(f"    voz: servidor {_host(url)}")
+                _ENDPOINT_OK = url
+            print(f"    voz OK — {len(boundaries)} tiempos de palabra capturados "
+                  f"(voz={VOICE}, rate={RATE})")
+            return boundaries
+    raise RuntimeError(f"La voz (edge-tts) no respondió en ningún servidor. "
+                       f"Último error: {type(ultimo).__name__}: {ultimo}") from ultimo
 
 
 def synthesize(text: str, audio_path: str):

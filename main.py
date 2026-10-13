@@ -286,6 +286,40 @@ def publicar_por_id(publish_id: str):
         sys.exit(1)
 
 
+GUION_INTENTO = os.path.join(BUILD, "guion_intento.json")
+
+
+def _guion_intento_previo():
+    """Si un intento anterior de ESTE MISMO run ya hizo el guion y falló después (voz,
+    b-roll, subida...), lo reúsa: el reintento no vuelve a gastar cuota de Gemini ni cambia
+    de tema. Solo en GitHub Actions (mismo GITHUB_RUN_ID). REUSAR_GUION=0 lo apaga."""
+    import json
+    rid = os.environ.get("GITHUB_RUN_ID", "").strip()
+    if not rid or os.environ.get("REUSAR_GUION", "1").strip() == "0":
+        return None
+    try:
+        with open(GUION_INTENTO, encoding="utf-8") as f:
+            guardado = json.load(f)
+    except (OSError, ValueError):
+        return None
+    if guardado.get("run_id") == rid and isinstance(guardado.get("data"), dict):
+        print("[1/7] Reúso el guion del intento anterior (falló un paso posterior)")
+        return guardado["data"]
+    return None
+
+
+def _guardar_guion_intento(data):
+    import json
+    rid = os.environ.get("GITHUB_RUN_ID", "").strip()
+    if not rid:
+        return
+    try:
+        with open(GUION_INTENTO, "w", encoding="utf-8") as f:
+            json.dump({"run_id": rid, "data": data}, f, ensure_ascii=False)
+    except OSError:
+        pass
+
+
 def generar_borrador():
     os.makedirs(BUILD, exist_ok=True)
     niche = os.environ.get("NICHE", "tecnología y finanzas")
@@ -295,11 +329,14 @@ def generar_borrador():
         print(f"[1/7] Rehaciendo con el guion guardado en: {rehacer}")
         data = uploader.leer_guion(os.environ["GITHUB_REPOSITORY"], rehacer)
     else:
-        print(f"[1/7] Generando guion sobre: {niche}")
-        recientes = history.load_recent(60)
-        if recientes:
-            print(f"    ({len(recientes)} temas recientes a evitar)")
-        data = script_gen.generate_script(niche, avoid=recientes)
+        data = _guion_intento_previo()
+        if data is None:
+            print(f"[1/7] Generando guion sobre: {niche}")
+            recientes = history.load_recent(60)
+            if recientes:
+                print(f"    ({len(recientes)} temas recientes a evitar)")
+            data = script_gen.generate_script(niche, avoid=recientes)
+            _guardar_guion_intento(data)
     import json
     with open(os.path.join(BUILD, "script.json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
