@@ -2,38 +2,6 @@
   "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
   "series": [
     {
-      "nombre": "IA para tu dinero",
-      "tema": "cómo usar la inteligencia artificial para cuidar tu dinero (con seguridad)",
-      "total": 4,
-      "siguiente": 0,
-      "episodios": [
-        {
-          "concepto": "presupuesto con IA",
-          "subtema": "cómo pedirle a una IA (ChatGPT, Gemini o la que uses) que te arme un presupuesto de quincena con tus ingresos y gastos, con un ejemplo de lo que le escribes",
-          "anterior": "",
-          "formato": "howto"
-        },
-        {
-          "concepto": "letra chiquita con IA",
-          "subtema": "usar la IA para entender la letra chiquita de un contrato o de un crédito antes de firmar: copiar el texto y pedirle que te explique comisiones, penalizaciones y CAT en palabras simples",
-          "anterior": "Parte 1: presupuesto con IA",
-          "formato": "howto"
-        },
-        {
-          "concepto": "datos que no se comparten con la IA",
-          "subtema": "la regla de oro: NUNCA le des a una IA tu NIP, CVV, contraseñas, códigos que te llegan por SMS ni tu número de tarjeta completo",
-          "anterior": "Partes 1-2: presupuesto con IA, letra chiquita con IA",
-          "formato": "mito"
-        },
-        {
-          "concepto": "comparar créditos con IA",
-          "subtema": "cómo pedirle a la IA que compare dos créditos por su CAT y te explique cuál sale más caro al final, y por qué siempre debes revisar tú los números en el documento oficial",
-          "anterior": "Partes 1-3: presupuesto con IA, letra chiquita con IA, datos que no se comparten con la IA",
-          "formato": "comparativa"
-        }
-      ]
-    },
-    {
       "nombre": "Tu buró sin miedo",
       "tema": "entender y mejorar tu buró de crédito",
       "total": 4,
