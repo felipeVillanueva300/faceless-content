@@ -1,0 +1,47 @@
+{
+  "_como_usar": "Guion FIJO (no usa Gemini). Actions -> Publicar Reel diario -> Run workflow -> en 'rehacer_id' pon: guiones/cobranza-redeco.json. Sale un BORRADOR con este texto tal cual (voz, fondos y música nuevos); se aprueba igual que siempre con publicar_id. Versión corregida del reel del 19-oct (daily-20261019-182204): el banco SÍ puede demandar, el embargo solo lo ordena un juez, horario 7:00-22:00 y los pasos del REDECO.",
+  "hook": "¿Te llaman de cobranza a las 11 de la noche? Eso va contra las reglas.",
+  "hook_card": "¿A LAS 11 DE LA NOCHE?",
+  "beats": [
+    {
+      "narration": "Los despachos solo pueden llamarte de 7 de la mañana a 10 de la noche, y no pueden amenazarte ni cobrarle a tu familia, a tus referencias o a tus compañeros, salvo que sean tus avales.",
+      "scene": "worried woman phone call",
+      "scene2": "stressed man phone call"
+    },
+    {
+      "narration": "Ojo: el banco sí puede demandarte, eso es legal. Pero un embargo solo lo ordena un juez, y nadie va a la cárcel solo por deber dinero.",
+      "scene": "judge gavel courtroom",
+      "scene2": "pensive man looking window"
+    },
+    {
+      "narration": "Si te acosan, anota el número, la fecha, la hora y el nombre del despacho, y presenta tu queja gratis en el REDECO de la CONDUSEF contra tu banco o financiera. Te dan un folio para darle seguimiento.",
+      "scene": "hand writing notebook",
+      "scene2": "woman typing laptop"
+    },
+    {
+      "narration": "Guárdalo para cuando lo necesites. Sígueme, mañana va otro.",
+      "scene": "person holding smartphone"
+    }
+  ],
+  "caption": "Qué hacer si un despacho de cobranza te acosa\n\nSolo pueden llamarte de 7:00 a 22:00 y no pueden amenazarte ni cobrarle a tu familia o a tus referencias. El banco sí puede demandarte, pero un embargo solo lo ordena un juez. Si te acosan, anota número, fecha, hora y nombre del despacho, y presenta tu queja gratis en el REDECO de la CONDUSEF.\n\n¿Te han llamado fuera de horario?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #deudas #condusef #cobranza",
+  "title": "Cobranza abusiva: lo que no pueden hacerte y cómo reportarla",
+  "concepto": "cobranza abusiva",
+  "topic": "reportar-cobranza-abusiva-redeco",
+  "broll_keywords": "worried phone call",
+  "cards": [
+    {
+      "big": "SOLO UN JUEZ",
+      "small": "puede ordenar un embargo",
+      "beat": 2
+    },
+    {
+      "big": "REDECO",
+      "small": "queja gratis en la CONDUSEF",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "tema_fraude": false,
+  "categoria": "deudas",
+  "formato": "Tip rápido"
+}

@@ -6,7 +6,8 @@ de emergencia): "guárdalo donde rendimiento diario y retiro en días hábiles" 
 
 Qué hace:
 1. normalizar_marcas(): escribe SIEMPRE igual los nombres (CetesDirecto, Mercado Pago...)
-   para que voz y subtítulos no cambien de forma a media frase. Local, sin costo.
+   para que voz y subtítulos no cambien de forma a media frase, y pasa a número las reglas
+   que Gemini escribe en letra ("cincuenta treinta veinte" -> "50/30/20"). Local, sin costo.
 2. revisar(): una llamada barata (flash-lite) que corrige SOLO redacción: oraciones sin
    verbo, palabras faltantes, concordancia, y que las cards no contradigan a la voz.
    Luego se VALIDA cada campo: si el revisor cambió cifras, alargó/acortó de más o
@@ -51,10 +52,36 @@ _PESOS_DOBLE = re.compile(r"(\$\s?\d[\d,\.]*)\s*(?:pesos|mxn|m\.n\.)(?![a-záé�
                           re.IGNORECASE)
 
 
+_DECENAS_NUM = {"diez": 10, "veinte": 20, "treinta": 30, "cuarenta": 40, "cincuenta": 50,
+                "sesenta": 60, "setenta": 70, "ochenta": 80, "noventa": 90}
+_DEC = "|".join(_DECENAS_NUM)
+_REGLA_EN_LETRA = re.compile(
+    rf"\b({_DEC})(?:[\s,/-]+({_DEC}))(?:[\s,/-]+({_DEC}))?\b"
+    r"(?!\s+y\s+(?:uno|un|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b)",
+    re.IGNORECASE)
+
+
+def reglas_en_cifras(texto: str) -> str:
+    """'la regla del cincuenta treinta veinte' -> 'la regla del 50/30/20' (y '80/20').
+    Solo si las decenas suman 100 (así no toca otras cuentas). En pantalla se lee mejor con
+    número; la voz lo sigue diciendo bien (tts._reglas_habladas)."""
+    if not texto:
+        return texto
+
+    def _cambio(m):
+        nums = [_DECENAS_NUM[g.lower()] for g in m.groups() if g]
+        if sum(nums) != 100:
+            return m.group(0)
+        return "/".join(str(n) for n in nums)
+
+    return _REGLA_EN_LETRA.sub(_cambio, texto)
+
+
 def normalizar_marcas(texto: str) -> str:
     if not texto:
         return texto
     texto = _PESOS_DOBLE.sub(r"\1", texto)
+    texto = reglas_en_cifras(texto)
     for patron, oficial in _tabla_marcas():
         # respeta MAYÚSCULAS: "CETES DIRECTO" -> "CETESDIRECTO" (cards), "Cetes Directo" -> "CetesDirecto"
         texto = re.sub(patron,
@@ -265,6 +292,14 @@ Revisa este guion de video corto y lista SOLO problemas REALES de contenido de e
 7. CIFRAS QUE NO CUADRAN entre sí (ej. el gancho dice "hasta $300" y luego "entre $150 y
    $350 más IVA"), o montos precisos de comisiones de bancos privados (manejo de cuenta,
    saldo mínimo, anualidad) sin decir de qué banco y cuenta: varían por banco.
+8. AFIRMACIÓN LEGAL EQUIVOCADA: llamar "ilegal" o decir que "viola la ley" algo que es un
+   DERECHO LEGÍTIMO de la otra parte, o al revés. Ej. real: "te presiona diciendo que te van
+   a demandar… eso viola la ley" (MAL: el banco SÍ puede demandar; lo ilegal es amenazar,
+   intimidar, cobrarle a familiares o referencias, llamar fuera de 7:00-22:00, o decir que te
+   embargan sin juicio: un embargo solo lo ordena un juez).
+9. PROMESA SIN CUMPLIR: el título o el gancho prometen un "cómo" (cómo reportar, cómo sacar,
+   cómo activar…) y la narración no dice DÓNDE se hace, QUÉ datos tener a la mano y QUÉ te
+   dan al final (folio, constancia, comprobante).
 
 NO reportes estilo, gustos, longitud ni cosas que ya están bien. Si no hay problemas reales,
 devuelve una lista vacía. Máximo 4 problemas, cada uno en UNA frase que cite el texto exacto

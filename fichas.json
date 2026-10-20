@@ -1,5 +1,5 @@
 {
-  "_como_usar": "Datos VERIFICADOS de instituciones que salen seguido en los videos. El guion los usa como verdad y el caption agrega el link oficial cuando el video menciona la institución (salvo si la ficha trae 'link_en_caption': false: empresas privadas como Nu o Mercado Pago, para que no parezca anuncio). Para agregar una: copia un bloque, llena claves (cómo se escribe/dice), link, datos, fuente y la fecha en que la verificaste. Revisa cada ficha cada ~3 meses.",
+  "_como_usar": "Datos VERIFICADOS de instituciones que salen seguido en los videos. El guion los usa como verdad y el caption agrega el link oficial cuando el video menciona la institución (salvo si la ficha trae 'link_en_caption': false: empresas privadas como Nu o Mercado Pago, para que no parezca anuncio). Para agregar una: copia un bloque, llena claves (cómo se escribe/dice), link, datos, fuente y la fecha en que la verificaste. Opcional 'reemplaza': [ids de otras fichas] para que, si el video menciona esta, el caption NO ponga también el link de esas (ej. REDECO reemplaza al SIPRES de 'condusef'). Revisa cada ficha cada ~3 meses.",
   "fichas": {
     "cetesdirecto": {
       "nombre": "CetesDirecto",
@@ -70,6 +70,28 @@
       ],
       "fuente": "CONDUSEF (gob.mx/condusef, webapps.condusef.gob.mx/SIPRES)",
       "verificado": "2026-09-29"
+    },
+    "redeco": {
+      "nombre": "REDECO de CONDUSEF",
+      "claves": [
+        "redeco",
+        "despacho de cobranza",
+        "despachos de cobranza",
+        "cobranza"
+      ],
+      "link": "https://eduweb.condusef.gob.mx/redeco/redeco.aspx",
+      "reemplaza": [
+        "condusef"
+      ],
+      "datos": [
+        "Los despachos de cobranza solo pueden contactarte de 7:00 a 22:00 h.",
+        "Tienen PROHIBIDO: amenazar, ofender o intimidar; cobrarle a familiares, referencias o compañeros de trabajo (salvo avales u obligados solidarios); usar nombres parecidos a los de una autoridad; mandar documentos que parezcan judiciales; exhibir tu deuda con listas o anuncios; recibir el pago directamente (se paga a la institución financiera).",
+        "El banco o la financiera SÍ puede demandarte por una deuda: eso es legal y NO se debe presentar como ilegal. Lo ilegal es amenazarte o intimidarte. Un embargo solo lo puede ordenar un juez dentro de un juicio, con notificación previa. Nadie puede ir a la cárcel solo por deber dinero (deuda civil, art. 17 de la Constitución).",
+        "La queja se presenta gratis en el REDECO de CONDUSEF y va contra la institución financiera, que responde por sus despachos. Datos a tener a la mano: el número que te llama, fecha y hora de las llamadas, nombre del despacho y nombre de tu banco o financiera. Al terminar te dan un folio para darle seguimiento.",
+        "En el REDECO también se pueden consultar los despachos registrados (razón social, teléfonos y domicilio)."
+      ],
+      "fuente": "CONDUSEF — REDECO y disposiciones de despachos de cobranza (vía N+ y ahorraseguros.mx, oct 2026). Abrir el link una vez para confirmarlo antes de subir.",
+      "verificado": "2026-10-19"
     },
     "ipab": {
       "nombre": "IPAB",

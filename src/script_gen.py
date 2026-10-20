@@ -145,6 +145,10 @@ banco...) y UN paso concreto para empezar ("descárgala, conecta tu cuenta y act
   que cambia ("hoy CETES anda cerca de X% anual, cambia cada semana"). Si no conoces la
   tasa actual, usa un ejemplo marcado como ejemplo, pero SIEMPRE nombra dónde se consigue.
 - Pregúntate al final: "¿quien lo ve sabe QUÉ hacer y DÓNDE hacerlo mañana?". Si no, falta.
+- Si el título o el gancho prometen un "cómo" (cómo reportar, cómo sacar, cómo activar…), el
+  guion DEBE dar los pasos: DÓNDE se hace (nombre real del sitio, app u oficina), QUÉ tener a
+  la mano y QUÉ te dan al final (folio, constancia, comprobante). Si no caben, NO prometas un
+  "cómo" en el título.
 - Cuando haya un nombre concreto (app, instrumento, institución), ponlo en una "card"
   para que se LEA en pantalla, no solo se escuche.
 - Las frases de la marca ("no te dejes cobrar", "que no te vean la cara") solo si vienen
@@ -171,6 +175,12 @@ más se saltan. Di el dato DIRECTO como afirmación o como situación con algo e
 Mal: "¿Sabías que pueden clonar tu voz con IA?". Bien: "Si tu hijo te llama llorando
 pidiendo dinero, puede que no sea él." / "Con unos segundos de tu voz ya pueden llamarle
 a tu mamá."
+LO FUERTE VA PRIMERO: la consecuencia o el dato que pica va en las PRIMERAS palabras del hook,
+no al final de la frase (en 1 segundo deciden). Mal: "Seguir la regla del 50/30/20 con una
+quincena normal en México te va a frustrar" (el golpe llega hasta el final). Bien: "La regla
+50/30/20 no cuadra con una quincena normal en México." UNA sola idea por hook: no amarres dos
+afirmaciones en una frase (mal: "Las llamadas de cobranza a medianoche no pueden amenazarte con
+embargar tu casa hoy mismo").
 EL GANCHO TIENE QUE SER VERDAD para quien lo ve. No afirmes que ya hace, tiene o sufre algo
 que no sabes (mal: "Le estás prestando tu dinero al gobierno y ni te enteraste" a alguien
 que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregunta (bien:
@@ -195,6 +205,11 @@ palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio
 - Consecuencias legales o fiscales (SAT, bloqueos, multas, buró): solo si una fuente oficial
   lo dice (SAT, PRODECON, CONDUSEF, Banxico). Muchos "te va a caer el SAT" son rumores
   virales: si el tema viene de ahí, di qué es mito y qué es real, no lo amplifiques.
+- DERECHOS vs PROHIBICIONES: distingue lo que es ILEGAL de lo que es un DERECHO LEGÍTIMO de la
+  otra parte, y no digas "viola la ley" o "es ilegal" sin respaldo oficial. Ej.: el banco SÍ
+  puede demandarte por una deuda (eso es legal); lo ilegal es que un despacho te amenace, te
+  intimide o te diga que te embargan "hoy mismo" (un embargo solo lo ordena un juez). Si el
+  tema toca una institución de los DATOS VERIFICADOS, apégate a ellos.
 - UNA sola cuenta en todo el video: el hook, el hook_card, las cards, el gráfico y la
   narración usan LOS MISMOS números. Mal: hook "¿10 mil al año?", gráfico "$19,325" y voz
   "1,800 al mes". Haz la cuenta una vez (ej. $60 x 22 días x 12 = $15,840) y repítela igual.
@@ -212,6 +227,9 @@ propia escena de fondo, para que la imagen CAMBIE justo cuando la voz llega a es
   Escribe los nombres SIEMPRE igual (CetesDirecto, junto; Mercado Pago; Nu).
 - Cantidades: escribe "$4,000" (la voz ya dice "pesos"). PROHIBIDO "$4,000 pesos" o
   "$4,000 MXN": se oye "cuatro mil pesos pesos".
+- TODAS las cifras van con NÚMERO, nunca con letra: "50/30/20", "$6,000", "a las 7 de la
+  mañana", "3 meses". La voz las lee bien y en el subtítulo se entienden al instante.
+  Mal: "la regla del cincuenta treinta veinte".
 - Leídos seguidos (hook + bloques), debe sonar natural, como alguien hablando de corrido.
 - Longitud según lo que el tema necesite: ~70-200 palabras entre TODOS los bloques. Si
   el tema es un método, una comparación o un paso a paso, usa MÍNIMO ~120 palabras: la

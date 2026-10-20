@@ -6,7 +6,8 @@ FONT = os.environ.get("SUB_FONT", "DejaVu Sans")
 WORDS_PER_CUE = int(os.environ.get("WORDS_PER_CUE", "4"))
 
 SUB_ALIGN = os.environ.get("SUB_ALIGN", "2")
-SUB_MARGIN_V = os.environ.get("SUB_MARGIN_V", "300")
+SUB_MARGIN_V = os.environ.get("SUB_MARGIN_V", "520")
+SUB_MARGIN_V_GRAFICO = os.environ.get("SUB_MARGIN_V_GRAFICO", "300")
 
 COL_BASE = os.environ.get("SUB_COLOR", "&H00FFFFFF")   
 COL_HL = os.environ.get("SUB_HL_COLOR", "&H0000E5FF")  
@@ -263,7 +264,12 @@ def _silabas(palabra: str) -> int:
     (antes valían 0 y el subtítulo "91, 182 O 364" duraba 0.3 s contra ~4 s de voz)."""
     import re
     if re.search(r"\d", palabra):
-        return sum(_silabas(w) for w in _cifra_hablada(palabra).split()) or 1
+        dicho = _cifra_hablada(palabra)
+        if dicho == palabra:
+            trozos = re.findall(r"\d+|[a-záéíóúüñ]+", palabra.lower())
+            return sum(_silabas(_num_a_palabras(int(t))) if t.isdigit() else _silabas(t)
+                       for t in trozos) or 1
+        return sum(_silabas(w) for w in dicho.split()) or 1
     p = palabra.lower()
     p = re.sub(r"[^a-záéíóúüñ]", "", p)
     if not p:
@@ -273,9 +279,6 @@ def _silabas(palabra: str) -> int:
 
 
 def _static_lines_from_text(text, duration):
-    """Reparte los subtítulos por el audio SIN tiempos de palabra reales, estimando
-    la duración de cada grupo por sus SÍLABAS (+ una pausa extra si termina en signo).
-    Deja un pequeño respiro inicial para que no arranque antes que la voz."""
     pals = text.split()
     groups = [pals[i:j] for i, j in agrupar(pals)]
 
@@ -349,3 +352,37 @@ def build_ass_segments(segmentos, ass_path):
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write(_header(FONT) + "\n".join(body))
     return ass_path
+
+
+def _seg_ass(t: str) -> float:
+    """'0:00:12.34' -> 12.34"""
+    h, m, s = t.strip().split(":")
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def bajar_durante(ass_path, ventanas, margin_v=None):
+    if not ventanas:
+        return 0
+    margin_v = str(int(float(margin_v if margin_v is not None else SUB_MARGIN_V_GRAFICO)))
+    with open(ass_path, encoding="utf-8") as f:
+        lineas = f.read().split("\n")
+    movidos = 0
+    for i, ln in enumerate(lineas):
+        if not ln.startswith("Dialogue:"):
+            continue
+        cab, resto = ln.split(":", 1)
+        campos = resto.split(",", 9)
+        if len(campos) < 10:
+            continue
+        try:
+            ini, fin = _seg_ass(campos[1]), _seg_ass(campos[2])
+        except ValueError:
+            continue
+        if any(ini < float(b) and fin > float(a) for a, b in ventanas):
+            campos[7] = margin_v
+            lineas[i] = cab + ":" + ",".join(campos)
+            movidos += 1
+    if movidos:
+        with open(ass_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lineas))
+    return movidos

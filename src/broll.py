@@ -108,7 +108,9 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
 - billetes, monedas o efectivo (de cualquier país);
 - letreros, carteles, notas o texto legible en un idioma que NO sea español
   (ej. alemán, tailandés, chino, ruso, francés). Texto CHICO en inglés dentro de una app o
-  pantalla sí se permite; letreros de tienda o calle en inglés NO;
+  pantalla sí se permite; letreros de tienda o calle en inglés NO; un TÍTULO o una frase en
+  inglés que se alcance a leer en una pantalla (ej. el encabezado de una página web en una
+  laptop) tampoco;
 - una palabra o frase en inglés GRANDE que domine el cuadro (ej. "BUDGET" o "SAVINGS"
   a pantalla completa en un celular);
 - documentos oficiales o formularios de otro país (ej. formularios de impuestos de EE.UU.);
@@ -119,7 +121,8 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
   SALVO que la escena pedida hable de inversión, bolsa o cripto;
 - el TONO contradice la escena pedida o el TEMA del video: gente riendo, celebrando o muy
   sonriente cuando la escena o el tema son de preocupación, fraude, estafa, robo, deuda,
-  multa o un problema;
+  multa o un problema; y si la escena pedida es de preocupación (worried, stressed,
+  anxious, sad, upset), también una persona que sonríe aunque sea poco o se ve relajada;
 - caricaturas, personajes animados o 3D, o ilustraciones (se ven baratos y no son reales);
 - la pantalla o el logo de un servicio que NO tiene que ver con el tema ocupa buena parte
   del cuadro (Netflix, apps de comida a domicilio, redes sociales, videojuegos);
@@ -218,7 +221,122 @@ def _vision_ok(path: str, etiqueta: str, escena: str = "") -> bool:
     return True
 
 
+OCR_ON = os.environ.get("BROLL_OCR", "1").strip().lower() in ("1", "true", "yes")
+OCR_MIN_CONF = float(os.environ.get("BROLL_OCR_MIN_CONF", "60"))
+OCR_FRASE = int(os.environ.get("BROLL_OCR_FRASE", "2"))
+OCR_TOTAL = int(os.environ.get("BROLL_OCR_TOTAL", "3"))
+_TESSERACT = os.environ.get("TESSERACT_BIN", "tesseract")
+_OCR_FALTA = False
+
+_INGLES = frozenset("""
+the and for you your yours with this that these those from what how why when where who whom
+whose which will would could should shall might must have had having are was were been being
+our ours their theirs they them his her hers she him its not but all any more most some such
+than then there here into onto over under about after before between through during without
+within because just also very each every other another both either neither only same too off
+out upon again ever never always often still yet while until since though although whether
+already almost enough quite rather really soon today tonight tomorrow yesterday now
+work works working worked get gets got make makes made take takes took know knows see look
+looks want wants need needs find give tell call try ask feel become leave put mean keep let
+begin seem help hear play run move live believe bring happen write sit stand lose pay meet
+include continue learn change lead understand watch follow stop create speak read spend grow
+open walk win offer remember love consider appear buy wait serve send expect build stay fall
+reach remain suggest raise pass sell require report decide pull choose save check click sign
+join start share shop order book apply submit download upload subscribe search contact news
+people time year years way day days thing things man woman women men child children world
+life hand part place case week company system program question government number night point
+water room mother area money story fact month lot right study eye job word business issue side
+kind head house service friend father power hour game line member law car city community name
+team minute idea kid body information back parent face others level office door health person
+art war history party result morning reason research girl guy moment air teacher force
+education welcome thank thanks please coming best good great first last long little old big
+high different small large next early young important few public bad able free new better easy
+hard sure true full special closed available budget tax taxes income savings saving bank loan
+loans debt card cards cash payment bills invoice balance account deposit withdraw transfer
+price prices cost costs deal deals discount shipping delivery store street market insurance
+retirement mortgage rent salary wage wages financial finance invest investing investment stock
+stocks profit growth wealth rich poor spending expenses monthly weekly yearly daily adoption
+adoptions family families school happy birthday coffee exit danger warning caution parking
+entrance push sales accounting summary statement overview revenue expense quarterly
+analysis chart dashboard
+""".split())
+
+
+def _dur_clip(path: str) -> float:
+    base, ext = os.path.splitext(_FFMPEG)
+    probe = (os.path.join(os.path.dirname(_FFMPEG), "ffprobe" + ext)
+             if os.path.dirname(_FFMPEG) else "ffprobe")
+    import subprocess
+    try:
+        out = subprocess.run([probe, "-v", "quiet", "-show_entries", "format=duration",
+                              "-of", "csv=p=0", path], capture_output=True, text=True, timeout=30)
+        return float(out.stdout.strip() or 0) or 5.0
+    except Exception:
+        return 5.0
+
+
+def _ingles_en_tsv(tsv: str) -> list:
+    """Salida TSV de Tesseract -> palabras en inglés que delatan texto extranjero, o []."""
+    import re
+    por_renglon, todas = {}, set()
+    for ln in (tsv or "").splitlines()[1:]:
+        c = ln.split("\t")
+        if len(c) < 12 or not c[11].strip():
+            continue
+        try:
+            conf = float(c[10])
+        except ValueError:
+            continue
+        w = re.sub(r"[^a-z]", "", c[11].lower())
+        if conf < OCR_MIN_CONF or len(w) < 3 or w not in _INGLES:
+            continue
+        por_renglon.setdefault((c[2], c[3], c[4]), set()).add(w)
+        todas.add(w)
+    frase = max((len(v) for v in por_renglon.values()), default=0)
+    if frase >= OCR_FRASE or len(todas) >= OCR_TOTAL:
+        return sorted(todas)
+    return []
+
+
+def texto_en_ingles(path: str) -> list:
+    """Lee 2 cuadros de los primeros segundos (es la parte del clip que se usa) a 2160 px de
+    ancho y devuelve las palabras en inglés si hay texto extranjero; [] si está limpio, si el
+    OCR está apagado o si Tesseract no está instalado."""
+    global _OCR_FALTA
+    if not OCR_ON or _OCR_FALTA:
+        return []
+    import shutil
+    import subprocess
+    import tempfile
+    if shutil.which(_TESSERACT) is None and not os.path.isfile(_TESSERACT):
+        _OCR_FALTA = True
+        print("    (OCR de texto en inglés no disponible: falta tesseract-ocr; sigo sin ese filtro)")
+        return []
+    dur = _dur_clip(path)
+    tiempos = sorted({round(min(t, max(0.0, dur - 0.2)), 2) for t in (1.0, 4.0)})
+    for t in tiempos:
+        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
+        try:
+            subprocess.run([_FFMPEG, "-v", "error", "-y", "-ss", f"{t:.2f}", "-i", path,
+                            "-frames:v", "1", "-vf", "scale=2160:-2:flags=lanczos,format=gray",
+                            tmp], check=True, timeout=60)
+            p = subprocess.run([_TESSERACT, tmp, "stdout", "-l", "eng", "--psm", "6", "tsv"],
+                               capture_output=True, timeout=90)
+            hallado = _ingles_en_tsv(p.stdout.decode("utf-8", "ignore"))
+            if hallado:
+                return hallado
+        except Exception as e:
+            print(f"    (OCR falló en un cuadro: {str(e)[:100]})")
+        finally:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+    return []
+
+
 _USADOS = set()
+_RECHAZADOS = set()     # clips ya descartados en esta corrida: no se vuelven a bajar
 
 
 def _clave(fuente: str, cid) -> str:
@@ -226,9 +344,10 @@ def _clave(fuente: str, cid) -> str:
 
 
 def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
-    """candidatos: lista de (id, link). Prueba en orden: descarga, revisa con visión y
-    devuelve el primero que pase. Máximo VISION_TRIES descargas."""
-    candidatos = [(cid, link) for cid, link in candidatos if _clave(fuente, cid) not in _USADOS]
+    """candidatos: lista de (id, link). Prueba en orden: descarga, revisa brillo, texto en
+    inglés (OCR) y visión, y devuelve el primero que pase. Máximo VISION_TRIES descargas."""
+    candidatos = [(cid, link) for cid, link in candidatos
+                  if _clave(fuente, cid) not in _USADOS and _clave(fuente, cid) not in _RECHAZADOS]
     for cid, link in candidatos[:VISION_TRIES]:
         etiqueta = f"{fuente} #{cid}" if cid is not None else fuente
         try:
@@ -240,11 +359,19 @@ def _probar_candidatos(candidatos, out_path: str, fuente: str, keywords: str):
         if luma is not None and luma < MIN_LUMA:
             print(f"    clip muy oscuro, se descarta {etiqueta} (brillo {luma:.0f} < {MIN_LUMA:.0f})")
             continue
+        ingles = texto_en_ingles(out_path)
+        if ingles:
+            print(f"    texto en inglés, se descarta {etiqueta}: {' '.join(ingles[:5])}")
+            if cid is not None:
+                _RECHAZADOS.add(_clave(fuente, cid))
+            continue
         if _vision_ok(out_path, etiqueta, keywords):
             print(f"    b-roll ({etiqueta}) para '{keywords}'")
             if cid is not None:
                 _USADOS.add(_clave(fuente, cid))
             return out_path
+        if cid is not None:
+            _RECHAZADOS.add(_clave(fuente, cid))
     return None
 
 

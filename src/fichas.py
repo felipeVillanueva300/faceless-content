@@ -68,6 +68,12 @@ def agregar_links(data: dict, fichas=None) -> dict:
         return sum(t.count(_norm(c)) for c in claves if c)
 
     candidatas = [f for f in mencionadas(texto, fichas) if f.get("link_en_caption", True) is not False]
+    quitar = set()
+    for f in candidatas:
+        quitar.update(r for r in (f.get("reemplaza") or []) if r)
+    if quitar:
+        ids = {id(f): fid for fid, f in fichas.items()}
+        candidatas = [f for f in candidatas if ids.get(id(f)) not in quitar]
     candidatas = sorted(candidatas, key=_veces, reverse=True)[:2]
     lineas = []
     for f in candidatas:

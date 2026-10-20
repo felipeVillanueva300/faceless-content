@@ -50,7 +50,27 @@ def _pronunciar(text: str, tabla: dict = None) -> str:
         text = patron.sub(lambda m: tabla[m.group(1)], text)
     text = re.sub(r"(\$\s?\d[\d,\.]*)\s*(?:pesos|mxn|m\.n\.)(?![a-záéíóú])", r"\1", text,
                   flags=re.IGNORECASE)
+    text = _reglas_habladas(text)
     return text
+
+
+def _reglas_habladas(text: str) -> str:
+    """Cifras con diagonal que la voz leería mal ("barra" o como fecha):
+      '50/30/20' -> 'cincuenta, treinta, veinte'   (porcentajes que suman 100)
+      '80/20'    -> 'ochenta, veinte'
+      '24/7'     -> 'veinticuatro siete'
+    Solo cambia lo que oye la voz: el subtítulo y las cards siguen diciendo 50/30/20."""
+    import re
+    from src.subtitles import _num_a_palabras
+    text = re.sub(r"(?<![\d/])24\s*/\s*7(?![\d/])", "veinticuatro siete", text)
+
+    def _regla(m):
+        nums = [int(g) for g in m.groups() if g]
+        if sum(nums) != 100:
+            return m.group(0)
+        return ", ".join(_num_a_palabras(n) for n in nums)
+
+    return re.sub(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{1,2}))?(?![\d/])", _regla, text)
 
 
 _DEFAULT_LIB = getattr(_ec, "WSS_URL", "")

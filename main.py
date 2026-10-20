@@ -320,12 +320,33 @@ def _guardar_guion_intento(data):
         pass
 
 
+def _cargar_guion_archivo(ruta: str) -> dict:
+    import json
+    from src import script_review, fichas
+    with open(ruta, encoding="utf-8") as f:
+        data = json.load(f)
+    data = {k: v for k, v in data.items() if not str(k).startswith("_")}   # quita notas "_..."
+    beats = [b for b in (data.get("beats") or [])
+             if isinstance(b, dict) and (b.get("narration") or "").strip()]
+    if not (data.get("hook") or "").strip() or len(beats) < 2:
+        raise ValueError(f"{ruta}: el guion necesita 'hook' y al menos 2 'beats' con 'narration'.")
+    data = script_review._aplicar_marcas(data)
+    data = fichas.agregar_links(data)
+    data.setdefault("graphics", [])
+    data.setdefault("cards", [])
+    return data
+
+
 def generar_borrador():
     os.makedirs(BUILD, exist_ok=True)
     niche = os.environ.get("NICHE", "tecnología y finanzas")
 
     rehacer = os.environ.get("REHACER_ID", "").strip()
-    if rehacer:
+    guion_archivo = rehacer.lower().endswith(".json")
+    if guion_archivo:
+        print(f"[1/7] Usando el guion fijo del archivo: {rehacer}")
+        data = _cargar_guion_archivo(rehacer)
+    elif rehacer:
         print(f"[1/7] Rehaciendo con el guion guardado en: {rehacer}")
         data = uploader.leer_guion(os.environ["GITHUB_REPOSITORY"], rehacer)
     else:
@@ -471,6 +492,9 @@ def generar_borrador():
 
     if graphic_overlays:
         cards = []
+        n = subtitles.bajar_durante(ass, [(g["start"], g["end"]) for g in graphic_overlays])
+        if n:
+            print(f"    {n} subtítulo(s) bajan mientras se ve el gráfico")
 
     outro = None
     if data.get("tema_fraude") and not data.get("serie"):
@@ -487,7 +511,13 @@ def generar_borrador():
     print("    ID :", tag)
     uploader.adjuntar(os.environ["GITHUB_REPOSITORY"], tag, os.path.join(BUILD, "script.json"))
 
-    if not rehacer:
+    registrar = not rehacer
+    if guion_archivo:
+        try:
+            registrar = topic not in history.load_recent(200)
+        except Exception:
+            registrar = False
+    if registrar:
         history.add(topic, categoria=data.get("categoria"), formato=data.get("formato"),
                     concepto=data.get("concepto"), titulo=title,
                     clips=sorted(broll._USADOS - previos))
