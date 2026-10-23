@@ -2,38 +2,6 @@
   "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
   "series": [
     {
-      "nombre": "Tu buró sin miedo",
-      "tema": "entender y mejorar tu buró de crédito",
-      "total": 4,
-      "siguiente": 0,
-      "episodios": [
-        {
-          "concepto": "qué es el buró",
-          "subtema": "qué es realmente el buró de crédito y el mito de que 'estar en buró' es malo: ahí está cualquiera que haya tenido un crédito; lo que importa es cómo pagaste",
-          "anterior": "",
-          "formato": "mito"
-        },
-        {
-          "concepto": "reporte de crédito gratis",
-          "subtema": "cómo pedir tu Reporte de Crédito Especial gratis una vez cada 12 meses en burodecredito.com.mx, paso a paso",
-          "anterior": "Parte 1: qué es el buró",
-          "formato": "howto"
-        },
-        {
-          "concepto": "qué mueve tu score",
-          "subtema": "qué sube y qué baja tu score: pagar a tiempo, qué parte de tu línea de crédito usas y abrir muchos créditos juntos; sin inventar porcentajes",
-          "anterior": "Partes 1-2: qué es el buró, reporte de crédito gratis",
-          "formato": "dato"
-        },
-        {
-          "concepto": "corregir tu historial",
-          "subtema": "cómo mejorar tu historial si está dañado y qué hacer si hay un error en tu reporte: presentar una reclamación ante Buró de Crédito",
-          "anterior": "Partes 1-3: qué es el buró, reporte de crédito gratis, qué mueve tu score",
-          "formato": "howto"
-        }
-      ]
-    },
-    {
       "nombre": "Casa o auto sin que te vean la cara",
       "tema": "comprar casa o auto sin que te vean la cara",
       "total": 5,
