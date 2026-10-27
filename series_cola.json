@@ -2,44 +2,6 @@
   "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
   "series": [
     {
-      "nombre": "Casa o auto sin que te vean la cara",
-      "tema": "comprar casa o auto sin que te vean la cara",
-      "total": 5,
-      "siguiente": 0,
-      "episodios": [
-        {
-          "concepto": "qué es el CAT",
-          "subtema": "qué es el CAT y por qué es el número que debes comparar entre créditos (no solo la tasa ni la mensualidad), con dos ejemplos en pesos marcados como ejemplo",
-          "anterior": "",
-          "formato": "dato"
-        },
-        {
-          "concepto": "cuánto te presta Infonavit",
-          "subtema": "cuánto te presta Infonavit y cómo consultarlo en Mi Cuenta Infonavit, paso a paso",
-          "anterior": "Parte 1: qué es el CAT",
-          "formato": "howto"
-        },
-        {
-          "concepto": "el enganche",
-          "subtema": "el enganche: por qué dar más enganche te ahorra intereses, con el mismo crédito y dos enganches distintos como ejemplo",
-          "anterior": "Partes 1-2: qué es el CAT, cuánto te presta Infonavit",
-          "formato": "comparativa"
-        },
-        {
-          "concepto": "costos del crédito automotriz",
-          "subtema": "crédito de auto: los costos que no ves en la mensualidad (seguro que te exige el crédito, comisión por apertura) y revisar el CAT antes de firmar",
-          "anterior": "Partes 1-3: qué es el CAT, cuánto te presta Infonavit, el enganche",
-          "formato": "error"
-        },
-        {
-          "concepto": "simulador de crédito CONDUSEF",
-          "subtema": "comparar créditos en los simuladores de CONDUSEF antes de firmar, paso a paso",
-          "anterior": "Partes 1-4: qué es el CAT, cuánto te presta Infonavit, el enganche, costos del crédito automotriz",
-          "formato": "howto"
-        }
-      ]
-    },
-    {
       "nombre": "Fugas de dinero",
       "tema": "fugas de dinero que no notas cada mes",
       "total": 4,

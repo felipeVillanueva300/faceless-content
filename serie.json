@@ -1,31 +1,37 @@
 {
-  "nombre": "Tu buró sin miedo",
-  "tema": "entender y mejorar tu buró de crédito",
-  "total": 4,
-  "siguiente": 4,
+  "nombre": "Casa o auto sin que te vean la cara",
+  "tema": "comprar casa o auto sin que te vean la cara",
+  "total": 5,
+  "siguiente": 1,
   "episodios": [
     {
-      "concepto": "qué es el buró",
-      "subtema": "qué es realmente el buró de crédito y el mito de que 'estar en buró' es malo: ahí está cualquiera que haya tenido un crédito; lo que importa es cómo pagaste",
+      "concepto": "qué es el CAT",
+      "subtema": "qué es el CAT y por qué es el número que debes comparar entre créditos (no solo la tasa ni la mensualidad), con dos ejemplos en pesos marcados como ejemplo",
       "anterior": "",
-      "formato": "mito"
-    },
-    {
-      "concepto": "reporte de crédito gratis",
-      "subtema": "cómo pedir tu Reporte de Crédito Especial gratis una vez cada 12 meses en burodecredito.com.mx, paso a paso",
-      "anterior": "Parte 1: qué es el buró",
-      "formato": "howto"
-    },
-    {
-      "concepto": "qué mueve tu score",
-      "subtema": "qué sube y qué baja tu score: pagar a tiempo, qué parte de tu línea de crédito usas y abrir muchos créditos juntos; sin inventar porcentajes",
-      "anterior": "Partes 1-2: qué es el buró, reporte de crédito gratis",
       "formato": "dato"
     },
     {
-      "concepto": "corregir tu historial",
-      "subtema": "cómo mejorar tu historial si está dañado y qué hacer si hay un error en tu reporte: presentar una reclamación ante Buró de Crédito",
-      "anterior": "Partes 1-3: qué es el buró, reporte de crédito gratis, qué mueve tu score",
+      "concepto": "cuánto te presta Infonavit",
+      "subtema": "cuánto te presta Infonavit y cómo consultarlo en Mi Cuenta Infonavit, paso a paso",
+      "anterior": "Parte 1: qué es el CAT",
+      "formato": "howto"
+    },
+    {
+      "concepto": "el enganche",
+      "subtema": "el enganche: por qué dar más enganche te ahorra intereses, con el mismo crédito y dos enganches distintos como ejemplo",
+      "anterior": "Partes 1-2: qué es el CAT, cuánto te presta Infonavit",
+      "formato": "comparativa"
+    },
+    {
+      "concepto": "costos del crédito automotriz",
+      "subtema": "crédito de auto: los costos que no ves en la mensualidad (seguro que te exige el crédito, comisión por apertura) y revisar el CAT antes de firmar",
+      "anterior": "Partes 1-3: qué es el CAT, cuánto te presta Infonavit, el enganche",
+      "formato": "error"
+    },
+    {
+      "concepto": "simulador de crédito CONDUSEF",
+      "subtema": "comparar créditos en los simuladores de CONDUSEF antes de firmar, paso a paso",
+      "anterior": "Partes 1-4: qué es el CAT, cuánto te presta Infonavit, el enganche, costos del crédito automotriz",
       "formato": "howto"
     }
   ]
