@@ -3,7 +3,9 @@ import json
 import datetime
 import requests
 
-KEEP_DAYS = int(os.environ.get("KEEP_DAYS", "7"))
+# Días que se guardan los borradores antes de borrarse solos. Antes 7: si no aprobabas a tiempo,
+# el borrador se perdía (así se perdió la Parte 1 de Afore).
+KEEP_DAYS = int(os.environ.get("KEEP_DAYS", "30"))
 KEEP_MIN = int(os.environ.get("KEEP_RELEASES", "4"))
 # KEEP_RELEASES = int(os.environ.get("KEEP_RELEASES", "4"))
 

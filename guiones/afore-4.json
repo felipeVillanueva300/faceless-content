@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 4 (el original decía que todo el ahorro voluntario se deduce; el de corto plazo NO, y hay que aportar con transferencia o tarjeta). rehacer_id: guiones/afore-4.json",
+  "hook": "El SAT te puede regresar dinero por ahorrar en tu Afore, pero no cualquier aportación cuenta.",
+  "hook_card": "NO CUALQUIER APORTACIÓN",
+  "beats": [
+    {
+      "narration": "Parte 4 de 5. Las aportaciones que dejas para tu retiro, las complementarias o de largo plazo, se pueden deducir de impuestos. Las de corto plazo, que sacas cuando quieras, no.",
+      "scene": "woman thinking at desk",
+      "scene2": "hands with calculator and receipts"
+    },
+    {
+      "narration": "Así funciona: lo que aportas se resta de tus ingresos del año. Si eres asalariado, tu patrón ya te retuvo impuestos sobre todo tu sueldo, así que esa diferencia te la devuelven como saldo a favor.",
+      "scene": "man reviewing payroll receipt",
+      "scene2": "person writing numbers notebook"
+    },
+    {
+      "narration": "Para que el SAT la acepte, aporta con transferencia o con una tarjeta a tu nombre. El tope es el 10% de lo que ganas al año.",
+      "scene": "hand holding debit card phone"
+    },
+    {
+      "narration": "En febrero tu Afore te da tu constancia de aportaciones, y en abril, en tu declaración anual, normalmente ya aparece precargada en deducciones personales. Confirma tu cuenta CLABE para que te depositen.",
+      "scene": "woman reading document at home",
+      "scene2": "man smiling checking phone"
+    },
+    {
+      "narration": "Mañana, la última parte: tus semanas cotizadas del IMSS, de las que depende tu pensión. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "TOPE: 10%",
+      "small": "de lo que ganas al año",
+      "beat": 3
+    },
+    {
+      "big": "ABRIL",
+      "small": "declaración anual con tu constancia",
+      "beat": 4
+    }
+  ],
+  "graphics": [],
+  "title": "Tu Afore sin misterio (4/5): Cómo hacer que el SAT te regrese dinero con tu Afore",
+  "caption": "Cómo deducir tus aportaciones voluntarias a la Afore en la declaración anual\n\nSolo se deducen las aportaciones que dejas para tu retiro (complementarias o de largo plazo); las de corto plazo no. Aporta con transferencia o tarjeta a tu nombre. El tope es el 10% de tus ingresos del año, con un máximo de 5 UMA anuales. Tu Afore te da la constancia en febrero y en abril la usas en tu declaración anual.\n\nFuente: Ley del ISR, art. 151, y CONSAR.\n\n¿Ya deduces tus aportaciones a la Afore?\n\n📚 Parte 4 de 5 de la serie «Tu Afore sin misterio». Sígueme para no perderte la parte 5.\n\n#finanzaspersonales #dineromexico #afore #declaracionanual #sat #TuAforeSinMisterio",
+  "concepto": "deducir aportaciones al retiro",
+  "topic": "deducir-aportaciones-voluntarias-afore",
+  "broll_keywords": "tax return refund",
+  "categoria": "serie",
+  "formato": "Configuración explicada (paso a paso)",
+  "serie": {
+    "nombre": "Tu Afore sin misterio",
+    "parte": "4",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

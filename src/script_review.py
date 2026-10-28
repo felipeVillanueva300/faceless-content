@@ -301,6 +301,13 @@ Revisa este guion de video corto y lista SOLO problemas REALES de contenido de e
    cómo activar…) y la narración no dice DÓNDE se hace, QUÉ datos tener a la mano y QUÉ te
    dan al final (folio, constancia, comprobante).
 
+OJO, TUS CONOCIMIENTOS PUEDEN ESTAR DESACTUALIZADOS: si el guion coincide con los DATOS
+VERIFICADOS o los DATOS VIGENTES que vienen abajo, NO es error y NO lo reportes (ej. Nu México
+es BANCO con seguro del IPAB desde agosto de 2026; decir que es SOFIPO sería lo equivocado).
+Una aparente contradicción que el propio guion explica NO es contradicción: "una tasa más baja
+puede salir más cara" es correcto cuando el CAT (comisiones y seguros) la encarece; ese es el
+punto del video. Si no estás seguro de que algo esté mal, NO lo reportes.
+
 NO reportes estilo, gustos, longitud ni cosas que ya están bien. Si no hay problemas reales,
 devuelve una lista vacía. Máximo 4 problemas, cada uno en UNA frase que cite el texto exacto
 y diga qué es lo correcto.
@@ -310,8 +317,10 @@ GUION:
 """
 
 
-def verificar(data: dict, client=None) -> list:
-    """Lista de problemas de contenido ([] si todo bien o si el verificador no responde)."""
+def verificar(data: dict, client=None, contexto: str = "") -> list:
+    """Lista de problemas de contenido ([] si todo bien o si el verificador no responde).
+    contexto: DATOS VIGENTES + DATOS VERIFICADOS (fichas). Sin esto el verificador usaba lo que
+    "sabía" y marcaba como error cosas correctas (ej. "Nu es SOFIPO, no tiene IPAB")."""
     if not VERIFY_ON:
         return []
     beats = [b for b in (data.get("beats") or []) if isinstance(b, dict)]
@@ -328,7 +337,9 @@ def verificar(data: dict, client=None) -> list:
             from google import genai
             client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         from google.genai import types
-        prompt = _PROMPT_VERIFICA + json.dumps(payload, ensure_ascii=False, indent=1)
+        base = _PROMPT_VERIFICA.rsplit("GUION:", 1)[0]
+        extra = (contexto.strip() + "\n\n") if (contexto or "").strip() else ""
+        prompt = base + extra + "GUION:\n" + json.dumps(payload, ensure_ascii=False, indent=1)
         ultimo = None
         for intento in range(2):
             try:

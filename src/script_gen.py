@@ -6,9 +6,13 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan, script_review, fichas, caption
+from src import content_plan, script_review, fichas, caption, repetidos
 
 VERIFICAR_REESCRIBE = os.environ.get("VERIFICAR_REESCRIBE", "1").strip().lower() in ("1", "true", "yes")
+# Filtro duro anti-repetición (src/repetidos.py): si el guion se parece a algo que salió en los
+# últimos TEMA_DUP_DIAS días, se pide OTRO tema una vez. Solo en el diario (las series ya van planeadas).
+TEMA_DUP = os.environ.get("TEMA_DUP", "1").strip().lower() in ("1", "true", "yes")
+TEMA_DUP_DIAS = int(os.environ.get("TEMA_DUP_DIAS", "40"))
 
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
@@ -353,8 +357,9 @@ No uses otros tipos ni omitas claves de estos formatos."""
         raise last_err
 
     data = _generar(prompt)
+    contexto = datos_txt + fichas_txt          # el verificador también ve los datos verificados
 
-    problemas = script_review.verificar(data, client)
+    problemas = script_review.verificar(data, client, contexto=contexto)
     if problemas and VERIFICAR_REESCRIBE:
         print(f"    verificador: {len(problemas)} problema(s); reescribo el guion una vez")
         for pr in problemas:
@@ -369,7 +374,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                     + json.dumps(previo, ensure_ascii=False))
         try:
             data2 = _generar(prompt + feedback)
-            problemas2 = script_review.verificar(data2, client)
+            problemas2 = script_review.verificar(data2, client, contexto=contexto)
             if len(problemas2) <= len(problemas):
                 data, problemas = data2, problemas2
                 print(f"    verificador: versión nueva con {len(problemas)} problema(s)")
@@ -377,5 +382,34 @@ No uses otros tipos ni omitas claves de estos formatos."""
                 print("    verificador: la versión nueva salió peor; me quedo con la primera")
         except Exception as e:
             print(f"    (no se pudo reescribir el guion: {str(e)[:120]}; sigo con el primero)")
+
+    if TEMA_DUP and plan.get("categoria_id") != "serie":
+        try:
+            from src import history
+            previos = history.recent_records(TEMA_DUP_DIAS)
+        except Exception:
+            previos = []
+        rep = repetidos.parecido(data, previos)
+        if rep:
+            ya = rep.get("titulo") or rep.get("concepto") or rep.get("topic")
+            print(f"    tema repetido: se parece a '{ya}' ({rep.get('fecha')}); pido otro tema")
+            aviso = (f"\n\nESE TEMA YA SALIÓ el {rep.get('fecha')}: \"{ya}\". Escribe un guion de un "
+                     "tema CLARAMENTE distinto: otro concepto, no el mismo con otras palabras, otro "
+                     "ejemplo u otro formato.")
+            try:
+                data2 = _generar(prompt + aviso)
+                rep2 = repetidos.parecido(data2, previos)
+                if rep2:
+                    ya2 = rep2.get("titulo") or rep2.get("concepto") or rep2.get("topic")
+                    print(f"    (el otro tema también se parece a '{ya2}'; me quedo con el primero)")
+                    problemas = list(problemas) + [f"Tema parecido a uno reciente: '{ya}' ({rep.get('fecha')})."]
+                else:
+                    data = data2
+                    problemas = script_review.verificar(data2, client, contexto=contexto)
+                    print(f"    tema nuevo: '{data.get('title', '')}'")
+            except Exception as e:
+                print(f"    (no se pudo pedir otro tema: {str(e)[:120]})")
+                problemas = list(problemas) + [f"Tema parecido a uno reciente: '{ya}' ({rep.get('fecha')})."]
+
     data["avisos"] = problemas
     return data

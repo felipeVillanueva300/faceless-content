@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 3 (el original abría con '2 de cada 100'; la CONSAR dice que solo ~8 de cada 100 cuentas tienen ahorro voluntario). rehacer_id: guiones/afore-3.json",
+  "hook": "9 de cada 10 cuentas de Afore no reciben ni un peso extra aparte de lo obligatorio.",
+  "hook_card": "9 DE CADA 10",
+  "beats": [
+    {
+      "narration": "Parte 3 de 5. Con lo que aportan tu patrón y tú, a muchos la pensión se les queda corta para lo que cuesta vivir. Las aportaciones voluntarias son dinero extra que tú le metes a tu Afore cuando quieras.",
+      "scene": "worried man doing bills at table",
+      "scene2": "older man counting expenses notebook"
+    },
+    {
+      "narration": "Por ejemplo, $200 al mes son $2,400 al año, sin contar rendimientos, y se van sumando a tu cuenta para el retiro.",
+      "scene": "hand writing savings plan notebook"
+    },
+    {
+      "narration": "Hacerlo es directo: en AforeMóvil puedes domiciliar un cargo a tu tarjeta de débito, o aportar en efectivo en tiendas dictando tu CURP. Se puede desde $50.",
+      "scene": "woman using smartphone app",
+      "scene2": "paying at store counter"
+    },
+    {
+      "narration": "Ojo: hay varios tipos. El de corto plazo lo puedes sacar cuando quieras; los de largo plazo y las complementarias se quedan para tu retiro y son los que dan beneficios fiscales. Pregunta en tu Afore cuál te conviene.",
+      "scene": "person thinking reading phone",
+      "scene2": "couple talking at kitchen table"
+    },
+    {
+      "narration": "Mañana, Parte 4: cómo el SAT te puede regresar dinero por ahorrar para tu retiro. Sígueme para no perdértela.",
+      "scene": "young woman holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "$200 AL MES",
+      "small": "son $2,400 al año, sin rendimientos",
+      "beat": 2
+    },
+    {
+      "big": "AFOREMÓVIL",
+      "small": "o en tiendas, desde $50",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Tu Afore sin misterio (3/5): Ahorro voluntario en Afore, cómo meterle dinero fácil",
+  "caption": "Cómo hacer aportaciones voluntarias a tu Afore\n\nSegún la CONSAR, 92 de cada 100 cuentas no reciben aportaciones voluntarias. Puedes aportar desde $50 en AforeMóvil (con domiciliación a tu tarjeta de débito) o en tiendas con tu CURP. El ahorro de corto plazo lo puedes retirar; el de largo plazo y las aportaciones complementarias son para tu retiro y dan beneficios fiscales.\n\nFuente: CONSAR, 2025.\n\n¿Ya le metes algo extra a tu Afore?\n\n📚 Parte 3 de 5 de la serie «Tu Afore sin misterio». Sígueme para no perderte la parte 4.\n\n#finanzaspersonales #dineromexico #afore #ahorrovoluntario #retiro #TuAforeSinMisterio",
+  "concepto": "aportaciones voluntarias",
+  "topic": "aportaciones-voluntarias-afore-tipos",
+  "broll_keywords": "retirement savings plan",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "Tu Afore sin misterio",
+    "parte": "3",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

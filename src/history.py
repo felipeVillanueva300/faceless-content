@@ -93,6 +93,24 @@ def recent_conceptos(dias: int = 120):
     return out
 
 
+def recent_records(dias: int = 40):
+    """Registros (fecha, titulo, concepto, topic, categoria) de los últimos 'dias' días.
+    Los usa el filtro anti-repetición (src/repetidos.py) para comparar el guion nuevo con lo
+    que ya salió, diario o serie."""
+    hoy = datetime.date.today()
+    out = []
+    for r in (_data().get("records") or []):
+        if not isinstance(r, dict):
+            continue
+        try:
+            if (hoy - datetime.date.fromisoformat(r.get("fecha", ""))).days > dias:
+                continue
+        except Exception:
+            continue
+        out.append(r)
+    return out
+
+
 def recent_clips(dias: int = 14):
     """Clips de b-roll usados en los últimos 'dias' ("pexels:123"), para no repetir el mismo
     clip en videos de días seguidos (el hombre del celular y la tarjeta salió en 3 videos)."""

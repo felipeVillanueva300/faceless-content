@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO de la Parte 1 (la original se perdió). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/afore-1.json. Llega por Telegram como borrador con su ID.",
+  "hook": "Si alguna vez trabajaste con IMSS, hay dinero a tu nombre en una Afore, aunque nunca la hayas elegido.",
+  "hook_card": "DINERO A TU NOMBRE",
+  "beats": [
+    {
+      "narration": "Esta es la Parte 1 de 5 de Tu Afore sin misterio. La Afore es la empresa que guarda e invierte el ahorro para tu retiro, en una cuenta que es solo tuya.",
+      "scene": "surprised man looking at phone",
+      "scene2": "older couple planning retirement"
+    },
+    {
+      "narration": "Ese dinero no sale de la nada: cada bimestre aportan tu patrón, tú con un descuento de tu nómina y, en muchos casos, también el gobierno.",
+      "scene": "payroll receipt on desk",
+      "scene2": "calendar planner desk"
+    },
+    {
+      "narration": "Para ver en qué Afore estás y cuánto tienes, descarga AforeMóvil, la app oficial y gratuita. Te registras con tu CURP, tu correo y tu celular, y ahí ves tu Afore y tu saldo.",
+      "scene": "woman using smartphone app",
+      "scene2": "hand typing on phone screen"
+    },
+    {
+      "narration": "Si nunca elegiste Afore, te asignaron una. Y si no puedes con la app, llama gratis a SARTEL; te dejo el número en la descripción.",
+      "scene": "woman phone call at home"
+    },
+    {
+      "narration": "Mañana, Parte 2: cómo saber si tu Afore te conviene y cómo cambiarte. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "CADA BIMESTRE",
+      "small": "aportan tu patrón y tú",
+      "beat": 2
+    },
+    {
+      "big": "AFOREMÓVIL",
+      "small": "la app oficial y gratuita",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Tu Afore sin misterio (1/5): Qué es tu Afore y cómo ver cuánto tienes",
+  "caption": "Cómo saber en qué Afore estoy y cuánto dinero tengo\n\nLa Afore guarda e invierte el ahorro para tu retiro. Cada bimestre aportan tu patrón, tú y, en muchos casos, el gobierno. Para ver en qué Afore estás y tu saldo, descarga la app oficial AforeMóvil (te registras con tu CURP, correo y celular). Si no puedes con la app, llama gratis a SARTEL al 55 1328 5000.\n\n¿Ya sabes en qué Afore está tu ahorro?\n\n📚 Parte 1 de 5 de la serie «Tu Afore sin misterio». Sígueme para no perderte la parte 2.\n\n#finanzaspersonales #dineromexico #afore #retiro #pension #TuAforeSinMisterio",
+  "concepto": "qué es la Afore",
+  "topic": "que-es-la-afore-aforemovil",
+  "broll_keywords": "retirement savings phone",
+  "categoria": "serie",
+  "formato": "Configuración explicada (paso a paso)",
+  "serie": {
+    "nombre": "Tu Afore sin misterio",
+    "parte": "1",
+    "total": "5"
+  },
+  "tema_fraude": false
+}
