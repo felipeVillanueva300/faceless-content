@@ -1,32 +1,38 @@
 {
-  "nombre": "Fugas de dinero",
-  "tema": "fugas de dinero que no notas cada mes",
-  "total": 4,
-  "siguiente": 4,
+  "nombre": "La economía en tu bolsillo",
+  "tema": "la economía de México explicada fácil (y cómo te pega en el bolsillo)",
+  "total": 5,
+  "siguiente": 1,
   "episodios": [
     {
-      "concepto": "suscripciones olvidadas",
-      "subtema": "suscripciones olvidadas: cómo encontrar todas las que pagas (estado de cuenta, App Store, Google Play) en 10 minutos",
+      "concepto": "tasa de Banxico",
+      "subtema": "qué es Banxico y por qué cuando 'sube o baja la tasa' cambia lo que pagas en créditos y lo que ganas en tus ahorros (como CETES); usa solo los DATOS VIGENTES para cifras",
       "anterior": "",
-      "formato": "howto"
-    },
-    {
-      "concepto": "pruebas gratis que se cobran",
-      "subtema": "las 'pruebas gratis' que se cobran solas: ponerles recordatorio de cancelación y usar una tarjeta digital para que no te agarren",
-      "anterior": "Parte 1: suscripciones olvidadas",
-      "formato": "tip"
-    },
-    {
-      "concepto": "gastos hormiga",
-      "subtema": "gastos hormiga: la cuenta real de un antojo diario al año con un ejemplo en pesos, y cómo recortar sin sufrir (apartado automático con lo que ahorras)",
-      "anterior": "Partes 1-2: suscripciones olvidadas, pruebas gratis que se cobran",
       "formato": "dato"
     },
     {
-      "concepto": "cancelar cargos recurrentes",
-      "subtema": "cargos recurrentes que ya no usas: cómo cancelarlos y, si te siguen cobrando, cómo pedir la aclaración del cargo con tu banco",
-      "anterior": "Partes 1-3: suscripciones olvidadas, pruebas gratis que se cobran, gastos hormiga",
-      "formato": "howto"
+      "concepto": "tipo de cambio",
+      "subtema": "por qué sube o baja el dólar en palabras simples y cómo te afecta aunque nunca compres dólares: celulares, productos importados, viajes",
+      "anterior": "Parte 1: tasa de Banxico",
+      "formato": "dato"
+    },
+    {
+      "concepto": "PIB y recesión",
+      "subtema": "qué es el PIB y qué significa que el país 'entre en recesión': qué le pasa al empleo y qué puedes hacer tú (fondo de emergencia, no endeudarte de más)",
+      "anterior": "Partes 1-2: tasa de Banxico, tipo de cambio",
+      "formato": "mito"
+    },
+    {
+      "concepto": "precio de la gasolina",
+      "subtema": "quién decide el precio de la gasolina en México y qué parte de lo que pagas son impuestos (IEPS e IVA), sin dar cifras exactas que no estén en los DATOS VIGENTES",
+      "anterior": "Partes 1-3: tasa de Banxico, tipo de cambio, PIB y recesión",
+      "formato": "dato"
+    },
+    {
+      "concepto": "salario mínimo e inflación",
+      "subtema": "quién decide el salario mínimo (la CONASAMI) y por qué cuando sube no siempre alcanza más: la relación entre salario, inflación y precios",
+      "anterior": "Partes 1-4: tasa de Banxico, tipo de cambio, PIB y recesión, precio de la gasolina",
+      "formato": "mito"
     }
   ]
 }
