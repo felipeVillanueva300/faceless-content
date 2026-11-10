@@ -34,34 +34,6 @@
       ]
     },
     {
-      "nombre": "Buen Fin sin deudas",
-      "tema": "cómo aprovechar el Buen Fin 2026 (13 al 17 de noviembre) sin endeudarte",
-      "total": 3,
-      "siguiente": 0,
-      "no_antes_de": "2026-11-10",
-      "no_despues_de": "2026-11-11",
-      "episodios": [
-        {
-          "concepto": "ofertas falsas del Buen Fin",
-          "subtema": "cómo saber si una oferta del Buen Fin es real: revisar el precio desde antes (capturas, historial de precios) y quejarte en Profeco si no respetan el precio anunciado",
-          "anterior": "",
-          "formato": "howto"
-        },
-        {
-          "concepto": "meses sin intereses en el Buen Fin",
-          "subtema": "meses sin intereses en el Buen Fin: la regla para que sí convengan (que la mensualidad quepa en tu presupuesto y no juntar varios) con un ejemplo en pesos",
-          "anterior": "Parte 1: ofertas falsas del Buen Fin",
-          "formato": "comparativa"
-        },
-        {
-          "concepto": "lista y tope de gasto",
-          "subtema": "la lista antes de comprar: qué necesitas, tope de gasto y qué hacer si te arrepientes (devoluciones, garantía, queja en Profeco)",
-          "anterior": "Partes 1-2: ofertas falsas del Buen Fin, meses sin intereses en el Buen Fin",
-          "formato": "tip"
-        }
-      ]
-    },
-    {
       "nombre": "Lo que te toca por ley",
       "tema": "tu nómina y tus prestaciones: lo que te toca por ley",
       "total": 5,
