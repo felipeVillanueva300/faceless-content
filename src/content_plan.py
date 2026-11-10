@@ -112,19 +112,20 @@ _FORMATO_POR_ID = {f["id"]: f for f in FORMATOS}
 # La cadencia se dispara alrededor de esa fecha, no toda la ventana.
 # --------------------------------------------------------------------------
 EVENTOS = [
-    {"id": "patrio", "mes": 9, "dia": 15,
+    {"id": "patrio", "mes": 9, "dia": 15, "claves": ("patri", "grito"),
      "tema": "las fiestas patrias (la cena del 15, la coperacha, el Grito) sin endeudarte"},
-    {"id": "muertos", "mes": 11, "dia": 2,
+    {"id": "muertos", "mes": 11, "dia": 2, "claves": ("muertos", "ofrenda", "cempas"),
      "tema": "Día de Muertos: ofrenda, flores y pan sin descontrol"},
     {"id": "buenfin", "mes": 11, "dia": 13,   # día en que EMPIEZA (2026: 13-17 nov); se mueve cada año
+     "claves": ("buen fin",),
      "tema": "el Buen Fin: MSI cuándo sí y cuándo no, comprar sin endeudarte"},
-    {"id": "aguinaldo", "mes": 12, "dia": 15,
+    {"id": "aguinaldo", "mes": 12, "dia": 15, "claves": ("aguinaldo",),
      "tema": "el aguinaldo (qué te toca por ley y cómo administrarlo) y los gastos decembrinos"},
-    {"id": "navidad", "mes": 12, "dia": 24,
+    {"id": "navidad", "mes": 12, "dia": 24, "claves": ("navidad", "regalos", "posada"),
      "tema": "Navidad: regalos y cena sin arruinar enero"},
-    {"id": "reyes", "mes": 1, "dia": 6,
+    {"id": "reyes", "mes": 1, "dia": 6, "claves": ("reyes", "rosca"),
      "tema": "Reyes: rosca y regalos sin deuda, y arranque financiero del año"},
-    {"id": "sat_anual", "mes": 4, "dia": 30,
+    {"id": "sat_anual", "mes": 4, "dia": 30, "claves": ("declaracion anual",),
      "tema": "la declaración anual del SAT (personas físicas): qué deducir y cómo, antes de que cierre"},
 ]
 
@@ -155,6 +156,32 @@ BEATS = {
 
 # Ventana en dias para considerar que un evento 'aplica' al buscar su ocurrencia.
 _VENTANA_BUSQUEDA = 40
+
+# Si una MINISERIE ya habló del evento en estos días (ej. "Buen Fin sin deudas"), el diario
+# no hace otro video de lo mismo: ese día va un pilar normal. Las "claves" de cada evento
+# (arriba) son las palabras que se buscan en el título/concepto de lo que ya salió.
+EVENTO_CUBIERTO_DIAS = 14
+
+
+def _evento_cubierto_por_serie(evento_id):
+    """El registro de una miniserie reciente que ya trató este evento, o None."""
+    import unicodedata
+    claves = next((e.get("claves") or () for e in EVENTOS if e["id"] == evento_id), ())
+    if not claves:
+        return None
+    try:
+        from src import history
+        recs = history.recent_records(EVENTO_CUBIERTO_DIAS)
+    except Exception:
+        return None
+    for r in recs:
+        if r.get("categoria") != "serie":
+            continue
+        t = unicodedata.normalize("NFD", f"{r.get('titulo', '')} {r.get('concepto', '')}".lower())
+        t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+        if any(c in t for c in claves):
+            return r
+    return None
 
 
 def _between(today, m1, d1, m2, d2) -> bool:
@@ -420,6 +447,12 @@ def plan_del_dia(today=None, offset=0):
     fmt = fmts[today.toordinal() % len(fmts)]
 
     ev = evento_del_dia(today)
+    if ev:
+        cubierto = _evento_cubierto_por_serie(ev["evento_id"])
+        if cubierto:
+            print(f"    temporada '{ev['evento_id']}': ya la cubre la miniserie "
+                  f"('{(cubierto.get('titulo') or '')[:60]}'); hoy va un pilar normal")
+            ev = None
     beat_instr = ""
     es_borrador = False
     if ev:
