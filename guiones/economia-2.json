@@ -1,0 +1,57 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 2 (el original decía 'un celular que cuesta $300', que en México se lee y se oye como 300 PESOS, y no explicaba por qué sube o baja el dólar). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/economia-2.json",
+  "hook": "Aunque nunca compres dólares, su precio decide cuánto pagas por tu próximo celular.",
+  "hook_card": "TU CELULAR DEPENDE DEL DÓLAR",
+  "beats": [
+    {
+      "narration": "Parte 2 de 5 sobre economía. El dólar sube o baja según cuántos dólares se quieren comprar y vender. Si llegan muchos a México, por remesas, turismo o inversiones, el peso se fortalece; si los inversionistas se asustan y se llevan su dinero, el dólar sube.",
+      "scene": "worried woman looking at phone",
+      "scene2": "busy city street people walking"
+    },
+    {
+      "narration": "Por ejemplo, con el dólar en $18.70, un celular de 300 dólares le cuesta a la tienda $5,610. Si el dólar sube a $20, el mismo celular le cuesta $6,000: $390 más.",
+      "scene": "electronics store display shelves"
+    },
+    {
+      "narration": "No cambia de un día para otro, pero si el dólar se queda arriba, tarde o temprano ese aumento llega al precio que pagas: en celulares, computadoras, refacciones y hasta en ropa importada.",
+      "scene": "woman checking price tag store",
+      "scene2": "car parts shelves store"
+    },
+    {
+      "narration": "Si vas a comprar algo importado y caro, compara precios en varias tiendas antes: no todas suben al mismo tiempo.",
+      "scene": "man comparing prices on phone in store"
+    },
+    {
+      "narration": "Mañana, Parte 3: qué es el PIB y qué pasa en una recesión. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [],
+  "graphics": [
+    {
+      "type": "bars",
+      "title": "CELULAR DE 300 DÓLARES",
+      "a_label": "DÓLAR A $18.70",
+      "a_value": 5610,
+      "b_label": "DÓLAR A $20",
+      "b_value": 6000,
+      "a_color": "green",
+      "b_color": "red",
+      "money": true,
+      "beat": 2
+    }
+  ],
+  "title": "La economía en tu bolsillo (2/5): Por qué sube el dólar y cómo te pega aunque no lo compres",
+  "caption": "Por qué sube o baja el dólar y cómo afecta los precios en México\n\nEl tipo de cambio depende de cuántos dólares se compran y se venden: remesas, turismo e inversión fortalecen al peso; cuando los inversionistas sacan su dinero, el dólar sube. Si el dólar se queda arriba, tarde o temprano sube lo importado: celulares, computadoras, refacciones y ropa. Antes de una compra grande, compara precios en varias tiendas.\n\n¿Pensabas comprar algún aparato este mes?\n\n📚 Parte 2 de 5 de la serie «La economía en tu bolsillo». Sígueme para no perderte la parte 3.\n\n#finanzaspersonales #dineromexico #tipodecambio #economiamexico #dolar #LaEconomiaEnTuBolsillo",
+  "concepto": "tipo de cambio",
+  "topic": "por-que-sube-el-dolar-precios",
+  "broll_keywords": "electronics store shopping",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "La economía en tu bolsillo",
+    "parte": "2",
+    "total": "5"
+  },
+  "tema_fraude": false
+}
