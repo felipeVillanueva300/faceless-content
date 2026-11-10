@@ -29,6 +29,9 @@ _VACIAS = {
     "todo", "todos", "quieres", "necesitas", "saber", "sabias", "real", "mejor", "peor",
     "nuevo", "nueva", "deja", "dejar", "evita", "evitar", "sale", "salir", "gana", "pierdes",
     "realmente", "aunque", "otro", "otra", "cada", "pero", "cara", "vean", "miedo",
+    # relleno de títulos gancho ("el costo oculto de...", "lo que arruina tu..."):
+    "oculto", "oculta", "ocultos", "ocultas", "arruina", "arruinar", "fracasar", "fracaso",
+    "protege", "protegete", "conviene", "vale", "pena", "antes", "despues", "trampa",
 }
 # Palabras cortas que sí dicen el tema.
 _CORTAS_OK = {"nu", "ia", "sat", "cat", "msi"}

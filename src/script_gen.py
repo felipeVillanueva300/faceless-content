@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan, script_review, fichas, caption, repetidos
+from src import content_plan, script_review, fichas, caption, repetidos, gemini
 
 VERIFICAR_REESCRIBE = os.environ.get("VERIFICAR_REESCRIBE", "1").strip().lower() in ("1", "true", "yes")
 # Filtro duro anti-repetición (src/repetidos.py): si el guion se parece a algo que salió en los
@@ -49,7 +49,7 @@ def _extract_json(text: str) -> dict:
 
 def generate_script(niche: str = "tecnología y finanzas",
                     avoid=None, max_retries: int = 4) -> dict:
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    client = gemini.cliente()        # con tiempo límite: si se cuelga, falla y prueba otro modelo
     today = datetime.date.today()
     plan = content_plan.plan_del_dia(today, offset=7)   # video usa offset 7
     conceptos = []
@@ -346,6 +346,12 @@ No uses otros tipos ni omitas claves de estos formatos."""
                         break
 
                     raise
+                except Exception as e:
+                    if not gemini.es_timeout(e):
+                        raise
+                    last_err = e
+                    print(f"'{model}' no contestó en {gemini.TIMEOUT_S}s; pruebo el siguiente modelo.")
+                    break
 
         if agotados:
             raise RuntimeError(
@@ -383,7 +389,8 @@ No uses otros tipos ni omitas claves de estos formatos."""
         except Exception as e:
             print(f"    (no se pudo reescribir el guion: {str(e)[:120]}; sigo con el primero)")
 
-    if TEMA_DUP and plan.get("categoria_id") != "serie":
+    # Series y días de temporada ya van planeados (su tema es obligatorio): no se filtran.
+    if TEMA_DUP and plan.get("categoria_id") != "serie" and not plan.get("evento_id"):
         try:
             from src import history
             previos = history.recent_records(TEMA_DUP_DIAS)

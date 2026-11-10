@@ -86,6 +86,7 @@ VISION_ON = os.environ.get("BROLL_VISION", "1").strip().lower() in ("1", "true",
 VISION_MODEL = os.environ.get("BROLL_VISION_MODEL", "gemini-3.5-flash-lite").strip()
 VISION_TRIES = max(1, int(os.environ.get("BROLL_VISION_TRIES", "3")))
 VISION_FALLBACK = os.environ.get("BROLL_VISION_FALLBACK", "gemini-3.6-flash").strip()
+VISION_TIMEOUT = int(os.environ.get("BROLL_VISION_TIMEOUT", "60"))   # segundos por revisión
 MIN_LUMA = float(os.environ.get("BROLL_MIN_LUMA", "60"))
 
 
@@ -184,7 +185,8 @@ def _vision_ok(path: str, etiqueta: str, escena: str = "") -> bool:
     import time
     from google import genai
     from google.genai import types
-    client = genai.Client(api_key=key)
+    from src import gemini
+    client = gemini.cliente(key, timeout_s=VISION_TIMEOUT)   # un clip no puede colgar el video
     partes = [types.Part.from_bytes(data=c, mime_type="image/jpeg") for c in cuadros]
     prompt = _VISION_PROMPT + (f"\nLa escena pedida era: \"{escena}\"." if escena else "")
     if TEMA_VIDEO:

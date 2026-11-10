@@ -40,10 +40,10 @@ jobs:
         if: env.HAY_EPISODIO == '1' || inputs.publicar_id != ''
         uses: nick-fields/retry@v3
         with:
-          timeout_minutes: 15
+          timeout_minutes: 25
           max_attempts: 3
           retry_wait_seconds: 60
-          command: python main.py
+          command: python -u main.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}

@@ -217,8 +217,8 @@ def revisar(data: dict, client=None) -> dict:
     }
     try:
         if client is None:
-            from google import genai
-            client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+            from src import gemini
+            client = gemini.cliente()
         rev = _llamar(client, payload)
     except Exception as e:
         print(f"    (revisor de redacción no disponible, sigo con el original: {str(e)[:120]})")
@@ -334,8 +334,8 @@ def verificar(data: dict, client=None, contexto: str = "") -> list:
     }
     try:
         if client is None:
-            from google import genai
-            client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+            from src import gemini
+            client = gemini.cliente()
         from google.genai import types
         base = _PROMPT_VERIFICA.rsplit("GUION:", 1)[0]
         extra = (contexto.strip() + "\n\n") if (contexto or "").strip() else ""
