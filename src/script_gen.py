@@ -334,6 +334,12 @@ No uses otros tipos ni omitas claves de estos formatos."""
                                   f"modelo: '{modelos[mi + 1]}'...")
                         break  # rompe el bucle de intentos -> siguiente modelo
 
+                    if code == 504:
+                        # 504 DEADLINE_EXCEEDED = Gemini no terminó dentro del tiempo límite
+                        # (GEMINI_TIMEOUT). Igual que un timeout: siguiente modelo. (11 nov)
+                        print(f"'{model}' no terminó a tiempo (504); pruebo el siguiente modelo.")
+                        break
+
                     if code in (429, 500, 502, 503) and attempt < max_retries - 1:
                         wait = 8 * (attempt + 1)
                         print(f"Gemini respondió {code} (transitorio) en '{model}'. "

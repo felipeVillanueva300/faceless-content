@@ -5,11 +5,12 @@ y el job muere sin decir nada (10 nov: 3 intentos de 15 min, sin un solo mensaje
 Con límite, la llamada falla rápido y el código ya sabe qué hacer: probar el siguiente
 modelo o seguir sin ese paso.
 
-GEMINI_TIMEOUT (segundos, default 150) cambia el límite sin tocar código.
+GEMINI_TIMEOUT (segundos, default 240) cambia el límite sin tocar código.
+Con el límite, Gemini a veces contesta 504 DEADLINE_EXCEEDED: también cuenta como "no contestó".
 """
 import os
 
-TIMEOUT_S = int(os.environ.get("GEMINI_TIMEOUT", "150"))
+TIMEOUT_S = int(os.environ.get("GEMINI_TIMEOUT", "240"))
 
 
 def cliente(api_key: str = None, timeout_s: int = None):
@@ -22,5 +23,7 @@ def cliente(api_key: str = None, timeout_s: int = None):
 
 def es_timeout(e) -> bool:
     """True si el error es porque Gemini no contestó a tiempo."""
+    if getattr(e, "code", None) == 504 or "DEADLINE_EXCEEDED" in str(e):
+        return True
     return (isinstance(e, TimeoutError) or "timeout" in type(e).__name__.lower()
             or "timed out" in str(e).lower())
