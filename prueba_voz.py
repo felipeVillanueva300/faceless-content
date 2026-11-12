@@ -1,25 +1,32 @@
-"""Prueba temporal: cómo suena 'Wi-Fi' con distintas escrituras, y transcripción de dos reels."""
-import asyncio, json, os, urllib.request
+"""Prueba temporal: cómo dice la voz algunas siglas. Mide cuánto dura la palabra (deletrear
+tarda mucho más que decirla de corrido) y transcribe palabra por palabra."""
+import asyncio, json, os, subprocess
 from src import tts
 from faster_whisper import WhisperModel
 
 os.makedirs("prueba_voz_out", exist_ok=True)
-FRASE = "Revisar tu app del banco con el {w} gratis de la plaza le da tu clave a cualquiera."
-CANDIDATOS = {"1_tal_cual_Wi-Fi": "Wi-Fi", "2_uaifai": "uáifai", "3_uai_fai": "uái fai",
-              "4_guaifai": "guáifai", "5_wifi": "wifi"}
+CASOS = {
+    "pib_1_PIB": "Cuando el PIB cae dos trimestres seguidos, hay recesión.",
+    "pib_2_pib": "Cuando el pib cae dos trimestres seguidos, hay recesión.",
+    "pib_3_píb": "Cuando el píb cae dos trimestres seguidos, hay recesión.",
+    "pib_4_Pib": "Cuando el Pib cae dos trimestres seguidos, hay recesión.",
+    "pib_5_pibe": "Cuando el pibe cae dos trimestres seguidos, hay recesión.",
+    "sin_sigla": "Cuando el cae dos trimestres seguidos, hay recesión.",
+    "condusef": "La CONDUSEF recomienda juntar al menos tres meses.",
+    "ieps_iva": "A eso se le suman dos impuestos: el IVA y el IEPS.",
+    "conasami": "Lo negocia la CONASAMI, una comisión tripartita.",
+}
+def dur(p):
+    out = subprocess.run(["ffprobe", "-v", "quiet", "-show_entries", "format=duration",
+                          "-of", "csv=p=0", p], capture_output=True, text=True).stdout
+    return float(out.strip() or 0)
 model = WhisperModel("medium", device="cpu", compute_type="int8")
 res = {}
-for k, w in CANDIDATOS.items():
+for k, frase in CASOS.items():
     out = f"prueba_voz_out/{k}.mp3"
-    asyncio.run(tts._synth(FRASE.format(w=w), out))
-    segs, _ = model.transcribe(out, language="es", beam_size=5)
-    res[k] = " ".join(s.text.strip() for s in segs)
-    print(k, "->", res[k], flush=True)
-for tag in ["daily-20261111-183146", "daily-20261107-002341"]:
-    url = f"https://github.com/felipeVillanueva300/faceless-content/releases/download/{tag}/reel.mp4"
-    mp4 = f"/tmp/{tag}.mp4"
-    urllib.request.urlretrieve(url, mp4)
-    segs, _ = model.transcribe(mp4, language="es", beam_size=5)
-    res[tag] = "\n".join(f"[{s.start:5.1f}] {s.text.strip()}" for s in segs)
-    print(tag, "\n" + res[tag], flush=True)
+    asyncio.run(tts._synth(frase, out))
+    segs, _ = model.transcribe(out, language="es", beam_size=5, word_timestamps=True)
+    palabras = [f"{w.word.strip()}({w.end - w.start:.2f}s)" for s in segs for w in s.words]
+    res[k] = {"dura": round(dur(out), 2), "oye": " ".join(palabras)}
+    print(f"{k}: {res[k]['dura']}s -> {res[k]['oye']}", flush=True)
 json.dump(res, open("prueba_voz_out/resultado.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
