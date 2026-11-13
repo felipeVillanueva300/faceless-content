@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 2 del Buen Fin (el original decía '$1,500 al mes' sin decir cuánto se debía en total ni compararlo con el sueldo, ponía tenis y ropa a 12 meses, la gráfica decía 'compra única $500' que no salía en la voz y cerraba con 'jamás juntes meses'). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/buenfin-2.json",
+  "hook": "Tres pagos chiquitos a meses sin intereses en el Buen Fin pueden sumar $22,800 de deuda.",
+  "hook_card": "CUIDADO CON JUNTAR MESES",
+  "beats": [
+    {
+      "narration": "Parte 2 de 3. Opción A: juntar meses. Pantalla y celular a 12 meses, $800 y $600 al mes; ropa y regalos a 6 meses, $1,000 al mes.",
+      "scene": "shopping mall electronics store tv screens",
+      "scene2": "person paying with credit card at store"
+    },
+    {
+      "narration": "Juntos son $2,400 al mes. Si ganas $8,000 a la quincena, ya es el 15% de tu sueldo, sin contar lo que ya debías.",
+      "scene": "worried man looking at credit card bill"
+    },
+    {
+      "narration": "La CONDUSEF recomienda que todas tus deudas juntas, meses incluidos, no pasen del 30% de lo que ganas: con $16,000 al mes, máximo $4,800.",
+      "scene": "woman calculating budget with calculator"
+    },
+    {
+      "narration": "Opción B: usa meses solo en lo que necesitas y dura más que los pagos, como la pantalla; la ropa y los regalos, de contado. Y si fallas un pago, te cobran intereses.",
+      "scene": "couple watching new tv at home"
+    },
+    {
+      "narration": "Mañana, Parte 3: tu lista, tu tope y qué hacer si te arrepientes. Sígueme.",
+      "scene": "person scrolling smartphone app"
+    }
+  ],
+  "cards": [],
+  "graphics": [
+    {
+      "type": "bars",
+      "title": "PAGO AL MES",
+      "a_label": "SOLO LA PANTALLA",
+      "a_value": 800,
+      "b_label": "TRES COMPRAS",
+      "b_value": 2400,
+      "a_color": "green",
+      "b_color": "red",
+      "money": true,
+      "beat": 3
+    }
+  ],
+  "title": "Buen Fin sin deudas (2/3): La regla del 30% para que los meses sin intereses no te ahorquen",
+  "caption": "La regla para usar meses sin intereses en el Buen Fin sin endeudarte\n\nUna pantalla, un celular y ropa a meses parecen pagos chiquitos, pero juntos suman $2,400 al mes y $22,800 de deuda. La CONDUSEF recomienda que todas tus deudas juntas, contando los meses sin intereses, no pasen del 30% de lo que ganas. Usa meses solo en cosas que necesitas y que duran más que los pagos, y no te atrases: si fallas un pago, te cobran intereses.\n\n¿Cuánto pagas hoy de mensualidades?\n\n📚 Parte 2 de 3 de la serie «Buen Fin sin deudas». Sígueme para no perderte la parte 3.\n\n#finanzaspersonales #buenfin #mesessinintereses #tarjetadecredito #dineromexico #BuenFinSinDeudas",
+  "concepto": "meses sin intereses",
+  "topic": "buen-fin-msi-regla-30",
+  "broll_keywords": "credit card payment shopping budget calculator",
+  "categoria": "serie",
+  "formato": "Comparativa simple",
+  "serie": {
+    "nombre": "Buen Fin sin deudas",
+    "parte": "2",
+    "total": "3"
+  },
+  "tema_fraude": false
+}
