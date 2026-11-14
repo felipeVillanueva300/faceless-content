@@ -1,0 +1,336 @@
+{
+ "palabra": {
+  "A_ref_aguda": {
+   "frase": "La consumé recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.4,
+   "pico_tono": 1.0
+  },
+  "A_ref_llana": {
+   "frase": "La consumen recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.45,
+   "pico_tono": 0.86
+  },
+  "A_ref_esdrujula": {
+   "frase": "La cónsules recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.46,
+   "pico_tono": 0.6
+  },
+  "A_tal_cual": {
+   "frase": "La CONDUSEF recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.49,
+   "pico_tono": 0.98,
+   "dtw_tono": {
+    "ref_aguda": 0.318,
+    "ref_llana": 0.138,
+    "ref_esdrujula": 0.231
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.578,
+    "ref_llana": 0.384,
+    "ref_esdrujula": 0.849
+   }
+  },
+  "A_condu_sef": {
+   "frase": "La condu sef recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.49,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 0.233,
+    "ref_llana": 0.261,
+    "ref_esdrujula": 0.363
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.465,
+    "ref_llana": 0.447,
+    "ref_esdrujula": 0.959
+   }
+  },
+  "A_condu_séf": {
+   "frase": "La condu séf recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.49,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 0.233,
+    "ref_llana": 0.261,
+    "ref_esdrujula": 0.363
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.465,
+    "ref_llana": 0.447,
+    "ref_esdrujula": 0.959
+   }
+  },
+  "A_condu-séf": {
+   "frase": "La condu-séf recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.49,
+   "pico_tono": 0.98,
+   "dtw_tono": {
+    "ref_aguda": 0.304,
+    "ref_llana": 0.136,
+    "ref_esdrujula": 0.231
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.578,
+    "ref_llana": 0.391,
+    "ref_esdrujula": 0.849
+   }
+  },
+  "A_con_du_séf": {
+   "frase": "La con du séf recomienda juntar al menos tres meses de gastos.",
+   "dura": 0.49,
+   "pico_tono": 0.83,
+   "dtw_tono": {
+    "ref_aguda": 0.437,
+    "ref_llana": 0.152,
+    "ref_esdrujula": 0.201
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.755,
+    "ref_llana": 0.455,
+    "ref_esdrujula": 0.85
+   }
+  },
+  "B_ref_aguda": {
+   "frase": "Si el banco no te responde, quéjate ante la consumé.",
+   "dura": 0.52,
+   "pico_tono": 0.21
+  },
+  "B_ref_llana": {
+   "frase": "Si el banco no te responde, quéjate ante la consumen.",
+   "dura": 0.58,
+   "pico_tono": 0.48
+  },
+  "B_ref_esdrujula": {
+   "frase": "Si el banco no te responde, quéjate ante la cónsules.",
+   "dura": 0.65,
+   "pico_tono": 0.19
+  },
+  "B_tal_cual": {
+   "frase": "Si el banco no te responde, quéjate ante la CONDUSEF.",
+   "dura": 0.56,
+   "pico_tono": 0.2,
+   "dtw_tono": {
+    "ref_aguda": 0.173,
+    "ref_llana": 0.304,
+    "ref_esdrujula": 0.062
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.392,
+    "ref_llana": 0.6,
+    "ref_esdrujula": 0.231
+   }
+  },
+  "B_condu_sef": {
+   "frase": "Si el banco no te responde, quéjate ante la condu sef.",
+   "dura": 0.57,
+   "pico_tono": 0.21,
+   "dtw_tono": {
+    "ref_aguda": 0.272,
+    "ref_llana": 0.25,
+    "ref_esdrujula": 0.278
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.4,
+    "ref_llana": 0.397,
+    "ref_esdrujula": 0.475
+   }
+  },
+  "B_condu_séf": {
+   "frase": "Si el banco no te responde, quéjate ante la condu séf.",
+   "dura": 0.57,
+   "pico_tono": 0.21,
+   "dtw_tono": {
+    "ref_aguda": 0.272,
+    "ref_llana": 0.25,
+    "ref_esdrujula": 0.278
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.4,
+    "ref_llana": 0.397,
+    "ref_esdrujula": 0.475
+   }
+  },
+  "B_condu-séf": {
+   "frase": "Si el banco no te responde, quéjate ante la condu-séf.",
+   "dura": 0.56,
+   "pico_tono": 0.2,
+   "dtw_tono": {
+    "ref_aguda": 0.181,
+    "ref_llana": 0.276,
+    "ref_esdrujula": 0.133
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.368,
+    "ref_llana": 0.543,
+    "ref_esdrujula": 0.297
+   }
+  },
+  "B_con_du_séf": {
+   "frase": "Si el banco no te responde, quéjate ante la con du séf.",
+   "dura": 0.6,
+   "pico_tono": 0.22,
+   "dtw_tono": {
+    "ref_aguda": 0.318,
+    "ref_llana": 0.289,
+    "ref_esdrujula": 0.291
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 0.453,
+    "ref_llana": 0.482,
+    "ref_esdrujula": 0.425
+   }
+  },
+  "C_ref_aguda": {
+   "frase": "Revisa en la página de la consumé si tu banco tiene quejas.",
+   "dura": 0.44,
+   "pico_tono": null
+  },
+  "C_ref_llana": {
+   "frase": "Revisa en la página de la consumen si tu banco tiene quejas.",
+   "dura": 0.51,
+   "pico_tono": 0.58
+  },
+  "C_ref_esdrujula": {
+   "frase": "Revisa en la página de la cónsules si tu banco tiene quejas.",
+   "dura": 0.44,
+   "pico_tono": 0.71
+  },
+  "C_tal_cual": {
+   "frase": "Revisa en la página de la CONDUSEF si tu banco tiene quejas.",
+   "dura": 0.51,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 0.91,
+    "ref_llana": 1.174,
+    "ref_esdrujula": 0.605
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 1.073,
+    "ref_llana": 1.421,
+    "ref_esdrujula": 0.881
+   }
+  },
+  "C_condu_sef": {
+   "frase": "Revisa en la página de la condu sef si tu banco tiene quejas.",
+   "dura": 0.51,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 0.928,
+    "ref_llana": 1.26,
+    "ref_esdrujula": 0.555
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 1.15,
+    "ref_llana": 1.427,
+    "ref_esdrujula": 0.938
+   }
+  },
+  "C_condu_séf": {
+   "frase": "Revisa en la página de la condu séf si tu banco tiene quejas.",
+   "dura": 0.51,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 0.968,
+    "ref_llana": 1.123,
+    "ref_esdrujula": 0.606
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 1.199,
+    "ref_llana": 1.447,
+    "ref_esdrujula": 0.928
+   }
+  },
+  "C_condu-séf": {
+   "frase": "Revisa en la página de la condu-séf si tu banco tiene quejas.",
+   "dura": 0.51,
+   "pico_tono": 0.96,
+   "dtw_tono": {
+    "ref_aguda": 1.133,
+    "ref_llana": 1.395,
+    "ref_esdrujula": 0.789
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 1.277,
+    "ref_llana": 1.618,
+    "ref_esdrujula": 1.1
+   }
+  },
+  "C_con_du_séf": {
+   "frase": "Revisa en la página de la con du séf si tu banco tiene quejas.",
+   "dura": 0.52,
+   "pico_tono": 0.95,
+   "dtw_tono": {
+    "ref_aguda": 0.918,
+    "ref_llana": 1.078,
+    "ref_esdrujula": 0.74
+   },
+   "dtw_tono+energia": {
+    "ref_aguda": 1.136,
+    "ref_llana": 1.403,
+    "ref_esdrujula": 0.913
+   }
+  }
+ },
+ "guiones": {
+  "guiones/economia-4.json_0": {
+   "texto": "Casi la mitad de lo que pagas por un litro de gasolina pueden ser impuestos.",
+   "voz": "Casi la mitad de lo que pagas por un litro de gasolina pueden ser impuestos.",
+   "oye": "Casi la mitad de lo que pagas por un litro de gasolina pueden ser impuestos."
+  },
+  "guiones/economia-4.json_1": {
+   "texto": "Parte 4 de 5 sobre economía. Desde 2017 cada gasolinera pone su precio, según lo que cuesta la gasolina en el mundo, el dólar, que vimos en la Parte 2, y el transporte.",
+   "voz": "Parte 4 de 5 sobre economía. Desde 2017 cada gasolinera pone su precio, según lo que cuesta la gasolina en el mundo, el dólar, que vimos en la Parte 2, y el transporte.",
+   "oye": "Parte 4 de 5 sobre Economía. Desde 2017 cada gasolinera pone su precio, según lo que cuesta la gasolina en el mundo, el dólar, que vimos en la parte 2, y el transporte."
+  },
+  "guiones/economia-4.json_2": {
+   "texto": "Pero hoy hay un acuerdo voluntario del gobierno con los gasolineros para que la Magna no pase de 24 pesos el litro.",
+   "voz": "Pero hoy hay un acuerdo voluntario del gobierno con los gasolineros para que la Magna no pase de 24 pesos el litro.",
+   "oye": "Pero hoy hay un acuerdo voluntario del gobierno con los gasolineros para que la magna no pase de 24 pesos el litro."
+  },
+  "guiones/economia-4.json_3": {
+   "texto": "Encima van el IVA, de 16%, y el IEPS: hasta $6.70 por litro de Magna en 2026. Cada semana Hacienda decide cuánto de ese IEPS te descuenta; cuando no hay descuento, casi la mitad del precio se va en impuestos.",
+   "voz": "Encima van el IVA, de 16%, y el i e pe ese: hasta $6.70 por litro de Magna en 2026. Cada semana Hacienda decide cuánto de ese i e pe ese te descuenta; cuando no hay descuento, casi la mitad del precio se va en impuestos.",
+   "oye": "Encima van el IVA, de 16%, y el IEPS, hasta 6 pesos con 70 centavos por litro de magna en 2026. Cada semana Hacienda decide cuánto de ese IEPS te descuenta, cuando no hay descuento, casi la mitad del precio se va en impuestos."
+  },
+  "guiones/economia-4.json_4": {
+   "texto": "Y te pega aunque no tengas coche: si sube el diésel de los camiones que llevan la comida, tarde o temprano sube el kilo de verdura.",
+   "voz": "Y te pega aunque no tengas coche: si sube el diésel de los camiones que llevan la comida, tarde o temprano sube el kilo de verdura.",
+   "oye": "Y te pega aunque no tengas coche, si sube el diesel de los camiones que llevan la comida, tarde o temprano sube el kilo de verdura."
+  },
+  "guiones/economia-4.json_5": {
+   "texto": "Mañana, la última parte: quién decide el salario mínimo y si de verdad te alcanza para más. Sígueme para no perdértela.",
+   "voz": "Mañana, la última parte: quién decide el salario mínimo y si de verdad te alcanza para más. Sígueme para no perdértela.",
+   "oye": "Mañana, la última parte, quien decide el salario mínimo y si de verdad te alcanza para más. Sígueme para no perdértela."
+  },
+  "guiones/economia-5.json_0": {
+   "texto": "Que suba el salario mínimo no quiere decir que a ti te suban el sueldo.",
+   "voz": "Que suba el salario mínimo no quiere decir que a ti te suban el sueldo.",
+   "oye": "Que suba el salario mínimo no quiere decir que a ti te suban el sueldo."
+  },
+  "guiones/economia-5.json_1": {
+   "texto": "Parte 5 de 5 sobre economía. El salario mínimo lo decide la CONASAMI, donde se sientan gobierno, patrones y trabajadores. Para 2026 quedó en $315.04 al día, 13% más que en 2025.",
+   "voz": "Parte 5 de 5 sobre economía. El salario mínimo lo decide la CONASAMI, donde se sientan gobierno, patrones y trabajadores. Para 2026 quedó en $315.04 al día, 13% más que en 2025.",
+   "oye": "Parte 5 de 5 sobre Economía. El salario mínimo lo decide la CONASAMI, donde se sientan gobierno, patrones y trabajadores. Para 2026 quedó en 315 pesos con 4 centavos al día, 13% más que en 2025."
+  },
+  "guiones/economia-5.json_2": {
+   "texto": "El mito: que a todos les suben igual. Ese aumento solo obliga a pagarle más a quien ganaba menos del nuevo mínimo; si ganas más, tu aumento depende de tu patrón o de tu contrato.",
+   "voz": "El mito: que a todos les suben igual. Ese aumento solo obliga a pagarle más a quien ganaba menos del nuevo mínimo; si ganas más, tu aumento depende de tu patrón o de tu contrato.",
+   "oye": "El mito, que a todos le suben igual. Ese aumento solo obliga a pagarle más a quien ganaba menos del nuevo mínimo. Si ganas más, tu aumento depende de tu patrón o de tu contrato."
+  },
+  "guiones/economia-5.json_3": {
+   "texto": "Lo que cuenta es tu aumento contra los precios. La inflación de octubre fue de 3.75% anual; el mínimo subió 13%, así que ese sí alcanza para más.",
+   "voz": "Lo que cuenta es tu aumento contra los precios. La inflación de octubre fue de 3.75% anual; el mínimo subió 13%, así que ese sí alcanza para más.",
+   "oye": "Lo que cuenta esto aumento contra los precios. La inflación de octubre fue de 3.75% anual, el mínimo subió 13%, así que ese se alcanza para más."
+  },
+  "guiones/economia-5.json_4": {
+   "texto": "Haz la cuenta con el tuyo: si te subieron menos que la inflación, tu sueldo alcanza para menos que hace un año.",
+   "voz": "Haz la cuenta con el tuyo: si te subieron menos que la inflación, tu sueldo alcanza para menos que hace un año.",
+   "oye": "Haz la cuenta con el tuyo. Si te subieron menos que la inflación, tu sueldo alcanza para menos que hace un año."
+  },
+  "guiones/economia-5.json_5": {
+   "texto": "Con esto cerramos la serie: tasas, dólar, PIB, gasolina y salarios. Sígueme para la que sigue.",
+   "voz": "Con esto cerramos la serie: tasas, dólar, píb, gasolina y salarios. Sígueme para la que sigue.",
+   "oye": "Con esto cerramos la serie, Tazas, Dólar, PIP, Gasolina y Salarios. Sígueme para la que sigue."
+  }
+ }
+}
