@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - run: pip install -r requirements.txt faster-whisper
+      - run: pip install -r requirements.txt faster-whisper librosa scipy
       - run: python -u prueba_voz.py
         env:
           TTS_VOICE: es-MX-JorgeNeural
