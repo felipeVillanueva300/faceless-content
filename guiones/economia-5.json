@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 5. El borrador del 8 nov (daily-20261108-234447) daba a entender que si sube el salario mínimo los precios suben igual y no ganas nada (en 2026 el mínimo subió 13% y la inflación anual de octubre fue 3.75%), no daba ninguna cifra y cerraba con 'para que no te vean la cara con tu quincena'. Ahora: quién lo decide, a quién obliga el aumento y cómo comparar tu propio aumento contra la inflación. Datos verificados el 14 nov 2026: salario mínimo general 2026 = $315.04 diarios (+13%), frontera norte $440.87 (CONASAMI); inflación anual oct 2026 = 3.75% (INEGI, 9 nov 2026). OJO: la CONASAMI anuncia el mínimo de 2027 a principios de diciembre; si se publica después de eso, actualizar cifras. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/economia-5.json",
+  "hook": "Que suba el salario mínimo no quiere decir que a ti te suban el sueldo.",
+  "hook_card": "¿Y A TI TE SUBEN?",
+  "beats": [
+    {
+      "narration": "Parte 5 de 5 sobre economía. El salario mínimo lo decide la CONASAMI, donde se sientan gobierno, patrones y trabajadores. Para 2026 quedó en $315.04 al día, 13% más que en 2025.",
+      "scene": "workers meeting conference table",
+      "scene2": "factory workers assembly line"
+    },
+    {
+      "narration": "El mito: que a todos les suben igual. Ese aumento solo obliga a pagarle más a quien ganaba menos del nuevo mínimo; si ganas más, tu aumento depende de tu patrón o de tu contrato.",
+      "scene": "man reading paycheck at desk",
+      "scene2": "office worker talking with manager"
+    },
+    {
+      "narration": "Lo que cuenta es tu aumento contra los precios. La inflación de octubre fue de 3.75% anual; el mínimo subió 13%, así que ese sí alcanza para más.",
+      "scene": "woman checking price tag store",
+      "scene2": "busy street market vendors"
+    },
+    {
+      "narration": "Haz la cuenta con el tuyo: si te subieron menos que la inflación, tu sueldo alcanza para menos que hace un año.",
+      "scene": "woman writing budget notebook"
+    },
+    {
+      "narration": "Con esto cerramos la serie: tasas, dólar, PIB, gasolina y salarios. Sígueme para la que sigue.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "$315.04 AL DÍA",
+      "small": "salario mínimo 2026, 13% más",
+      "beat": 1
+    },
+    {
+      "big": "INFLACIÓN 3.75%",
+      "small": "anual, en octubre de 2026",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "La economía en tu bolsillo (5/5): Si sube el salario mínimo, ¿a ti te suben?",
+  "caption": "Qué pasa con tu sueldo cuando sube el salario mínimo\n\nLa CONASAMI fijó el salario mínimo de 2026 en $315.04 diarios, 13% más que en 2025 ($440.87 en la frontera norte). Ese aumento solo obliga a quien ganaba menos del nuevo mínimo. Para saber si tu sueldo rinde más, compara tu aumento con la inflación: en octubre de 2026 fue de 3.75% anual, según el INEGI.\n\n¿Cuánto te subieron el sueldo este año?\n\n📚 Última parte de la serie «La economía en tu bolsillo». Ve las 5 partes en mi perfil y sígueme para la próxima serie.\n\n#finanzaspersonales #dineromexico #salariominimo #inflacion #sueldo #LaEconomiaEnTuBolsillo",
+  "concepto": "salario mínimo e inflación",
+  "topic": "salario-minimo-conasami-precios",
+  "broll_keywords": "workers paycheck salary",
+  "categoria": "serie",
+  "formato": "Mito vs. realidad",
+  "serie": {
+    "nombre": "La economía en tu bolsillo",
+    "parte": "5",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

@@ -1,0 +1,57 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 4. El borrador del 7 nov (daily-20261107-234343) decía 'Ya vimos Banxico y el dólar' (se saltaba la Parte 3, el PIB), 'su precio no lo decreta una persona' sin mencionar el tope voluntario de 24 pesos para la Magna (lo primero que te van a comentar), no daba ni una cifra de impuestos y cerraba con 'que no te vean la cara pensando que no te afecta' (la misma frase forzada que se quitó de la Parte 3). Datos verificados el 14 nov 2026: IEPS completo de la Magna en 2026 = $6.70/litro (DOF, cuotas 2026); Hacienda publica cada semana en el DOF el estímulo (descuento) a esa cuota; tope voluntario Magna < $24 y diésel < $27, renovado el 31 ago 2026 por 6 meses; sin estímulo, IEPS + IVA fueron 46.6% del precio de la Magna (Expansión, ago 2025). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/economia-4.json",
+  "hook": "Casi la mitad de lo que pagas por un litro de gasolina pueden ser impuestos.",
+  "hook_card": "CASI LA MITAD: IMPUESTOS",
+  "beats": [
+    {
+      "narration": "Parte 4 de 5 sobre economía. Desde 2017 cada gasolinera pone su precio, según lo que cuesta la gasolina en el mundo, el dólar, que vimos en la Parte 2, y el transporte.",
+      "scene": "driver refueling car fuel nozzle",
+      "scene2": "fuel pump digital counter display"
+    },
+    {
+      "narration": "Pero hoy hay un acuerdo voluntario del gobierno con los gasolineros para que la Magna no pase de 24 pesos el litro.",
+      "scene": "gas station price board",
+      "scene2": "car driving into gas station"
+    },
+    {
+      "narration": "Encima van el IVA, de 16%, y el IEPS: hasta $6.70 por litro de Magna en 2026. Cada semana Hacienda decide cuánto de ese IEPS te descuenta; cuando no hay descuento, casi la mitad del precio se va en impuestos.",
+      "scene": "hands using calculator on desk",
+      "scene2": "financial graphs on laptop screen"
+    },
+    {
+      "narration": "Y te pega aunque no tengas coche: si sube el diésel de los camiones que llevan la comida, tarde o temprano sube el kilo de verdura.",
+      "scene": "freight truck driving highway morning",
+      "scene2": "customer inspecting groceries supermarket cart"
+    },
+    {
+      "narration": "Mañana, la última parte: quién decide el salario mínimo y si de verdad te alcanza para más. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "TOPE $24",
+      "small": "Magna, acuerdo voluntario",
+      "beat": 2
+    },
+    {
+      "big": "HASTA $6.70",
+      "small": "de IEPS por litro de Magna en 2026",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "La economía en tu bolsillo (4/5): Quién pone el precio de la gasolina y cuánto es impuesto",
+  "caption": "Cómo se forma el precio de la gasolina en México\n\nDesde 2017 cada gasolinera pone su precio según el costo internacional, el dólar y el transporte, y hoy hay un acuerdo voluntario para que la Magna no pase de 24 pesos por litro. Encima van el IVA y el IEPS; Hacienda decide cada semana cuánto del IEPS descuenta y, sin descuento, casi la mitad del precio son impuestos. Si tienes coche, compara gasolineras de tu zona: el tope es voluntario y no todas cobran igual.\n\n¿Cuánto gastas a la quincena en gasolina o transporte?\n\n📚 Parte 4 de 5 de la serie «La economía en tu bolsillo». Sígueme para no perderte la parte 5.\n\n#finanzaspersonales #dineromexico #gasolina #ieps #economiamexico #LaEconomiaEnTuBolsillo",
+  "concepto": "precio de la gasolina",
+  "topic": "precio-gasolina-ieps-iva",
+  "broll_keywords": "fuel pump station nozzle",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "La economía en tu bolsillo",
+    "parte": "4",
+    "total": "5"
+  },
+  "tema_fraude": false
+}
