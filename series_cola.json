@@ -2,38 +2,6 @@
   "_como_usar": "Series en espera. Cuando termina la serie de serie.json, el workflow de la miniserie toma sola la siguiente. Las de temporada traen 'no_antes_de' (no arrancan antes) y 'no_despues_de' (si llegan tarde se quitan). Las demás solo arrancan si alcanzan a terminar antes de la próxima de temporada. Para ver el calendario: python serie_queue.py calendario",
   "series": [
     {
-      "nombre": "Trucos de la app de tu banco",
-      "tema": "trucos de la app de tu banco que casi nadie usa",
-      "total": 4,
-      "siguiente": 0,
-      "episodios": [
-        {
-          "concepto": "tarjeta digital",
-          "subtema": "la tarjeta digital o virtual de la app de tu banco para comprar en línea sin exponer tu tarjeta física, y cómo cambiarla si se filtra",
-          "anterior": "",
-          "formato": "howto"
-        },
-        {
-          "concepto": "límites y alertas de compra",
-          "subtema": "poner límites de compra por internet y alertas por cada cargo en la app de tu banco para detectar un cargo raro en segundos",
-          "anterior": "Parte 1: tarjeta digital",
-          "formato": "tip"
-        },
-        {
-          "concepto": "apartados o cajitas",
-          "subtema": "apartados o cajitas: separar tu dinero dentro de la app para no gastarlo sin querer (renta, colegiatura, fondo de emergencia)",
-          "anterior": "Partes 1-2: tarjeta digital, límites y alertas de compra",
-          "formato": "howto"
-        },
-        {
-          "concepto": "domiciliación",
-          "subtema": "pagos domiciliados: cómo automatizar un pago y, sobre todo, cómo CANCELAR una domiciliación que ya no quieres desde la app o en el banco",
-          "anterior": "Partes 1-3: tarjeta digital, límites y alertas de compra, apartados o cajitas",
-          "formato": "howto"
-        }
-      ]
-    },
-    {
       "nombre": "Lo que te toca por ley",
       "tema": "tu nómina y tus prestaciones: lo que te toca por ley",
       "total": 5,

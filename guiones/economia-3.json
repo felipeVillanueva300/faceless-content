@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO corregido de la Parte 3 (el original decía 'fondo de emergencia de mínimo 1 mes', y la CONDUSEF recomienda al menos 3 meses; además 'que no te vean la cara desprevenido' sonaba forzado y no explicaba qué es una recesión técnica). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/economia-3.json",
+  "hook": "Que el PIB caiga suena a noticia lejana, pero lo primero que toca es tu chamba.",
+  "hook_card": "EL PIB Y TU CHAMBA",
+  "beats": [
+    {
+      "narration": "Parte 3 de 5 sobre economía. El PIB es el valor de todo lo que se produce en México: desde autos y tortillas hasta un corte de pelo. Si crece, hay más trabajo; si cae, hay menos.",
+      "scene": "busy street market vendors",
+      "scene2": "factory workers assembly line"
+    },
+    {
+      "narration": "Cuando el PIB cae dos trimestres seguidos, se le llama recesión técnica. Los negocios venden menos, dejan de contratar, recortan turnos y algunos despiden gente.",
+      "scene": "closed shop shutter street",
+      "scene2": "worried man looking at bills"
+    },
+    {
+      "narration": "Tu mejor defensa es un fondo de emergencia. La CONDUSEF recomienda juntar al menos tres meses de tus gastos básicos: renta, comida, luz y transporte. Si hoy no llegas, empieza con uno y ve subiendo.",
+      "scene": "woman saving money in jar",
+      "scene2": "woman writing budget notebook"
+    },
+    {
+      "narration": "Y mientras tanto, no te endeudes de más: si te quedas sin ingreso, una tarjeta llena se vuelve bola de nieve.",
+      "scene": "credit card bills on table"
+    },
+    {
+      "narration": "Mañana, Parte 4: quién fija el precio de la gasolina y qué impuestos pagas en cada litro. Sígueme para no perdértela.",
+      "scene": "gas station fuel pump"
+    }
+  ],
+  "cards": [
+    {
+      "big": "RECESIÓN TÉCNICA",
+      "small": "2 trimestres seguidos de caída del PIB",
+      "beat": 2
+    },
+    {
+      "big": "3 MESES",
+      "small": "de gastos básicos, recomienda la CONDUSEF",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "La economía en tu bolsillo (3/5): Qué es el PIB y cómo te pega una recesión",
+  "caption": "Qué es el PIB y qué significa una recesión técnica en México\n\nEl PIB es el valor de todo lo que se produce en el país. Cuando cae dos trimestres seguidos se le llama recesión técnica: los negocios venden menos, contratan menos y algunos recortan personal. Tu mejor defensa es un fondo de emergencia: la CONDUSEF recomienda al menos tres meses de gastos básicos; si hoy no llegas, empieza con uno.\n\n¿Cuántos meses de gastos tienes ahorrados hoy?\n\n📚 Parte 3 de 5 de la serie «La economía en tu bolsillo». Sígueme para no perderte la parte 4.\n\n#finanzaspersonales #dineromexico #economiamexico #recesion #fondodeemergencia #LaEconomiaEnTuBolsillo",
+  "concepto": "PIB y recesión",
+  "topic": "pib-recesion-empleo",
+  "broll_keywords": "economy workers market",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "La economía en tu bolsillo",
+    "parte": "3",
+    "total": "5"
+  },
+  "tema_fraude": false
+}
