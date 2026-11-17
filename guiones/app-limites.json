@@ -1,0 +1,50 @@
+{
+  "_como_usar": "Guion FIJO suelto, sacado de 'Trucos de la app de tu banco (2/4)' (daily-20261114-234331). La serie se partió porque la Parte 1 (tarjeta digital) ya salió el 1 y el 21 oct, y la Parte 4 (cancelar domiciliación) el 3 oct. Sin 'Parte 2 de 4' ni 'que no te vean la cara'. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/app-limites.json",
+  "hook": "Un cargo que no hiciste a medianoche te puede dejar sin quincena antes de que despiertes.",
+  "hook_card": "¿UN CARGO A MEDIANOCHE?",
+  "beats": [
+    {
+      "narration": "Hay dos ajustes en la app de tu banco que casi nadie mueve y que frenan ese cargo antes de que pase.",
+      "scene": "person checking phone at night in bed"
+    },
+    {
+      "narration": "Uno: entra a la configuración de tu tarjeta de débito y apaga las compras por internet, o pon el límite en cero. Si alguien mete tus números en una página, el cobro rebota.",
+      "scene": "hands holding smartphone banking app",
+      "scene2": "credit card on table next to phone"
+    },
+    {
+      "narration": "Para comprar en línea, usa la tarjeta digital de tu app; así la física queda apagada para internet.",
+      "scene": "woman shopping online on phone"
+    },
+    {
+      "narration": "Dos: activa las notificaciones de cada movimiento. Si ves un cargo que no reconoces, bloqueas la tarjeta ahí mismo y llamas a tu banco.",
+      "scene": "phone notification on screen",
+      "scene2": "man calling on phone worried"
+    },
+    {
+      "narration": "Hazlo hoy, toma dos minutos. Sígueme, mañana va otro.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "LÍMITE EN $0",
+      "small": "compras por internet de tu tarjeta física",
+      "beat": 2
+    },
+    {
+      "big": "AVISO DE CADA CARGO",
+      "small": "y si no lo reconoces, bloqueas al instante",
+      "beat": 4
+    }
+  ],
+  "graphics": [],
+  "title": "Dos ajustes de la app de tu banco que frenan cargos que no hiciste",
+  "caption": "Cómo evitar cargos no reconocidos en tu tarjeta de débito\n\nEn la app de tu banco apaga las compras por internet de tu tarjeta física o pon el límite en cero, y compra en línea con la tarjeta digital. Activa el aviso de cada movimiento: si ves un cargo que no hiciste, bloquea la tarjeta desde la app y llama a tu banco.\n\n¿Ya tienes activadas las notificaciones de tu tarjeta?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #seguridadbancaria #tarjetadedebito #appbancaria",
+  "concepto": "límites y alertas de compra",
+  "topic": "limites-compras-alertas-banco",
+  "broll_keywords": "mobile banking app phone",
+  "categoria": "tecnologia",
+  "formato": "Configuración explicada (paso a paso)",
+  "tema_fraude": false
+}

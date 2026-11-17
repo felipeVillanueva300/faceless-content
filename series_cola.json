@@ -62,21 +62,155 @@
           "formato": "tip"
         },
         {
-          "concepto": "meses sin intereses en diciembre",
-          "subtema": "el error de diciembre: comprar todo a meses sin intereses y llegar a enero con varias mensualidades juntas; cómo sumar lo que ya debes antes de comprar algo más",
+          "concepto": "empeño y préstamos de diciembre",
+          "subtema": "el error de diciembre: empeñar o pedir un préstamo rápido en una app para completar gastos; cómo ver cuánto cuesta de verdad comparando el CAT y el total a pagar (no solo el pago semanal), y cómo revisar en el SIPRES de CONDUSEF que la financiera esté registrada; ejemplo en pesos marcado como ejemplo",
           "anterior": "Partes 1-2: plan para el aguinaldo, presupuesto de regalos",
           "formato": "error"
         },
         {
           "concepto": "cuesta de enero",
           "subtema": "la cuesta de enero: qué gastos llegan juntos (inscripciones, útiles, predial, pagos de diciembre) y por qué conviene apartar desde diciembre; sin inventar cifras",
-          "anterior": "Partes 1-3: plan para el aguinaldo, presupuesto de regalos, meses sin intereses en diciembre",
+          "anterior": "Partes 1-3: plan para el aguinaldo, presupuesto de regalos, empeño y préstamos de diciembre",
           "formato": "dato"
         },
         {
           "concepto": "apartado para enero",
           "subtema": "cómo apartar desde hoy para enero en un apartado o cajita de la app de tu banco o en CETES desde CetesDirecto, con un ejemplo semanal",
-          "anterior": "Partes 1-4: plan para el aguinaldo, presupuesto de regalos, meses sin intereses en diciembre, cuesta de enero",
+          "anterior": "Partes 1-4: plan para el aguinaldo, presupuesto de regalos, empeño y préstamos de diciembre, cuesta de enero",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Tu Afore sin misterio",
+      "tema": "tu Afore y tu retiro explicados fácil",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "qué es la Afore",
+          "subtema": "qué es la Afore, de dónde sale ese dinero (aportan tú, tu patrón y el gobierno) y cómo ver cuánto tienes y en qué Afore estás con la app AforeMóvil",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "comparar y cambiar de Afore",
+          "subtema": "cómo saber si tu Afore te conviene: comparar su rendimiento neto en la página de la CONSAR y cómo pedir el cambio (traspaso) desde AforeMóvil; sin prometer plazos ni rendimientos",
+          "anterior": "Parte 1: qué es la Afore",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "aportaciones voluntarias",
+          "subtema": "aportaciones voluntarias: cómo hacerlas desde AforeMóvil o en tiendas y por qué poco cada mes cuenta, con un ejemplo de $200 al mes marcado claramente como ejemplo (sin prometer rendimientos); en UNA frase, que algunas aportaciones se pueden deducir en la declaración anual",
+          "anterior": "Partes 1-2: qué es la Afore, comparar y cambiar de Afore",
+          "formato": "dato"
+        },
+        {
+          "concepto": "semanas cotizadas",
+          "subtema": "semanas cotizadas: qué son, por qué de ellas depende tu pensión del IMSS y cómo pedir gratis tu constancia de semanas cotizadas en la página del IMSS con tu CURP y un correo",
+          "anterior": "Partes 1-3: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "IA para tu dinero",
+      "tema": "cómo usar la inteligencia artificial para cuidar tu dinero (con seguridad)",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "presupuesto con IA",
+          "subtema": "cómo pedirle a una IA (ChatGPT, Gemini o la que uses) que te arme un presupuesto de quincena con tus ingresos y gastos, con un ejemplo de lo que le escribes",
+          "anterior": "",
+          "formato": "howto"
+        },
+        {
+          "concepto": "letra chiquita con IA",
+          "subtema": "usar la IA para entender la letra chiquita de un contrato o de un crédito antes de firmar: copiar el texto y pedirle que te explique comisiones, penalizaciones y CAT en palabras simples",
+          "anterior": "Parte 1: presupuesto con IA",
+          "formato": "howto"
+        },
+        {
+          "concepto": "datos que no se comparten con la IA",
+          "subtema": "la regla de oro: NUNCA le des a una IA tu NIP, CVV, contraseñas, códigos que te llegan por SMS ni tu número de tarjeta completo; si le subes un estado de cuenta, tapa antes tu nombre y tus números de cuenta y tarjeta",
+          "anterior": "Partes 1-2: presupuesto con IA, letra chiquita con IA",
+          "formato": "mito"
+        },
+        {
+          "concepto": "comparar créditos con IA",
+          "subtema": "cómo pedirle a la IA que compare dos créditos por su CAT y te explique cuál sale más caro al final, y por qué siempre debes revisar tú los números en el documento oficial",
+          "anterior": "Partes 1-3: presupuesto con IA, letra chiquita con IA, datos que no se comparten con la IA",
+          "formato": "comparativa"
+        }
+      ]
+    },
+    {
+      "nombre": "Casa o auto sin que te vean la cara",
+      "tema": "comprar casa o auto sin que te vean la cara",
+      "total": 5,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "qué es el CAT",
+          "subtema": "qué es el CAT y por qué es el número que debes comparar entre créditos (no solo la tasa ni la mensualidad), con dos ejemplos en pesos marcados como ejemplo",
+          "anterior": "",
+          "formato": "dato"
+        },
+        {
+          "concepto": "cuánto te presta Infonavit",
+          "subtema": "cuánto te presta Infonavit y cómo consultarlo en Mi Cuenta Infonavit, paso a paso",
+          "anterior": "Parte 1: qué es el CAT",
+          "formato": "howto"
+        },
+        {
+          "concepto": "el enganche",
+          "subtema": "el enganche: por qué dar más enganche te ahorra intereses, con el mismo crédito y dos enganches distintos como ejemplo",
+          "anterior": "Partes 1-2: qué es el CAT, cuánto te presta Infonavit",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "costos del crédito automotriz",
+          "subtema": "crédito de auto: los costos que no ves en la mensualidad (seguro que te exige el crédito, comisión por apertura) y revisar el CAT antes de firmar",
+          "anterior": "Partes 1-3: qué es el CAT, cuánto te presta Infonavit, el enganche",
+          "formato": "error"
+        },
+        {
+          "concepto": "simulador de crédito CONDUSEF",
+          "subtema": "comparar créditos en los simuladores de CONDUSEF antes de firmar, paso a paso",
+          "anterior": "Partes 1-4: qué es el CAT, cuánto te presta Infonavit, el enganche, costos del crédito automotriz",
+          "formato": "howto"
+        }
+      ]
+    },
+    {
+      "nombre": "Paga menos por tus servicios",
+      "tema": "cómo pagar menos por luz, internet, celular y gas",
+      "total": 4,
+      "siguiente": 0,
+      "episodios": [
+        {
+          "concepto": "recibo de luz y tarifa DAC",
+          "subtema": "tu recibo de luz de la CFE: dónde ver cuántos kWh gastas y por qué, si tu consumo promedio de los últimos 12 meses pasa el límite de alto consumo de tu zona, te cambian a la tarifa DAC, que es mucho más cara; qué aparatos gastan más; sin inventar precios ni límites exactos",
+          "anterior": "",
+          "formato": "dato"
+        },
+        {
+          "concepto": "plan de internet",
+          "subtema": "cómo bajar lo que pagas de internet o del paquete con TV: revisa qué velocidad usas de verdad, compara con lo que ofrecen otras compañías y llama a la tuya para pedir un plan más barato o la promoción de clientes nuevos; sin nombrar precios de compañías",
+          "anterior": "Parte 1: recibo de luz y tarifa DAC",
+          "formato": "howto"
+        },
+        {
+          "concepto": "plan o prepago de celular",
+          "subtema": "plan o prepago: revisa en los ajustes de tu celular cuántos datos usas al mes y compáralo con lo que pagas; si te cambias de compañía, la portabilidad es gratis y conservas tu número; sin nombrar precios de compañías",
+          "anterior": "Partes 1-2: recibo de luz y tarifa DAC, plan de internet",
+          "formato": "comparativa"
+        },
+        {
+          "concepto": "precio máximo del gas LP",
+          "subtema": "el gas LP tiene precio máximo por región que la Comisión Nacional de Energía publica cada semana: cómo consultarlo para tu municipio antes de comprar y qué hacer si te cobran más o te dan kilos o litros incompletos (queja en Profeco); sin dar precios",
+          "anterior": "Partes 1-3: recibo de luz y tarifa DAC, plan de internet, plan o prepago de celular",
           "formato": "howto"
         }
       ]

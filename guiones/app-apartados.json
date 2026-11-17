@@ -1,0 +1,46 @@
+{
+  "_como_usar": "Guion FIJO suelto, sacado de 'Trucos de la app de tu banco (3/4)' (daily-20261115-234035), sin 'Parte 3 de 4'. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/app-apartados.json",
+  "hook": "Pagas en la tiendita con la tarjeta y, sin darte cuenta, ya te gastaste la renta.",
+  "hook_card": "¿YA TE GASTASTE LA RENTA?",
+  "beats": [
+    {
+      "narration": "Pasa porque toda tu quincena se ve como saldo disponible, y la tarjeta gasta de ahí sin distinguir qué era para qué.",
+      "scene": "woman paying with card at store",
+      "scene2": "supermarket checkout terminal"
+    },
+    {
+      "narration": "La solución está en la app de tu banco: se llaman apartados, cajitas o bolsillos, según el banco.",
+      "scene": "hands holding smartphone banking app"
+    },
+    {
+      "narration": "El día que cobras, crea uno que se llame Renta y pásale ese monto exacto. Haz otro para la colegiatura o la luz.",
+      "scene": "woman writing budget notebook",
+      "scene2": "calendar planning desk"
+    },
+    {
+      "narration": "Ese dinero sigue siendo tuyo, pero la tarjeta ya no lo puede gastar. Solo ves y gastas lo que de verdad te queda libre.",
+      "scene": "man smiling at phone",
+      "scene2": "person counting money at table"
+    },
+    {
+      "narration": "Sígueme, mañana va otro.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "APARTADOS",
+      "small": "también se llaman cajitas o bolsillos",
+      "beat": 2
+    }
+  ],
+  "graphics": [],
+  "title": "El truco de la app de tu banco para no gastarte la renta",
+  "caption": "Cómo separar el dinero de la renta para no gastarlo\n\nEn la app de tu banco busca los apartados, cajitas o bolsillos. El día que cobras, pásale a uno el monto exacto de la renta y a otro el de la luz o la colegiatura: el dinero sigue siendo tuyo, pero la tarjeta ya no lo puede gastar.\n\n¿Qué gasto fijo separarías primero?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #presupuesto #ahorro #appbancaria",
+  "concepto": "apartados o cajitas",
+  "topic": "truco-app-banco-apartados-cajitas",
+  "broll_keywords": "mobile banking app budget",
+  "categoria": "tecnologia",
+  "formato": "Configuración explicada (paso a paso)",
+  "tema_fraude": false
+}
