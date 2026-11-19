@@ -1,0 +1,55 @@
+{
+  "_como_usar": "Guion FIJO de 'Lo que te toca por ley' (3/5). Lo usa sola la miniserie (serie.json -> episodio -> 'guion'). Datos verificados (LFT reformada, vigente desde el 1 de enero de 2023): art. 76, 12 días el primer año y suben 2 por año hasta 20 el quinto; del sexto en adelante, 2 más cada 5 años (22 del 6o al 10o). Art. 78: al menos 12 días seguidos. Art. 79: no se cambian por dinero salvo al terminar el trabajo. Art. 80: prima vacacional de al menos 25%. Ejemplo de $400 diarios: arriba del salario mínimo 2026.",
+  "hook": "Desde 2023, tu primer año de trabajo te da 12 días de vacaciones pagadas, no 6.",
+  "hook_card": "12 DÍAS, NO 6",
+  "beats": [
+    {
+      "narration": "Parte 3 de 5 de Lo que te toca por ley. Con la reforma, son 12 días el primer año, y suben 2 cada año: 14, 16, 18, hasta 20 en el quinto.",
+      "scene": "woman packing suitcase for vacation",
+      "scene2": "family at the beach"
+    },
+    {
+      "narration": "Del sexto año en adelante suben 2 días cada 5 años. Y puedes pedir por lo menos 12 días seguidos.",
+      "scene": "calendar on office desk"
+    },
+    {
+      "narration": "Además, te toca una prima vacacional de por lo menos 25%. Por ejemplo, con $400 al día, tus 12 días son $4,800, y la prima te suma $1,200 más.",
+      "scene": "person counting money at table",
+      "scene2": "person using calculator at desk"
+    },
+    {
+      "narration": "Ojo: no te las pueden pagar en lugar de dártelas. Solo si dejas el trabajo te pagan las que no tomaste, con su prima.",
+      "scene": "employee talking with manager office"
+    },
+    {
+      "narration": "Mañana, Parte 4: el reparto de utilidades, y por qué no a todos les toca. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "12 → 20 DÍAS",
+      "small": "del primer al quinto año",
+      "beat": 1
+    },
+    {
+      "big": "PRIMA DE 25%",
+      "small": "por lo menos, sobre tus días de vacaciones",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Lo que te toca por ley (3/5): Cuántos días de vacaciones te tocan y la prima vacacional",
+  "caption": "Cuántos días de vacaciones te tocan por ley en México\n\nDesde 2023 son 12 días el primer año, 14 el segundo, 16 el tercero, 18 el cuarto y 20 el quinto; después suben 2 días cada 5 años. Además te toca una prima vacacional de al menos 25%. No te las pueden pagar en lugar de dártelas, salvo cuando dejas el trabajo.\n\n¿Cuántos días de vacaciones te están dando?\n\n📚 Parte 3 de 5 de la serie «Lo que te toca por ley». Sígueme para no perderte la parte 4.\n\n#finanzaspersonales #dineromexico #vacaciones #derechoslaborales #LoQueTeTocaPorLey",
+  "concepto": "vacaciones y prima vacacional",
+  "topic": "vacaciones-dignas-prima-vacacional",
+  "broll_keywords": "vacation travel family",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "Lo que te toca por ley",
+    "parte": "3",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

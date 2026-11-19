@@ -343,6 +343,12 @@ def serie_pendiente():
         prox = serie_queue.proxima_serie()
         if prox:
             pendientes += [e for e in (prox.get("episodios") or []) if isinstance(e, dict)]
+        # Y TODAS las series que esperan en la cola: el 19 nov el diario sacó "costo de tener
+        # auto" con "Casa o auto" ya planeada para diciembre.
+        nombre_prox = (prox or {}).get("nombre")
+        for s in (serie_queue._cargar(serie_queue.COLA) or {}).get("series") or []:
+            if isinstance(s, dict) and (not nombre_prox or s.get("nombre") != nombre_prox):
+                pendientes += [e for e in (s.get("episodios") or []) if isinstance(e, dict)]
     except Exception:
         pass
     for ep in pendientes:
@@ -598,7 +604,7 @@ def avoid_text(recientes, limite=60, conceptos=None, serie=None):
     serie: capítulos de la miniserie que aún no salen (el diario NO se les adelanta)."""
     out = ""
     if serie:
-        out += ("\nTEMAS QUE YA VIENEN EN LA MINISERIE DE ESTOS DÍAS (PROHIBIDO tocarlos hoy, "
+        out += ("\nTEMAS QUE YA VIENEN EN LAS MINISERIES PROGRAMADAS (PROHIBIDO tocarlos hoy, "
                 "ni con otro ángulo, otras palabras u otro formato; elige un tema claramente "
                 "distinto):\n- " + "\n- ".join(serie) + "\n")
     if recientes:

@@ -14,25 +14,29 @@
       "concepto": "aguinaldo",
       "subtema": "el aguinaldo: mínimo 15 días de salario por ley, se paga a más tardar el 20 de diciembre, cómo calcular el tuyo y el proporcional si no trabajaste el año completo",
       "anterior": "Parte 1: leer tu recibo de nómina",
-      "formato": "dato"
+      "formato": "dato",
+      "guion": "guiones/ley-2-aguinaldo.json"
     },
     {
       "concepto": "vacaciones y prima vacacional",
       "subtema": "vacaciones y prima vacacional con la ley vigente desde 2023: 12 días el primer año y suben con la antigüedad; la prima es de al menos 25% de esos días",
       "anterior": "Partes 1-2: leer tu recibo de nómina, aguinaldo",
-      "formato": "dato"
+      "formato": "dato",
+      "guion": "guiones/ley-3-vacaciones.json"
     },
     {
       "concepto": "reparto de utilidades",
       "subtema": "el reparto de utilidades (PTU): quién lo recibe, cuándo se paga (mayo o junio) y por qué no a todos les toca",
       "anterior": "Partes 1-3: leer tu recibo de nómina, aguinaldo, vacaciones y prima vacacional",
-      "formato": "mito"
+      "formato": "mito",
+      "guion": "guiones/ley-4-utilidades.json"
     },
     {
       "concepto": "finiquito vs liquidación",
       "subtema": "finiquito vs liquidación: el finiquito te toca siempre (sueldo pendiente, aguinaldo y vacaciones proporcionales con su prima); la liquidación solo si te despiden sin causa justificada; no prometas montos fijos de indemnización: para tu caso, la PROFEDET asesora gratis",
       "anterior": "Partes 1-4: leer tu recibo de nómina, aguinaldo, vacaciones y prima vacacional, reparto de utilidades",
-      "formato": "comparativa"
+      "formato": "comparativa",
+      "guion": "guiones/ley-5-finiquito.json"
     }
   ]
 }

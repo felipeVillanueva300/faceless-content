@@ -1,0 +1,55 @@
+{
+  "_como_usar": "Guion FIJO de 'Lo que te toca por ley' (5/5). Lo usa sola la miniserie (serie.json -> episodio -> 'guion'). Datos verificados (LFT): el finiquito se paga siempre que termina la relación (salario pendiente, aguinaldo proporcional, vacaciones no tomadas con su prima; art. 79 y 87); la liquidación solo si el despido es injustificado: indemnización de 3 meses de salario (art. 48) más otros conceptos según el caso (prima de antigüedad, art. 162). Sin montos fijos de indemnización: para el cálculo de cada caso, la Profedet asesora gratis.",
+  "hook": "Si renuncias, te toca finiquito. Si te corren sin causa, además te toca liquidación.",
+  "hook_card": "¿FINIQUITO O LIQUIDACIÓN?",
+  "beats": [
+    {
+      "narration": "Parte 5 de 5 de Lo que te toca por ley. El finiquito te lo pagan siempre que dejas un trabajo, renuncies o te corran.",
+      "scene": "man packing office box leaving job",
+      "scene2": "woman signing document at desk"
+    },
+    {
+      "narration": "Incluye los días que te deben de sueldo, tu aguinaldo proporcional, las vacaciones que no tomaste y su prima vacacional.",
+      "scene": "person reviewing paycheck at table"
+    },
+    {
+      "narration": "La liquidación es solo si te despiden sin una causa justificada. Además del finiquito, la ley te da una indemnización de 3 meses de salario, y puede haber otros pagos según tu caso.",
+      "scene": "worried man in office meeting",
+      "scene2": "person using calculator at desk"
+    },
+    {
+      "narration": "Antes de firmar, revisa la cuenta. No firmes una renuncia que no escribiste ni hojas en blanco. La Profedet te asesora gratis y te dice cuánto te toca.",
+      "scene": "hand holding pen over contract"
+    },
+    {
+      "narration": "Con esto cerramos la serie: recibo, aguinaldo, vacaciones, utilidades y finiquito. Sígueme: mañana empieza la serie de tu Afore.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "FINIQUITO",
+      "small": "te lo pagan siempre, renuncies o te corran",
+      "beat": 1
+    },
+    {
+      "big": "LIQUIDACIÓN",
+      "small": "solo si te despiden sin causa justificada",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Lo que te toca por ley (5/5): Finiquito o liquidación, qué te pagan si dejas tu trabajo",
+  "caption": "Diferencia entre finiquito y liquidación en México\n\nEl finiquito te lo pagan siempre que termina el trabajo: sueldo pendiente, aguinaldo proporcional, vacaciones no tomadas y su prima. La liquidación solo aplica si te despiden sin causa justificada: además del finiquito, una indemnización de 3 meses de salario y otros pagos según tu caso. Antes de firmar, la Profedet te asesora gratis.\n\n¿Te han pagado bien un finiquito alguna vez?\n\n📚 Última parte de la serie «Lo que te toca por ley». Ve las 5 partes en mi perfil y sígueme para la próxima serie.\n\n#finanzaspersonales #dineromexico #finiquito #derechoslaborales #LoQueTeTocaPorLey",
+  "concepto": "finiquito vs liquidación",
+  "topic": "finiquito-vs-liquidacion-profedet",
+  "broll_keywords": "office job contract",
+  "categoria": "serie",
+  "formato": "Comparativa simple",
+  "serie": {
+    "nombre": "Lo que te toca por ley",
+    "parte": "5",
+    "total": "5"
+  },
+  "tema_fraude": false
+}
