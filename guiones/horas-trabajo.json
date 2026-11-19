@@ -1,0 +1,54 @@
+{
+  "_como_usar": "Guion FIJO corregido de 'Calcula tus horas de trabajo antes de hacer un gasto'. El borrador del 16 nov (daily-20261116-193514) ponía de ejemplo $4,000 a la quincena por 80 horas: eso es menos que el salario mínimo de 2026 ($315.04 diarios, unos $4,725 a la quincena), y alguien lo iba a señalar en los comentarios. Ahora: $8,000 libres a la quincena, 80 horas, $100 la hora; un antojo de $600 = 6 horas. Cierra adelantando la serie 'Lo que te toca por ley' (arranca el 18 nov). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/horas-trabajo.json",
+  "hook": "Ese antojo de $600 no te cuesta dinero: te cuesta casi un día de trabajo.",
+  "hook_card": "¿CUÁNTAS HORAS TE CUESTA?",
+  "beats": [
+    {
+      "narration": "Cuando ves una oferta, tu cabeza solo ve el precio en pesos, no las horas que trabajaste para ganarlo.",
+      "scene": "woman looking at shop window",
+      "scene2": "person holding shopping bags"
+    },
+    {
+      "narration": "Haz la cuenta: si te quedan $8,000 libres a la quincena y trabajas 80 horas, ganas $100 por hora.",
+      "scene": "person using calculator at desk"
+    },
+    {
+      "narration": "Entonces ese antojo de $600 son 6 horas de tu trabajo. Casi un día completo.",
+      "scene": "tired office worker at desk",
+      "scene2": "clock on office wall"
+    },
+    {
+      "narration": "Antes de pagar algo que no tenías planeado, divide el precio entre lo que ganas por hora. Si no vale esas horas de tu vida, déjalo en el anaquel.",
+      "scene": "woman putting product back on shelf"
+    },
+    {
+      "narration": "Mañana empieza una serie nueva: lo que te toca por ley en tu nómina. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "$100 POR HORA",
+      "small": "con $8,000 libres a la quincena",
+      "beat": 2
+    }
+  ],
+  "graphics": [
+    {
+      "type": "countup",
+      "value": 6,
+      "prefix": "",
+      "suffix": " HORAS",
+      "label": "TE CUESTA UN ANTOJO DE $600",
+      "beat": 3
+    }
+  ],
+  "title": "¿Cuántas horas de trabajo te cuesta ese antojo?",
+  "caption": "Cómo saber si una compra vale la pena antes de pagarla\n\nDivide el precio entre lo que ganas por hora. Si te quedan $8,000 libres a la quincena y trabajas 80 horas, ganas $100 por hora: un antojo de $600 son 6 horas de tu trabajo. Si no vale esas horas, déjalo.\n\n¿Cuántas horas de trabajo te costó lo último que compraste?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #ahorro #comprasimpulsivas #presupuesto",
+  "concepto": "costo en horas de trabajo",
+  "topic": "compras-impulso-horas-trabajo",
+  "broll_keywords": "shopping store price tag",
+  "categoria": "presupuesto",
+  "formato": "Tip rápido",
+  "tema_fraude": false
+}

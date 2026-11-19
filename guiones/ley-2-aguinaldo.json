@@ -1,0 +1,55 @@
+{
+  "_como_usar": "Guion FIJO de 'Lo que te toca por ley' (2/5). Lo usa sola la miniserie (serie.json -> episodio -> 'guion'). Datos verificados el 19 nov 2026: LFT art. 87 (mínimo 15 días de salario, a más tardar el 20 de diciembre, proporcional si no completaste el año aunque ya no trabajes ahí); exento de ISR hasta 30 UMA = $3,519.30 en 2026 (UMA diaria $117.31, INEGI; LISR art. 93). Ejemplo de $400 diarios: arriba del salario mínimo 2026 ($315.04).",
+  "hook": "Tu aguinaldo no es un regalo de tu patrón: por ley son mínimo 15 días de tu salario.",
+  "hook_card": "MÍNIMO 15 DÍAS",
+  "beats": [
+    {
+      "narration": "Parte 2 de 5 de Lo que te toca por ley. Te lo tienen que pagar a más tardar el 20 de diciembre, y son por lo menos 15 días de salario.",
+      "scene": "office workers celebrating december",
+      "scene2": "calendar december planning"
+    },
+    {
+      "narration": "La cuenta es sencilla: multiplica tu salario diario por 15. Por ejemplo, si ganas $400 al día, te tocan mínimo $6,000.",
+      "scene": "person using calculator at desk"
+    },
+    {
+      "narration": "Si entraste a medio año o ya te saliste, igual te toca la parte proporcional: con 6 meses trabajados, más o menos la mitad.",
+      "scene": "woman reading document at home"
+    },
+    {
+      "narration": "Y del impuesto: hasta $3,519 de tu aguinaldo no paga ISR. Solo se cobra sobre lo que pase de esa cantidad.",
+      "scene": "paycheck and calculator on table"
+    },
+    {
+      "narration": "Si llega el 20 de diciembre y no te lo pagaron, la Profedet te asesora gratis. Mañana, Parte 3: tus vacaciones y la prima vacacional. Sígueme para no perdértela.",
+      "scene": "man calling on phone",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "20 DE DICIEMBRE",
+      "small": "fecha límite para pagarte el aguinaldo",
+      "beat": 1
+    },
+    {
+      "big": "$400 × 15 = $6,000",
+      "small": "ejemplo con salario de $400 al día",
+      "beat": 2
+    }
+  ],
+  "graphics": [],
+  "title": "Lo que te toca por ley (2/5): Cuánto es tu aguinaldo y cuándo te lo deben pagar",
+  "caption": "Cómo calcular tu aguinaldo en México\n\nPor ley son mínimo 15 días de salario y te lo deben pagar a más tardar el 20 de diciembre. Multiplica tu salario diario por 15; si no trabajaste el año completo, te toca la parte proporcional. Hasta $3,519.30 (30 UMA) no paga ISR. Si no te lo pagan, la Profedet te asesora gratis.\n\n¿Ya sabes cuánto te toca de aguinaldo este año?\n\n📚 Parte 2 de 5 de la serie «Lo que te toca por ley». Sígueme para no perderte la parte 3.\n\n#finanzaspersonales #dineromexico #aguinaldo #derechoslaborales #LoQueTeTocaPorLey",
+  "concepto": "aguinaldo",
+  "topic": "aguinaldo-calculo-fecha-isr",
+  "broll_keywords": "office workers december",
+  "categoria": "serie",
+  "formato": "El dato que sorprende",
+  "serie": {
+    "nombre": "Lo que te toca por ley",
+    "parte": "2",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

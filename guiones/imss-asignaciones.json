@@ -1,0 +1,63 @@
+{
+  "_como_usar": "Guion FIJO corregido de 'El trámite que sube 15% tu pensión del IMSS' (daily-20261112-182239). El original decía que basta con 'presentar tu acta de matrimonio', que el aumento es 'de por vida' (se acaba cuando el familiar ya no cumple, p. ej. el hijo crece) y cerraba con 'que no te vean la cara'. Verificado el 17 nov 2026 (art. 164 de la Ley del Seguro Social de 1973; IMSS vía UnoTV, Expansión ago 2026): 15% por esposa o concubina; 10% por cada hijo menor de 16 (hasta 25 si estudia); 10% por cada padre que dependa del pensionado; 15% de ayuda asistencial si no hay ninguno. Solo pensiones de cesantía o vejez de la Ley 73 (empezaron a cotizar antes del 1 jul 1997). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/imss-asignaciones.json",
+  "hook": "Si te pensionas por la Ley 73 del IMSS, tu esposa o concubina le puede sumar 15% a tu pensión.",
+  "hook_card": "+15% EN TU PENSIÓN",
+  "beats": [
+    {
+      "narration": "Se llaman asignaciones familiares. Son para quien se pensiona por cesantía o vejez con la Ley 73, o sea, quien empezó a cotizar antes de julio de 1997.",
+      "scene": "senior man reading documents at table",
+      "scene2": "elderly couple at home"
+    },
+    {
+      "narration": "Por tu esposa o concubina te suman 15% de tu pensión. Por cada hijo menor de 16 años, 10%, y hasta los 25 si sigue estudiando.",
+      "scene": "family with grandparents at home"
+    },
+    {
+      "narration": "Si no tienes pareja ni hijos pero tus papás dependen de ti, es 10% por cada uno. Y si no tienes a nadie, te toca una ayuda asistencial de 15%.",
+      "scene": "senior woman sitting by window"
+    },
+    {
+      "narration": "Ejemplo: con una pensión de $10,000 y tu esposa registrada, recibes $11,500 al mes.",
+      "scene": "senior man using calculator"
+    },
+    {
+      "narration": "Pídelo al tramitar tu pensión, con tus actas de matrimonio o de nacimiento. Si ya estás pensionado, revisa tu resolución de pensión: ahí dice si te lo están dando. Sígueme para más.",
+      "scene": "person organizing documents folder",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "ASIGNACIONES FAMILIARES",
+      "small": "pensión de cesantía o vejez, Ley 73",
+      "beat": 1
+    },
+    {
+      "big": "15% Y 10%",
+      "small": "pareja 15%; cada hijo menor de 16, 10%",
+      "beat": 2
+    }
+  ],
+  "graphics": [
+    {
+      "type": "bars",
+      "title": "PENSIÓN LEY 73 (EJEMPLO)",
+      "a_label": "SIN ASIGNACIÓN",
+      "a_value": 10000,
+      "b_label": "CON ESPOSA",
+      "b_value": 11500,
+      "a_color": "red",
+      "b_color": "green",
+      "money": true,
+      "beat": 4
+    }
+  ],
+  "title": "Ley 73: el 15% extra en tu pensión del IMSS que tienes que pedir",
+  "caption": "Cómo aumentar tu pensión del IMSS Ley 73 con asignaciones familiares\n\nSi te pensionas por cesantía o vejez con la Ley 73, el IMSS suma 15% por tu esposa o concubina, 10% por cada hijo menor de 16 años (hasta 25 si estudia) y 10% por cada padre que dependa de ti; si no tienes a nadie, 15% de ayuda asistencial. Pídelo al tramitar tu pensión con tus actas, y si ya estás pensionado revisa tu resolución.\n\n¿Alguien en tu familia se pensiona por la Ley 73?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #pension #imss #ley73",
+  "concepto": "asignaciones familiares Ley 73",
+  "topic": "asignaciones-familiares-pension-imss",
+  "broll_keywords": "senior couple retirement",
+  "categoria": "tramites",
+  "formato": "El dato que sorprende",
+  "tema_fraude": false
+}

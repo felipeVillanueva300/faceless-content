@@ -1,0 +1,55 @@
+{
+  "_como_usar": "Guion FIJO de 'Lo que te toca por ley' (4/5). Lo usa sola la miniserie (serie.json -> episodio -> 'guion'). Datos verificados (LFT arts. 117, 122, 126, 127; reforma de 2021): se reparte el 10% de las utilidades; se paga dentro de los 60 días después de la declaración anual de la empresa (a más tardar 30 de mayo si es persona moral; 29 de junio si tu patrón es persona física); no reciben directores, administradores ni gerentes generales, ni eventuales con menos de 60 días trabajados en el año; empresas de nueva creación no reparten el primer año; tope por trabajador: 3 meses de salario o el promedio de lo recibido en los últimos 3 años, lo que más le convenga. Exenta de ISR hasta 15 UMA ($1,759.65 en 2026).",
+  "hook": "El reparto de utilidades no le toca a todo el mundo, y no se paga en diciembre.",
+  "hook_card": "¿Y A TI TE TOCA?",
+  "beats": [
+    {
+      "narration": "Parte 4 de 5 de Lo que te toca por ley. El mito: que a todos nos dan utilidades. La realidad: la empresa reparte el 10% de lo que ganó en el año; si no tuvo ganancias, no hay reparto.",
+      "scene": "business meeting with charts",
+      "scene2": "office workers at desks"
+    },
+    {
+      "narration": "Se paga a más tardar el 30 de mayo si tu patrón es una empresa, o el 29 de junio si es una persona.",
+      "scene": "calendar planning desk"
+    },
+    {
+      "narration": "No les toca a directores ni gerentes generales, ni a eventuales con menos de 60 días trabajados en el año. Y una empresa nueva no reparte en su primer año.",
+      "scene": "manager in office with laptop",
+      "scene2": "construction worker on site"
+    },
+    {
+      "narration": "Desde 2021 hay un tope: lo tuyo no pasa de 3 meses de salario, o del promedio de lo que te dieron los últimos 3 años, lo que más te convenga.",
+      "scene": "person reviewing documents at table"
+    },
+    {
+      "narration": "Si crees que te tocaba y no te pagaron, la Profedet te asesora gratis. Mañana, la última parte: finiquito o liquidación. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "10% DE LAS UTILIDADES",
+      "small": "solo si la empresa tuvo ganancias",
+      "beat": 1
+    },
+    {
+      "big": "30 DE MAYO",
+      "small": "o 29 de junio si tu patrón es una persona",
+      "beat": 2
+    }
+  ],
+  "graphics": [],
+  "title": "Lo que te toca por ley (4/5): Reparto de utilidades, a quién le toca y cuándo",
+  "caption": "Quién recibe reparto de utilidades (PTU) en México y cuándo se paga\n\nLa empresa reparte el 10% de sus utilidades del año; si no tuvo ganancias, no hay reparto. Se paga a más tardar el 30 de mayo (empresas) o el 29 de junio (patrones personas físicas). No les toca a directores ni gerentes generales, ni a eventuales con menos de 60 días trabajados. El tope es 3 meses de salario o el promedio de los últimos 3 años, lo que más te convenga.\n\n¿Te dieron utilidades este año?\n\n📚 Parte 4 de 5 de la serie «Lo que te toca por ley». Sígueme para no perderte la parte 5.\n\n#finanzaspersonales #dineromexico #ptu #derechoslaborales #LoQueTeTocaPorLey",
+  "concepto": "reparto de utilidades",
+  "topic": "ptu-quien-recibe-cuando-tope",
+  "broll_keywords": "office workers business",
+  "categoria": "serie",
+  "formato": "Mito vs. realidad",
+  "serie": {
+    "nombre": "Lo que te toca por ley",
+    "parte": "4",
+    "total": "5"
+  },
+  "tema_fraude": false
+}

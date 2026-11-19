@@ -14,7 +14,11 @@
       "scene2": "office worker talking with manager"
     },
     {
+<<<<<<< HEAD
       "narration": "Lo que cuenta es tu aumento contra los precios. La inflación de octubre fue de 3.75% anual; el mínimo subió 13%, así que ese sí alcanza para más.",
+=======
+      "narration": "Lo que importa es cuánto sube tu sueldo contra los precios. En octubre la inflación fue de 3.75% anual, y el mínimo subió 13%: mucho más que los precios.",
+>>>>>>> origin/main
       "scene": "woman checking price tag store",
       "scene2": "busy street market vendors"
     },
