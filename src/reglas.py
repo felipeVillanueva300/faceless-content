@@ -126,6 +126,67 @@ def sueldo_bajo_minimo(texto: str):
     return probs
 
 
+_RE_NUM = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
+_RE_PCT = re.compile(r"(hasta|más de|mas de|casi)?\s*(\d+(?:\.\d+)?)\s?%", re.IGNORECASE)
+
+
+def _numeros(texto: str):
+    return [_num(x) for x in _RE_NUM.findall(texto or "")]
+
+
+def graficas_en_voz(data: dict):
+    """Cada cifra de una gráfica tiene que decirse en la voz (si no, la gente ve un número
+    que nadie explicó)."""
+    dichos = []
+    for _, t in _textos(data):
+        dichos += _numeros(t)
+    probs = []
+    for g in data.get("graphics") or []:
+        if not isinstance(g, dict):
+            continue
+        claves = ("value",) if (g.get("type") or "countup") != "bars" else ("a_value", "b_value")
+        for k in claves:
+            try:
+                v = float(g.get(k))
+            except (TypeError, ValueError):
+                continue
+            if not any(abs(v - d) < 0.006 for d in dichos):
+                probs.append(f"la gráfica muestra {g.get(k)} y la voz nunca dice esa cifra")
+    return probs
+
+
+def porcentaje_vs_ejemplo(data: dict):
+    """Si el gancho promete un porcentaje ("hasta 7% más") y un bloque da el ejemplo con DOS
+    cifras en pesos (antes y después), el ejemplo tiene que dar ese porcentaje.
+    Caso real (20 nov): "hasta 7%" y luego $19.02 contra $20.50 (7.8%)."""
+    gancho = data.get("hook") or ""
+    ms = list(_RE_PCT.finditer(gancho))
+    if len(ms) != 1:
+        return []
+    tope = (ms[0].group(1) or "").lower()
+    p = float(ms[0].group(2))
+    probs = []
+    for etiqueta, texto in _textos(data)[1:]:
+        for frase in re.split(r"(?<=[.!?])\s+", texto):
+            montos = [_num(x) for x in _RE_MONTO.findall(frase)]
+            if len(montos) != 2 or min(montos) <= 0:
+                continue
+            a, b = sorted(montos)
+            r = (b / a - 1) * 100
+            if not (0.5 <= r <= 60):
+                continue
+            if tope == "hasta":
+                malo = r > p * 1.03
+            elif tope in ("más de", "mas de"):
+                malo = r < p * 0.97
+            else:
+                malo = abs(r - p) > max(1.0, p * 0.1)
+            if malo:
+                probs.append(f"{etiqueta}: el gancho dice {ms[0].group(0).strip()!r} pero el "
+                             f"ejemplo {_fmt(a)} → {_fmt(b)} es {r:.1f}%")
+    return probs
+
+
 def revisar(data: dict) -> list:
     """Lista de problemas encontrados por las reglas fijas ([] si todo bien)."""
     if not REGLAS_ON or not isinstance(data, dict):
@@ -159,4 +220,5 @@ def revisar(data: dict) -> list:
         for frase in FRASES_PROHIBIDAS:
             if _norm(frase) in tn:
                 probs.append(f"{etiqueta}: usa la muletilla {frase!r}; quítala")
+    probs += graficas_en_voz(data) + porcentaje_vs_ejemplo(data)
     return probs

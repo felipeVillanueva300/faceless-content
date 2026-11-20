@@ -26,7 +26,9 @@ PILARES = [
     {"id": "impuestos", "tipo": "fin", "nombre": "Impuestos básicos",
      "angulos": ["RFC", "deducciones personales", "facturar", "declaración anual"]},
     {"id": "tramites", "tipo": "fin", "nombre": "Trámites y gobierno",
-     "angulos": ["Afore: elegir/cambiar", "IMSS", "pensión", "INFONAVIT básico"]},
+     "angulos": ["Afore: elegir/cambiar", "IMSS", "pensión", "INFONAVIT básico",
+                 "retiro por desempleo de tu Afore", "pensión de viudez del IMSS",
+                 "devolución del saldo de vivienda Infonavit al pensionarte"]},
     {"id": "compras", "tipo": "fin", "nombre": "Compras inteligentes",
      "angulos": ["MSI cuándo sí/no", "Buen Fin", "comparar precios", "suscripciones fantasma"]},
     {"id": "ingresos", "tipo": "fin", "nombre": "Ingresos extra",
@@ -374,6 +376,23 @@ def _sin_genericas(frase: str) -> str:
     return " ".join(out)
 
 
+def _pesos_pilares() -> dict:
+    """{'tramites': 2, ...} desde la variable PESOS_PILARES ('id=n;id=n'). Default: los pilares
+    que mejor funcionaron en nov 2026. PESOS_PILARES=0 o vacío explícito ('-') = todos iguales."""
+    crudo = os.environ.get("PESOS_PILARES", "tramites=3").strip()
+    out = {}
+    if crudo in ("", "-", "0"):
+        return out
+    for par in crudo.replace(",", ";").split(";"):
+        if "=" in par:
+            k, v = par.split("=", 1)
+            try:
+                out[k.strip()] = max(1, min(4, int(v.strip())))
+            except ValueError:
+                pass
+    return out
+
+
 def plan_del_dia(today=None, offset=0):
     """Elige categoría (enfriamiento de COOLDOWN_DIAS), formato (sin repetir los
     últimos 2) y, si hoy toca golpe de temporada, sobreescribe el formato con el
@@ -435,7 +454,13 @@ def plan_del_dia(today=None, offset=0):
         if tech_disp:
             disponibles = tech_disp
 
-    cat = disponibles[(today.toordinal() + offset) % len(disponibles)]
+    # Pesos por pilar (PESOS_PILARES="tramites=3"): un pilar con peso 3 entra 3 veces a la
+    # ruleta cuando está disponible (el enfriamiento sigue igual). Así lo que mejor funciona
+    # (nov 2026: pensión Ley 73, 4,778 vistas en TikTok y +2.2x en Facebook) sale más seguido,
+    # sin dejar de rotar los demás. "trabajo" no se sube: sus temas ya salieron en la serie.
+    pesos = _pesos_pilares()
+    ruleta = [p for p in disponibles for _ in range(max(1, pesos.get(p["id"], 1)))]
+    cat = ruleta[(today.toordinal() + offset) % len(ruleta)]
 
     usados = []
     try:

@@ -63,6 +63,19 @@ def _fit_font(text, max_w, start, minimum):
     return _font(minimum)
 
 
+def _decimales(*valores) -> int:
+    """2 si alguna cifra trae decimales (6.5 -> "6.50", 19.02 -> "19.02"); si no, 0.
+    Antes todo se redondeaba a entero: el 10 nov salió "6%" en pantalla con la voz
+    diciendo "6.50%" (Banxico) y un tipo de cambio de $19.02 se iba a ver como "$19"."""
+    for v in valores:
+        try:
+            if abs(float(v) - round(float(v))) > 1e-9:
+                return 2
+        except (TypeError, ValueError):
+            pass
+    return 0
+
+
 def render_bars_frame(spec, progress, out_path):
     """spec: {title, a_label, a_value, b_label, b_value, a_color?, b_color?}."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -96,7 +109,8 @@ def render_bars_frame(spec, progress, out_path):
         _rounded_bar(d, x, base_y - h, bar_w, h, col)
         # valor arriba de la barra (sube con la animación)
         shown = val * p
-        txt = f"${shown:,.0f}" if spec.get("money", True) else f"{shown:,.0f}"
+        dec = _decimales(a_val, b_val)
+        txt = f"${shown:,.{dec}f}" if spec.get("money", True) else f"{shown:,.{dec}f}"
         _center(d, txt, _fit_font(txt, celda, 64, 34), x + bar_w / 2, base_y - h - 90, WHITE)
         # etiqueta abajo (auto-ajustada para no chocar con la otra)
         _center(d, lbl, _fit_font(lbl, celda, 44, 24), x + bar_w / 2, base_y + 24, DIM, shadow=False)
@@ -114,12 +128,13 @@ def render_countup_frame(spec, progress, out_path):
     value = float(spec["value"]) * p
     prefix = spec.get("prefix", "$")
     suffix = spec.get("suffix", "")
-    num = f"{prefix}{value:,.0f}{suffix}"
+    dec = _decimales(spec["value"])
+    num = f"{prefix}{value:,.{dec}f}{suffix}"
 
     cy = 1000
     # El número y la etiqueta se ajustan al ancho (antes: fuente fija de 230 px y
     # "$15,000 MXN" se salía de la pantalla). La etiqueta larga se parte en 2 líneas.
-    final = f"{prefix}{float(spec['value']):,.0f}{suffix}"      # tamaño con el valor FINAL
+    final = f"{prefix}{float(spec['value']):,.{dec}f}{suffix}"   # tamaño con el valor FINAL
     f_num = _fit_font(final, W - 100, 230, 90)
     _center(d, num, f_num, W // 2, cy + 75 - getattr(f_num, "size", 230), CYAN)
     # línea de acento

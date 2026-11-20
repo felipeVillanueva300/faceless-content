@@ -47,6 +47,25 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
+LECCIONES_JSON = os.environ.get("LECCIONES_JSON", "lecciones.json")
+
+
+def _lecciones_txt() -> str:
+    """Errores que ya cometimos (lecciones.json). Van en el prompt del guionista y en el
+    contexto del verificador, para que no se repitan. '' si no hay archivo."""
+    try:
+        with open(LECCIONES_JSON, encoding="utf-8") as f:
+            items = (json.load(f) or {}).get("lecciones") or []
+    except Exception:
+        return ""
+    reglas_l = [str(x.get("regla", "")).strip() for x in items if isinstance(x, dict)]
+    reglas_l = [r for r in reglas_l if r][:25]
+    if not reglas_l:
+        return ""
+    return ("ERRORES QUE YA COMETIMOS EN VIDEOS ANTERIORES (no los repitas; si el guion cae en "
+            "uno, corrígelo):\n- " + "\n- ".join(reglas_l) + "\n")
+
+
 def generate_script(niche: str = "tecnología y finanzas",
                     avoid=None, max_retries: int = 4) -> dict:
     client = gemini.cliente()        # con tiempo límite: si se cuelga, falla y prueba otro modelo
@@ -73,6 +92,7 @@ def generate_script(niche: str = "tecnología y finanzas",
 
     fichas_txt = fichas.texto_prompt()
 
+    lecciones_txt = _lecciones_txt()
     prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
 de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
 México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
@@ -198,7 +218,7 @@ que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregun
 CERO FRASES DE RELLENO: nada que prometa algo que el video no da ("olvídate de los mitos"
 si no hay mitos) ni frases redundantes ("te regresa más dinero de vuelta"). Tampoco
 palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio.
-{datos_txt}{fichas_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
+{datos_txt}{fichas_txt}{lecciones_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
 - Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
@@ -375,7 +395,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
         raise last_err
 
     data = _generar(prompt)
-    contexto = datos_txt + fichas_txt          # el verificador también ve los datos verificados
+    contexto = datos_txt + fichas_txt + lecciones_txt   # el verificador también ve datos y lecciones
 
     def _revisar(d):
         """Reglas fijas (cuentas, sueldo mínimo, 'serie' en un suelto, muletilla) + verificador."""
