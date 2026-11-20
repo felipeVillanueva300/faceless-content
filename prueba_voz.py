@@ -14,7 +14,7 @@ def get(path, **params):
     except Exception:
         return r.status_code, {"texto": r.text[:300]}
 
-st, cuenta = get(IG, fields="username,name,followers_count,follows_count,media_count,account_type")
+st, cuenta = get(IG, fields="username,name,followers_count,follows_count,media_count")
 print("CUENTA", st, json.dumps(cuenta, ensure_ascii=False))
 st, lim = get(f"{IG}/content_publishing_limit", fields="config,quota_usage")
 print("LIMITE", st, json.dumps(lim, ensure_ascii=False))
@@ -22,7 +22,7 @@ st, media = get(f"{IG}/media", fields="id,caption,media_type,media_product_type,
 print("MEDIA", st, "n=", len(media.get("data", [])) if isinstance(media, dict) else media)
 if st != 200:
     print(json.dumps(media, ensure_ascii=False)[:600])
-for m in (media.get("data") or []):
+for m in (media.get("data") or [])[:0]:
     cap = (m.get("caption") or "").split("\n")[0][:60]
     res = {}
     for met in ("views", "reach", "saved", "shares", "total_interactions", "ig_reels_avg_watch_time"):
@@ -36,3 +36,6 @@ for m in (media.get("data") or []):
           "likes", m.get("like_count"), "coment", m.get("comments_count"), "|", json.dumps(res, ensure_ascii=False))
 st, ins = get(f"{IG}/insights", metric="reach,views,follower_count", period="day", metric_type="total_value")
 print("CUENTA_INSIGHTS", st, json.dumps(ins, ensure_ascii=False)[:800])
+
+st, perms = get("me/permissions")
+print("PERMISOS", st, json.dumps([p.get("permission") + ":" + p.get("status") for p in perms.get("data", [])]) if isinstance(perms, dict) else perms)
