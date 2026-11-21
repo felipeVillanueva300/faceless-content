@@ -19,11 +19,12 @@
     },
     {
       "narration": "Se hace en la app IMSS Digital o en la página del IMSS, con tu CURP, la de tu familiar y un correo. Si no puedes en línea, ve a tu clínica.",
-      "scene": "hand holding smartphone app"
+      "scene": "woman using phone on sofa at home",
+      "scene2": "man filling form on laptop at home"
     },
     {
       "narration": "Y ojo: si te quedas sin trabajo y cotizaste al menos 8 semanas seguidas, tú y tu familia conservan el servicio médico 8 semanas más. Sígueme, mañana va otro.",
-      "scene": "worried man looking at documents",
+      "scene": "man reading letter at kitchen table",
       "scene2": "young man holding smartphone"
     }
   ],
