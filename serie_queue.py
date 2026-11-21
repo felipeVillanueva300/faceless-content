@@ -150,6 +150,9 @@ def peek():
         "SERIE_FORMATO": ep.get("formato", ""),
         "SERIE_SIGUIENTE": siguiente,
         "SERIE_NOMBRE": data.get("nombre", ""),
+        # Guion FIJO ya verificado para este capítulo (guiones/xxx.json). Si existe, main.py lo
+        # usa tal cual en vez de pedirle el guion a Gemini.
+        "SERIE_GUION": ep.get("guion", ""),
     }
     for k, v in lineas.items():
         v = " ".join(str(v).splitlines())   # asegura una sola línea

@@ -1,0 +1,52 @@
+{
+  "_como_usar": "Guion FIJO suelto. Verificado el 21 nov 2026: Ley del Seguro Social art. 84 (beneficiarios del seguro de enfermedades y maternidad: cónyuge; concubina o concubinario con 5 años de convivencia o hijos en común; hijos hasta 16 años, hasta 25 si estudian en el sistema educativo nacional, sin límite si no pueden mantenerse por una discapacidad; padre y madre que vivan en el hogar del asegurado) y art. 109 (si te quedas sin trabajo y cotizaste al menos 8 semanas seguidas, tú y tus beneficiarios conservan el servicio médico 8 semanas). Alta en línea con la CURP del titular, la del familiar y un correo (IMSS Digital / imss.gob.mx), o en la Unidad de Medicina Familiar. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/imss-beneficiarios.json",
+  "hook": "Tu IMSS no es solo para ti: puedes registrar a tu pareja, a tus hijos y hasta a tus papás.",
+  "hook_card": "TU IMSS CUBRE A TU FAMILIA",
+  "beats": [
+    {
+      "narration": "Si estás dado de alta en el IMSS, tu familia también puede tener servicio médico. Pero no es automático: tienes que registrarla como beneficiaria.",
+      "scene": "family visiting doctor clinic",
+      "scene2": "doctor talking with family"
+    },
+    {
+      "narration": "Puedes registrar a tu esposa o esposo, o a tu pareja si viven juntos desde hace 5 años o tienen hijos.",
+      "scene": "couple at home kitchen"
+    },
+    {
+      "narration": "También a tus hijos hasta los 16 años, o hasta los 25 si siguen estudiando, y a tus papás si viven contigo.",
+      "scene": "mother with children at home",
+      "scene2": "elderly parents with adult son"
+    },
+    {
+      "narration": "Se hace en la app IMSS Digital o en la página del IMSS, con tu CURP, la de tu familiar y un correo. Si no puedes en línea, ve a tu clínica.",
+      "scene": "woman using phone on sofa at home",
+      "scene2": "man filling form on laptop at home"
+    },
+    {
+      "narration": "Y ojo: si te quedas sin trabajo y cotizaste al menos 8 semanas seguidas, tú y tu familia conservan el servicio médico 8 semanas más. Sígueme, mañana va otro.",
+      "scene": "man reading letter at kitchen table",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "HIJOS HASTA 25",
+      "small": "si siguen estudiando",
+      "beat": 3
+    },
+    {
+      "big": "IMSS DIGITAL",
+      "small": "tu CURP, la de tu familiar y un correo",
+      "beat": 4
+    }
+  ],
+  "graphics": [],
+  "title": "Tu IMSS también cubre a tu familia: a quién puedes registrar",
+  "caption": "Cómo registrar a tu familia como beneficiaria en el IMSS\n\nSi estás dado de alta en el IMSS, puedes registrar a tu esposa o esposo (o a tu pareja si viven juntos desde hace 5 años o tienen hijos), a tus hijos hasta los 16 años o hasta los 25 si estudian, y a tus papás si viven contigo. Se hace en la app IMSS Digital o en la página del IMSS con tu CURP, la de tu familiar y un correo. Si te quedas sin trabajo, conservan el servicio médico 8 semanas si cotizaste al menos 8 semanas seguidas.\n\n¿Ya tienes registrada a tu familia en el IMSS?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #imss #seguridadsocial #tramites",
+  "concepto": "beneficiarios del IMSS",
+  "topic": "registrar-beneficiarios-imss",
+  "broll_keywords": "family doctor clinic",
+  "categoria": "tramites",
+  "formato": "Configuración explicada (paso a paso)",
+  "tema_fraude": false
+}

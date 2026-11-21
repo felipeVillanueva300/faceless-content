@@ -6,13 +6,13 @@ from google import genai
 from google.genai import types
 from google.genai import errors
 
-from src import content_plan, script_review, fichas, caption, repetidos, gemini
+from src import content_plan, script_review, fichas, caption, repetidos, gemini, reglas
 
 VERIFICAR_REESCRIBE = os.environ.get("VERIFICAR_REESCRIBE", "1").strip().lower() in ("1", "true", "yes")
 # Filtro duro anti-repetición (src/repetidos.py): si el guion se parece a algo que salió en los
 # últimos TEMA_DUP_DIAS días, se pide OTRO tema una vez. Solo en el diario (las series ya van planeadas).
 TEMA_DUP = os.environ.get("TEMA_DUP", "1").strip().lower() in ("1", "true", "yes")
-TEMA_DUP_DIAS = int(os.environ.get("TEMA_DUP_DIAS", "40"))
+TEMA_DUP_DIAS = int(os.environ.get("TEMA_DUP_DIAS", "90"))
 
 def _model_ladder():
     lista = os.environ.get("GEMINI_MODELS", "").strip()
@@ -47,6 +47,25 @@ def _extract_json(text: str) -> dict:
     return json.loads(text[start:end + 1])
 
 
+LECCIONES_JSON = os.environ.get("LECCIONES_JSON", "lecciones.json")
+
+
+def _lecciones_txt() -> str:
+    """Errores que ya cometimos (lecciones.json). Van en el prompt del guionista y en el
+    contexto del verificador, para que no se repitan. '' si no hay archivo."""
+    try:
+        with open(LECCIONES_JSON, encoding="utf-8") as f:
+            items = (json.load(f) or {}).get("lecciones") or []
+    except Exception:
+        return ""
+    reglas_l = [str(x.get("regla", "")).strip() for x in items if isinstance(x, dict)]
+    reglas_l = [r for r in reglas_l if r][:25]
+    if not reglas_l:
+        return ""
+    return ("ERRORES QUE YA COMETIMOS EN VIDEOS ANTERIORES (no los repitas; si el guion cae en "
+            "uno, corrígelo):\n- " + "\n- ".join(reglas_l) + "\n")
+
+
 def generate_script(niche: str = "tecnología y finanzas",
                     avoid=None, max_retries: int = 4) -> dict:
     client = gemini.cliente()        # con tiempo límite: si se cuelga, falla y prueba otro modelo
@@ -73,6 +92,7 @@ def generate_script(niche: str = "tecnología y finanzas",
 
     fichas_txt = fichas.texto_prompt()
 
+    lecciones_txt = _lecciones_txt()
     prompt = f"""Eres guionista de Reels/Shorts en español de México para una cuenta
 de finanzas y tecnología llamada "Dinero Simple". Tu público: personas normales en
 México, SIN conocimientos financieros. Hablas claro y directo, como a un amigo.
@@ -84,11 +104,12 @@ vean la cara con tu dinero. Ángulo central: "lo que el banco/las apps/las letra
 NO te dicen, yo sí". Tono: directo, cómplice y protector — como un amigo que te dice la
 verdad que otros te esconden, con un toque de "no te dejes". NADA de conspiración,
 alarmismo falso ni odio; es defender al usuario con datos reales y consejos accionables.
-Frases que reflejan la voz (úsalas de vez en cuando, no forzadas): "que no te vean la
-cara", "el banco no te lo va a decir", "no te dejes cobrar de más". Úsalas EXACTAMENTE así,
-sin mezclarlas ni cambiarlas (mal: "para que no te dejes ver la cara").
-Es una SERIE diaria: UN truco corto CADA DÍA. Que se sienta continua ("hoy te toca…",
-"el de hoy…") para dar razón de seguir y esperar el de mañana.
+Frases que reflejan la voz (úsalas de vez en cuando, no forzadas): "el banco no te lo va
+a decir", "no te dejes cobrar de más". Úsalas EXACTAMENTE así, sin mezclarlas ni cambiarlas.
+PROHIBIDO en la narración: "que no te vean la cara" (ya se usó demasiado y suena forzada).
+Es UN consejo corto CADA DÍA. Que se sienta continuo ("hoy te toca…", "el de hoy…") para dar
+razón de seguir y esperar el de mañana. Si hoy NO es un capítulo de miniserie, NO digas
+"serie", "parte 1", "parte 2"... ni "el truco de hoy en la serie": es un video suelto.
 
 PILAR DE HOY: {plan['categoria_nombre']} (ángulos posibles: {plan['angulos']}).
 FORMATO DE HOY: {plan['formato_nombre']}. {plan['formato_video']}
@@ -155,8 +176,13 @@ banco...) y UN paso concreto para empezar ("descárgala, conecta tu cuenta y act
   "cómo" en el título.
 - Cuando haya un nombre concreto (app, instrumento, institución), ponlo en una "card"
   para que se LEA en pantalla, no solo se escuche.
-- Las frases de la marca ("no te dejes cobrar", "que no te vean la cara") solo si vienen
+- Las frases de la marca ("no te dejes cobrar", "el banco no te lo va a decir") solo si vienen
   al caso; si nadie te está cobrando nada en el tema, no las uses.
+- EJEMPLOS DE SUELDO REALISTAS: {reglas.linea_minimo()}. Ningún ejemplo de sueldo de
+  tiempo completo va por debajo.
+- SUMAS QUE CUADRAN: si dices "son", "suman" o "en total", la suma de las cifras que
+  mencionaste tiene que dar EXACTAMENTE ese total. Si hay gastos sin cifra ("más refrendo"),
+  no los sumes a un total ni digas "mínimo".
 - PROHIBIDO inventar términos que no se usan en México (mal: "recargos hormiga", mezcla de
   "gastos hormiga" con recargos). Usa los nombres reales: intereses, comisiones, IVA,
   gastos hormiga, pago mínimo. Si un término no lo diría cualquiera en la sobremesa, no va.
@@ -192,7 +218,7 @@ que nunca invirtió). Si no aplica a todos, plantéalo como posibilidad o pregun
 CERO FRASES DE RELLENO: nada que prometa algo que el video no da ("olvídate de los mitos"
 si no hay mitos) ni frases redundantes ("te regresa más dinero de vuelta"). Tampoco
 palabras fuertes o raras para la marca ("mensaje maldito"): directo, pero limpio.
-{datos_txt}{fichas_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
+{datos_txt}{fichas_txt}{lecciones_txt}CIFRAS (somos cuenta de finanzas: la confianza es todo):
 - Usa solo cifras que puedas respaldar (Banxico, INEGI, CONDUSEF, la app o el banco). Si
   la cifra es un EJEMPLO ilustrativo, dilo ("por ejemplo", "si tu tarjeta cobra 60%...").
 - Si en el guion usas un dato real, el caption lo cierra con "Fuente: <institución, año>".
@@ -369,9 +395,16 @@ No uses otros tipos ni omitas claves de estos formatos."""
         raise last_err
 
     data = _generar(prompt)
-    contexto = datos_txt + fichas_txt          # el verificador también ve los datos verificados
+    contexto = datos_txt + fichas_txt + lecciones_txt   # el verificador también ve datos y lecciones
 
-    problemas = script_review.verificar(data, client, contexto=contexto)
+    def _revisar(d):
+        """Reglas fijas (cuentas, sueldo mínimo, 'serie' en un suelto, muletilla) + verificador."""
+        fijos = reglas.revisar(d)
+        for pr in fijos:
+            print(f"    regla: {pr}")
+        return fijos + script_review.verificar(d, client, contexto=contexto)
+
+    problemas = _revisar(data)
     if problemas and VERIFICAR_REESCRIBE:
         print(f"    verificador: {len(problemas)} problema(s); reescribo el guion una vez")
         for pr in problemas:
@@ -386,7 +419,7 @@ No uses otros tipos ni omitas claves de estos formatos."""
                     + json.dumps(previo, ensure_ascii=False))
         try:
             data2 = _generar(prompt + feedback)
-            problemas2 = script_review.verificar(data2, client, contexto=contexto)
+            problemas2 = _revisar(data2)
             if len(problemas2) <= len(problemas):
                 data, problemas = data2, problemas2
                 print(f"    verificador: versión nueva con {len(problemas)} problema(s)")
@@ -406,23 +439,36 @@ No uses otros tipos ni omitas claves de estos formatos."""
         if rep:
             ya = rep.get("titulo") or rep.get("concepto") or rep.get("topic")
             print(f"    tema repetido: se parece a '{ya}' ({rep.get('fecha')}); pido otro tema")
-            aviso = (f"\n\nESE TEMA YA SALIÓ el {rep.get('fecha')}: \"{ya}\". Escribe un guion de un "
-                     "tema CLARAMENTE distinto: otro concepto, no el mismo con otras palabras, otro "
-                     "ejemplo u otro formato.")
-            try:
-                data2 = _generar(prompt + aviso)
-                rep2 = repetidos.parecido(data2, previos)
-                if rep2:
-                    ya2 = rep2.get("titulo") or rep2.get("concepto") or rep2.get("topic")
-                    print(f"    (el otro tema también se parece a '{ya2}'; me quedo con el primero)")
-                    problemas = list(problemas) + [f"Tema parecido a uno reciente: '{ya}' ({rep.get('fecha')})."]
-                else:
-                    data = data2
-                    problemas = script_review.verificar(data2, client, contexto=contexto)
-                    print(f"    tema nuevo: '{data.get('title', '')}'")
-            except Exception as e:
-                print(f"    (no se pudo pedir otro tema: {str(e)[:120]})")
-                problemas = list(problemas) + [f"Tema parecido a uno reciente: '{ya}' ({rep.get('fecha')})."]
+            ya_salieron = [f"\"{ya}\" ({rep.get('fecha')})"]
+            candidatos = [(repetidos.puntaje(data, previos), data, problemas)]
+            elegido = None
+            for intento in (2, 3):     # hasta 2 temas más; antes se quedaba con el 1o si el 2o salía igual
+                aviso = ("\n\nESTOS TEMAS YA SALIERON: " + "; ".join(ya_salieron) + ". Escribe un "
+                         "guion de un tema CLARAMENTE distinto: otro concepto, no el mismo con otras "
+                         "palabras, otro ejemplo u otro formato.")
+                try:
+                    d2 = _generar(prompt + aviso)
+                except Exception as e:
+                    print(f"    (no se pudo pedir otro tema: {str(e)[:120]})")
+                    break
+                rep2 = repetidos.parecido(d2, previos)
+                if not rep2:
+                    elegido = (d2, _revisar(d2))
+                    print(f"    tema nuevo: '{d2.get('title', '')}'")
+                    break
+                ya2 = rep2.get("titulo") or rep2.get("concepto") or rep2.get("topic")
+                print(f"    (el intento {intento} también se parece a '{ya2}')")
+                ya_salieron.append(f"\"{ya2}\" ({rep2.get('fecha')})")
+                candidatos.append((repetidos.puntaje(d2, previos), d2, None))
+            if elegido:
+                data, problemas = elegido
+            else:
+                # todos se parecen a algo: el MENOS parecido, y aviso en Telegram
+                _, data, probs_c = min(candidatos, key=lambda c: c[0])
+                problemas = list(probs_c if probs_c is not None else _revisar(data))
+                rep_f = repetidos.parecido(data, previos) or rep
+                ya_f = rep_f.get("titulo") or rep_f.get("concepto") or rep_f.get("topic")
+                problemas.append(f"Tema parecido a uno reciente: '{ya_f}' ({rep_f.get('fecha')}).")
 
     data["avisos"] = problemas
     return data

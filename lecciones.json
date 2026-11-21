@@ -1,0 +1,61 @@
+{
+  "_como_usar": "Errores REALES que ya salieron o casi salen. El guionista (Gemini) los lee en cada guion como 'no repitas esto' y el verificador los usa como lista de revisión. Cada vez que se corrija un video, agrega aquí UNA línea corta: qué se dijo mal y cómo es lo correcto. Máximo ~20 (las más viejas o ya cubiertas por src/reglas.py se pueden quitar). 'desde': fecha del caso, solo de referencia.",
+  "lecciones": [
+    {
+      "desde": "2026-11-20",
+      "regla": "Si el gancho da un porcentaje ('hasta 7% más'), el ejemplo en pesos tiene que dar ESE porcentaje (mal: 'hasta 7%' y luego $19.02 contra $20.50, que es 7.8%)."
+    },
+    {
+      "desde": "2026-11-20",
+      "regla": "Compras en tiendas extranjeras: si la tienda ofrece cobrarte en pesos, usa SU tipo de cambio inflado (eso lo hace la tienda, no tu banco). Pagar en la moneda de la tienda suele salir mejor, pero muchos bancos cobran comisión por compras en el extranjero: dilo; nunca digas que la conversión del banco es gratis ni 'al tipo de cambio oficial'."
+    },
+    {
+      "desde": "2026-11-19",
+      "regla": "Los totales son la suma EXACTA de lo que dijiste (mal: $2,000 + $800 + $1,000 'son $4,500'). Gastos sin cifra no se suman ni permiten decir 'mínimo'."
+    },
+    {
+      "desde": "2026-11-19",
+      "regla": "Sueldo neto 2026: con el subsidio al empleo (aplica hasta $11,492.66 al mes), $10,000 brutos al mes quedan arriba de $9,000 netos (mal: '$8,700'). Si no estás seguro de un cálculo de impuestos, no des la cifra."
+    },
+    {
+      "desde": "2026-11-16",
+      "regla": "Ejemplos de sueldo de tiempo completo nunca debajo del salario mínimo (mal: '$4,000 a la quincena' trabajando 80 horas)."
+    },
+    {
+      "desde": "2026-11-16",
+      "regla": "Lo que sale en una gráfica o card es la MISMA cifra que dice la voz (mal: voz '33.5%' y gráfica '33%')."
+    },
+    {
+      "desde": "2026-11-12",
+      "regla": "No exageres derechos ni trámites: nada de 'solo con presentar tu acta' ni 'de por vida' si hay requisitos o se acaba (las asignaciones familiares terminan cuando el hijo cumple la edad)."
+    },
+    {
+      "desde": "2026-11-11",
+      "regla": "Fondo de emergencia: la CONDUSEF recomienda al menos 3 meses de gastos básicos (mal: 'mínimo 1 mes')."
+    },
+    {
+      "desde": "2026-11-10",
+      "regla": "Precios en otra moneda se dicen con la moneda: '300 dólares', nunca '$300' (en México '$' se lee como pesos)."
+    },
+    {
+      "desde": "2026-11-14",
+      "regla": "Gasolina: la Magna tiene un tope VOLUNTARIO de $24 por litro acordado con gasolineros; no digas que nadie decide el precio."
+    },
+    {
+      "desde": "2026-11-14",
+      "regla": "En una serie, si resumes lo anterior, menciona TODAS las partes previas en orden (mal: en la parte 4 'ya vimos Banxico y el dólar', saltándose el PIB)."
+    },
+    {
+      "desde": "2026-11-19",
+      "regla": "Un video suelto nunca dice 'serie', 'parte 1' ni 'el truco de hoy en la serie'."
+    },
+    {
+      "desde": "2026-11-20",
+      "regla": "'El banco no te lo va a decir' solo cuando de verdad es el banco el que cobra o esconde algo; si es una tienda, una app o el gobierno, no lo uses."
+    },
+    {
+      "desde": "2026-11-21",
+      "regla": "Escenas de fondo: nada de alcohol, cigarros ni gente con la cara tapada; pide escenas cotidianas en México (tiendita, cocina, oficina, clínica) que muestren lo que dice la voz."
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
-  "_como_usar": "Guion FIJO suelto, sacado de 'Trucos de la app de tu banco (3/4)' (daily-20261115-234035), sin 'Parte 3 de 4'. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/app-apartados.json",
+  "_como_usar": "Guion FIJO suelto, sacado de 'Trucos de la app de tu banco (3/4)' (daily-20261115-234035), sin 'Parte 3 de 4'. 21 nov: escena del bloque 1 cambiada (salía un hombre encapuchado recibiendo dinero). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/app-apartados.json",
   "hook": "Pagas en la tiendita con la tarjeta y, sin darte cuenta, ya te gastaste la renta.",
   "hook_card": "¿YA TE GASTASTE LA RENTA?",
   "beats": [
     {
       "narration": "Pasa porque toda tu quincena se ve como saldo disponible, y la tarjeta gasta de ahí sin distinguir qué era para qué.",
-      "scene": "woman paying with card at store",
-      "scene2": "supermarket checkout terminal"
+      "scene": "cashier card payment terminal store",
+      "scene2": "woman checking banking app on phone"
     },
     {
       "narration": "La solución está en la app de tu banco: se llaman apartados, cajitas o bolsillos, según el banco.",

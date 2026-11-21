@@ -32,6 +32,8 @@ _VACIAS = {
     # relleno de títulos gancho ("el costo oculto de...", "lo que arruina tu..."):
     "oculto", "oculta", "ocultos", "ocultas", "arruina", "arruinar", "fracasar", "fracaso",
     "protege", "protegete", "conviene", "vale", "pena", "antes", "despues", "trampa",
+    # "...que te cuesta miles" (19 nov: unía temas distintos solo por el gancho):
+    "cuesta", "cuestan", "costar", "miles", "mil",
 }
 # Palabras cortas que sí dicen el tema.
 _CORTAS_OK = {"nu", "ia", "sat", "cat", "msi"}
@@ -72,6 +74,19 @@ def raices(texto: str) -> set:
 def _texto_registro(r: dict) -> str:
     t = " ".join(x for x in (r.get("titulo"), r.get("concepto")) if x)
     return t or (r.get("topic") or "").replace("-", " ")
+
+
+def puntaje(data: dict, registros, minimo: int = 2) -> float:
+    """Qué tanto se parece 'data' a lo más parecido del historial (0 = nada, 1 = mismo tema).
+    Sirve para quedarse con el MENOS repetido cuando todos los intentos salen parecidos."""
+    nuevo = raices(f"{data.get('title', '')} {data.get('concepto', '')}")
+    mejor = 0.0
+    for r in registros or []:
+        previo = raices(_texto_registro(r))
+        comunes = nuevo & previo
+        if previo and nuevo and len(comunes) >= minimo:
+            mejor = max(mejor, len(comunes) / min(len(nuevo), len(previo)))
+    return mejor
 
 
 def parecido(data: dict, registros, minimo: int = 2, proporcion: float = 0.5):

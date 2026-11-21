@@ -334,6 +334,12 @@ def _cargar_guion_archivo(ruta: str) -> dict:
     data = fichas.agregar_links(data)
     data.setdefault("graphics", [])
     data.setdefault("cards", [])
+    # Los guiones fijos también pasan por las reglas fijas: si algo se coló, sale en Telegram.
+    from src import reglas
+    avisos = reglas.revisar(data)
+    for a in avisos:
+        print(f"    regla: {a}")
+    data["avisos"] = avisos
     return data
 
 
@@ -342,6 +348,15 @@ def generar_borrador():
     niche = os.environ.get("NICHE", "tecnología y finanzas")
 
     rehacer = os.environ.get("REHACER_ID", "").strip()
+    serie_guion = os.environ.get("SERIE_GUION", "").strip()
+    if not rehacer and serie_guion:
+        # El capítulo de la miniserie trae un guion FIJO ya verificado (serie.json ->
+        # episodio -> "guion"): se usa tal cual, sin pedirle el guion a Gemini.
+        if os.path.isfile(serie_guion):
+            print(f"[1/7] Capítulo de la serie con guion fijo verificado: {serie_guion}")
+            rehacer = serie_guion
+        else:
+            print(f"    (SERIE_GUION={serie_guion} no existe; genero el guion con Gemini)")
     guion_archivo = rehacer.lower().endswith(".json")
     if guion_archivo:
         print(f"[1/7] Usando el guion fijo del archivo: {rehacer}")

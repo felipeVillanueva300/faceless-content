@@ -124,6 +124,9 @@ Te doy 2 cuadros del MISMO clip. Marca "rechazar": true si en CUALQUIERA se ve:
   sonriente cuando la escena o el tema son de preocupación, fraude, estafa, robo, deuda,
   multa o un problema; y si la escena pedida es de preocupación (worried, stressed,
   anxious, sad, upset), también una persona que sonríe aunque sea poco o se ve relajada;
+- cigarros, alcohol (botellas, latas de cerveza, gente brindando o tomando) o anuncios y
+  marcas de tabaco, alcohol o apuestas, aunque estén al fondo (ej. un letrero de Marlboro);
+- gente con la cara tapada (pasamontañas, capucha y cubrebocas negro): parece un asalto;
 - caricaturas, personajes animados o 3D, o ilustraciones (se ven baratos y no son reales);
 - la pantalla o el logo de un servicio que NO tiene que ver con el tema ocupa buena parte
   del cuadro (Netflix, apps de comida a domicilio, redes sociales, videojuegos);

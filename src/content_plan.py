@@ -26,7 +26,12 @@ PILARES = [
     {"id": "impuestos", "tipo": "fin", "nombre": "Impuestos básicos",
      "angulos": ["RFC", "deducciones personales", "facturar", "declaración anual"]},
     {"id": "tramites", "tipo": "fin", "nombre": "Trámites y gobierno",
-     "angulos": ["Afore: elegir/cambiar", "IMSS", "pensión", "INFONAVIT básico"]},
+     "angulos": ["Afore: elegir/cambiar", "IMSS", "pensión", "INFONAVIT básico",
+                 "retiro por desempleo de tu Afore", "pensión de viudez del IMSS",
+                 "devolución del saldo de vivienda Infonavit al pensionarte",
+                 "registrar a tu familia como beneficiaria del IMSS",
+                 "ISSSTE: qué te toca como trabajador del gobierno",
+                 "qué hacer si el IMSS te niega una incapacidad o un medicamento"]},
     {"id": "compras", "tipo": "fin", "nombre": "Compras inteligentes",
      "angulos": ["MSI cuándo sí/no", "Buen Fin", "comparar precios", "suscripciones fantasma"]},
     {"id": "ingresos", "tipo": "fin", "nombre": "Ingresos extra",
@@ -37,7 +42,8 @@ PILARES = [
      "angulos": ["gastos hormiga", "FOMO financiero", "metas realistas"]},
     {"id": "trabajo", "tipo": "fin", "nombre": "Tu dinero y tu trabajo",
      "angulos": ["calcular tu aguinaldo", "finiquito vs liquidación", "prima vacacional",
-                 "leer tu recibo de nómina", "reparto de utilidades (PTU)", "horas extra"]},
+                 "leer tu recibo de nómina", "reparto de utilidades (PTU)", "horas extra",
+                 "seguro de gastos médicos mayores de tu empresa: qué cubre y qué pasa si te vas"]},
     {"id": "vivienda", "tipo": "fin", "nombre": "Vivienda",
      "angulos": ["rentar vs comprar", "crédito Infonavit paso a paso", "depósito de renta",
                  "predial y descuentos por pago anticipado", "gastos ocultos al comprar casa"]},
@@ -343,6 +349,12 @@ def serie_pendiente():
         prox = serie_queue.proxima_serie()
         if prox:
             pendientes += [e for e in (prox.get("episodios") or []) if isinstance(e, dict)]
+        # Y TODAS las series que esperan en la cola: el 19 nov el diario sacó "costo de tener
+        # auto" con "Casa o auto" ya planeada para diciembre.
+        nombre_prox = (prox or {}).get("nombre")
+        for s in (serie_queue._cargar(serie_queue.COLA) or {}).get("series") or []:
+            if isinstance(s, dict) and (not nombre_prox or s.get("nombre") != nombre_prox):
+                pendientes += [e for e in (s.get("episodios") or []) if isinstance(e, dict)]
     except Exception:
         pass
     for ep in pendientes:
@@ -366,6 +378,23 @@ def _sin_genericas(frase: str) -> str:
         if base not in _GENERICAS_SERIE:
             out.append(w)
     return " ".join(out)
+
+
+def _pesos_pilares() -> dict:
+    """{'tramites': 2, ...} desde la variable PESOS_PILARES ('id=n;id=n'). Default: los pilares
+    que mejor funcionaron en nov 2026. PESOS_PILARES=0 o vacío explícito ('-') = todos iguales."""
+    crudo = os.environ.get("PESOS_PILARES", "tramites=3").strip()
+    out = {}
+    if crudo in ("", "-", "0"):
+        return out
+    for par in crudo.replace(",", ";").split(";"):
+        if "=" in par:
+            k, v = par.split("=", 1)
+            try:
+                out[k.strip()] = max(1, min(4, int(v.strip())))
+            except ValueError:
+                pass
+    return out
 
 
 def plan_del_dia(today=None, offset=0):
@@ -429,7 +458,13 @@ def plan_del_dia(today=None, offset=0):
         if tech_disp:
             disponibles = tech_disp
 
-    cat = disponibles[(today.toordinal() + offset) % len(disponibles)]
+    # Pesos por pilar (PESOS_PILARES="tramites=3"): un pilar con peso 3 entra 3 veces a la
+    # ruleta cuando está disponible (el enfriamiento sigue igual). Así lo que mejor funciona
+    # (nov 2026: pensión Ley 73, 4,778 vistas en TikTok y +2.2x en Facebook) sale más seguido,
+    # sin dejar de rotar los demás. "trabajo" no se sube: sus temas ya salieron en la serie.
+    pesos = _pesos_pilares()
+    ruleta = [p for p in disponibles for _ in range(max(1, pesos.get(p["id"], 1)))]
+    cat = ruleta[(today.toordinal() + offset) % len(ruleta)]
 
     usados = []
     try:
@@ -598,7 +633,7 @@ def avoid_text(recientes, limite=60, conceptos=None, serie=None):
     serie: capítulos de la miniserie que aún no salen (el diario NO se les adelanta)."""
     out = ""
     if serie:
-        out += ("\nTEMAS QUE YA VIENEN EN LA MINISERIE DE ESTOS DÍAS (PROHIBIDO tocarlos hoy, "
+        out += ("\nTEMAS QUE YA VIENEN EN LAS MINISERIES PROGRAMADAS (PROHIBIDO tocarlos hoy, "
                 "ni con otro ángulo, otras palabras u otro formato; elige un tema claramente "
                 "distinto):\n- " + "\n- ".join(serie) + "\n")
     if recientes:
