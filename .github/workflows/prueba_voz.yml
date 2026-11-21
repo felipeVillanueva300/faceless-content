@@ -2,17 +2,27 @@ name: Prueba de voz (temporal, se borra)
 on:
   push:
     branches: [prueba-voz-wifi]
+    paths-ignore: ['prueba_voz_out/**']
+permissions:
+  contents: write
 jobs:
-  diag:
+  voz:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install requests
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt faster-whisper
       - run: python -u prueba_voz.py
         env:
-          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          GRAPH_VERSION: v23.0
+          TTS_VOICE: es-MX-JorgeNeural
+          TTS_RATE: "+5%"
+      - name: Guardar los mp3 en la rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add prueba_voz_out
+          git commit -m "Resultados de la prueba de voz [skip ci]" || true
+          git push || true

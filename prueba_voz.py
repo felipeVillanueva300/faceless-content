@@ -1,41 +1,37 @@
-"""Diagnóstico temporal de Instagram (solo lectura, GET): datos de la cuenta y alcance de los
-últimos Reels, para ver si Instagram los muestra a quien no te sigue. No publica nada."""
-import os, json, requests
-VER = os.environ.get("GRAPH_VERSION", "v23.0")
-B = f"https://graph.facebook.com/{VER}"
-TOK = os.environ["META_ACCESS_TOKEN"]
-IG = os.environ["IG_USER_ID"]
+"""Prueba temporal: qué palabra se oye mal hacia el segundo 30 del video de beneficiarios del
+IMSS (daily-20261121-185903) y cómo suena 'IMSS' / 'CURP' con distintas escrituras.
+Sin Gemini: solo edge-tts + Whisper."""
+import asyncio, json, os, subprocess, requests
+from src import tts
+from faster_whisper import WhisperModel
 
-def get(path, **params):
-    params["access_token"] = TOK
-    r = requests.get(f"{B}/{path}", params=params, timeout=30)
-    try:
-        return r.status_code, r.json()
-    except Exception:
-        return r.status_code, {"texto": r.text[:300]}
+OUT = "prueba_voz_out"
+os.makedirs(OUT, exist_ok=True)
+URL = ("https://github.com/felipeVillanueva300/faceless-content/releases/download/"
+       "daily-20261121-185903/reel.mp4")
+open(f"{OUT}/reel.mp4", "wb").write(requests.get(URL, timeout=120).content)
+subprocess.run(["ffmpeg", "-y", "-v", "quiet", "-ss", "26", "-to", "38", "-i", f"{OUT}/reel.mp4",
+                "-vn", "-ac", "1", "-ar", "16000", f"{OUT}/tramo_26_38.wav"], check=True)
+model = WhisperModel("medium", device="cpu", compute_type="int8")
 
-st, cuenta = get(IG, fields="username,name,followers_count,follows_count,media_count")
-print("CUENTA", st, json.dumps(cuenta, ensure_ascii=False))
-st, lim = get(f"{IG}/content_publishing_limit", fields="config,quota_usage")
-print("LIMITE", st, json.dumps(lim, ensure_ascii=False))
-st, media = get(f"{IG}/media", fields="id,caption,media_type,media_product_type,timestamp,permalink,like_count,comments_count", limit=15)
-print("MEDIA", st, "n=", len(media.get("data", [])) if isinstance(media, dict) else media)
-if st != 200:
-    print(json.dumps(media, ensure_ascii=False)[:600])
-for m in (media.get("data") or [])[:0]:
-    cap = (m.get("caption") or "").split("\n")[0][:60]
-    res = {}
-    for met in ("views", "reach", "saved", "shares", "total_interactions", "ig_reels_avg_watch_time"):
-        s, ins = get(f"{m['id']}/insights", metric=met)
-        if s == 200 and ins.get("data"):
-            v = ins["data"][0].get("values", [{}])[0].get("value", ins["data"][0].get("total_value", {}).get("value"))
-            res[met] = v
-        else:
-            res[met] = f"err{s}:{(ins.get('error') or {}).get('message','')[:70]}"
-    print(m.get("timestamp", "")[:16], m.get("media_product_type"), "|", cap, "|",
-          "likes", m.get("like_count"), "coment", m.get("comments_count"), "|", json.dumps(res, ensure_ascii=False))
-st, ins = get(f"{IG}/insights", metric="reach,views,follower_count", period="day", metric_type="total_value")
-print("CUENTA_INSIGHTS", st, json.dumps(ins, ensure_ascii=False)[:800])
+def oye(path):
+    segs, _ = model.transcribe(path, language="es", beam_size=5, word_timestamps=True)
+    return " ".join(f"{w.word.strip()}({w.start:.1f}-{w.end:.1f})" for s in segs for w in s.words)
 
-st, perms = get("me/permissions")
-print("PERMISOS", st, json.dumps([p.get("permission") + ":" + p.get("status") for p in perms.get("data", [])]) if isinstance(perms, dict) else perms)
+print("VIDEO 26-38s:", oye(f"{OUT}/tramo_26_38.wav"), flush=True)
+base = "Se hace en la app {i} Digital o en la página del {i}, con tu {c}, la de tu familiar y un correo."
+variantes = {
+    "actual": ("IMSS", "CURP"),
+    "ims": ("ims", "CURP"),
+    "imse": ("ímss", "CURP"),
+    "seguro": ("Seguro Social", "CURP"),
+    "curp_min": ("IMSS", "curp"),
+    "curp_acento": ("IMSS", "kúrp"),
+}
+for k, (i, c) in variantes.items():
+    texto = base.format(i=i, c=c)
+    mp3 = f"{OUT}/var_{k}.mp3"
+    asyncio.run(tts._synth(texto, mp3))
+    print(f"{k:12s} voz: {tts._pronunciar(texto)}", flush=True)
+    print(f"{k:12s} oye: {oye(mp3)}", flush=True)
+os.remove(f"{OUT}/reel.mp4")
