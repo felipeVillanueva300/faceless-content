@@ -8,7 +8,7 @@ from faster_whisper import WhisperModel
 OUT = "prueba_voz_out"
 os.makedirs(OUT, exist_ok=True)
 URL = ("https://github.com/felipeVillanueva300/faceless-content/releases/download/"
-       "daily-20261121-185903/reel.mp4")
+       "daily-20261121-191537/reel.mp4")
 open(f"{OUT}/reel.mp4", "wb").write(requests.get(URL, timeout=120).content)
 subprocess.run(["ffmpeg", "-y", "-v", "quiet", "-ss", "26", "-to", "38", "-i", f"{OUT}/reel.mp4",
                 "-vn", "-ac", "1", "-ar", "16000", f"{OUT}/tramo_26_38.wav"], check=True)
@@ -28,7 +28,7 @@ variantes = {
     "curp_min": ("IMSS", "curp"),
     "curp_acento": ("IMSS", "kúrp"),
 }
-for k, (i, c) in variantes.items():
+for k, (i, c) in list(variantes.items())[:0]:
     texto = base.format(i=i, c=c)
     mp3 = f"{OUT}/var_{k}.mp3"
     asyncio.run(tts._synth(texto, mp3))
