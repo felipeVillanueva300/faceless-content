@@ -26,13 +26,10 @@
     "CONDUSEF": "condu séf",
     "Condusef": "condu séf",
     "condusef": "condu séf",
-    "IEPS": "i e pe ese"
+    "IEPS": "i e pe ese",
+    "IMSS": "ímss"
   },
   "candidatos": {
-    "IMSS": {
-      "dice": "ims",
-      "ejemplo": "Revisa si tu patrón te dio de alta en el IMSS."
-    },
     "ISSSTE": {
       "dice": "íste",
       "ejemplo": "Si trabajas para el gobierno, cotizas en el ISSSTE."
