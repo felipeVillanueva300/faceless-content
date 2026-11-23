@@ -1,0 +1,51 @@
+{
+  "_como_usar": "Guion FIJO suelto. Verificado el 22 nov 2026 con criterios de la Profedet (LFT art. 87): el aguinaldo es de mínimo 15 días de salario y se paga a más tardar el 20 de diciembre; cuentan como días trabajados las vacaciones, los descansos, la incapacidad por maternidad (pre y posnatal), el permiso de paternidad y las incapacidades por riesgo de trabajo (accidente o enfermedad de trabajo, incluido el trayecto); las incapacidades por enfermedad general NO cuentan como días trabajados, salvo que el contrato individual o colectivo dé algo mejor. Ejemplo: $400 diarios x 15 = $6,000; con 10 días de incapacidad por enfermedad general: 6,000 x 355 / 365 = $5,835.62 (descuento $164.38). Profedet: 800 911 7877. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/aguinaldo-incapacidad.json",
+  "hook": "¿Te pueden descontar el aguinaldo por una incapacidad? Depende de qué tipo fue.",
+  "hook_card": "¿INCAPACIDAD = MENOS AGUINALDO?",
+  "beats": [
+    {
+      "narration": "Tu aguinaldo es de mínimo 15 días de salario, y se calcula con los días que la ley cuenta como trabajados.",
+      "scene": "woman reviewing paycheck at kitchen table"
+    },
+    {
+      "narration": "Si tu incapacidad fue por maternidad o por un riesgo de trabajo, como un accidente en el trabajo o de camino a él, esos días cuentan como trabajados y no te pueden descontar nada.",
+      "scene": "pregnant woman resting at home",
+      "scene2": "construction worker with injured arm"
+    },
+    {
+      "narration": "Si fue por enfermedad general, como una gripa o una operación que no viene de tu trabajo, esos días sí te los pueden descontar, salvo que tu contrato diga algo mejor.",
+      "scene": "sick man with flu resting on sofa",
+      "scene2": "doctor talking with patient in clinic"
+    },
+    {
+      "narration": "Pero solo esos días, no todo el aguinaldo. Si ganas 400 pesos diarios, tu aguinaldo completo es de 6,000. Con 10 días de incapacidad por enfermedad, te tocan unos 5,836: te descuentan unos 164 pesos.",
+      "scene": "person using calculator at desk"
+    },
+    {
+      "narration": "Si te descontaron por maternidad o por un riesgo de trabajo, o no te pagan antes del 20 de diciembre, la Profedet te asesora gratis. Compártelo con quien estuvo incapacitado este año.",
+      "scene": "woman talking on phone at home",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "NO TE DESCUENTAN",
+      "small": "maternidad, riesgo de trabajo, vacaciones",
+      "beat": 2
+    },
+    {
+      "big": "SOLO ESOS DÍAS",
+      "small": "$400 diarios: de $6,000 a unos $5,836",
+      "beat": 4
+    }
+  ],
+  "graphics": [],
+  "title": "¿Te pueden descontar el aguinaldo por una incapacidad?",
+  "caption": "¿Te pueden descontar el aguinaldo por una incapacidad?\n\nDepende del tipo. Las incapacidades por maternidad y por riesgo de trabajo (un accidente en el trabajo o de camino a él) cuentan como días trabajados: no te pueden descontar nada. Tampoco por vacaciones ni por el permiso de paternidad. Las incapacidades por enfermedad general sí se pueden descontar, pero solo esos días y salvo que tu contrato diga algo mejor.\n\nEjemplo: con $400 diarios, tu aguinaldo completo es de $6,000. Con 10 días de incapacidad por enfermedad, te tocan unos $5,836.\n\nEl aguinaldo se paga a más tardar el 20 de diciembre. Si tienes dudas, la Profedet te asesora gratis: 800 911 7877.\n\n¿Estuviste incapacitado este año?\n\n#finanzaspersonales #dineromexico #aguinaldo #derechoslaborales #imss",
+  "concepto": "aguinaldo e incapacidades",
+  "topic": "descuento-aguinaldo-incapacidad",
+  "broll_keywords": "sick leave work",
+  "categoria": "trabajo",
+  "formato": "Mito vs realidad",
+  "tema_fraude": false
+}

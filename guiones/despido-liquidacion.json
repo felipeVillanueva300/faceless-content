@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO suelto. Verificado el 22 nov 2026 (LFT): art. 47 (causas de despido justificado; el patrón debe dar aviso por escrito con la conducta y la fecha; la falta de aviso por sí sola presume la separación no justificada); art. 48 (indemnización de 3 meses de salario o reinstalación); art. 50 (20 días por año solo en ciertos casos: negativa a reinstalar, art. 49, o rescisión por culpa del patrón); art. 162 (prima de antigüedad de 12 días por año; en despido se paga sin importar la antigüedad; salario topado al doble del mínimo, arts. 485-486); art. 33 (es nula la renuncia de salarios devengados e indemnizaciones; el convenio se ratifica ante el Centro de Conciliación); art. 518 (2 meses desde el día siguiente al despido; la solicitud de conciliación suspende el plazo, art. 521); conciliación prejudicial obligatoria y gratuita (art. 684-B). Convenio sancionado por el Centro Federal de Conciliación: tesis 2028700 y 2029157 (cosa juzgada; nulidad improcedente). El recorte de personal no está en el art. 47; la terminación colectiva por causas económicas (arts. 433-436) paga 4 meses más prima de antigüedad. Profedet: 800 911 7877 (orienta también en asuntos locales). Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/despido-liquidacion.json",
+  "hook": "Si te despiden y Recursos Humanos te pide que firmes ya, no firmes sin saber esto.",
+  "hook_card": "¿TE DESPIDIERON? NO FIRMES AÚN",
+  "beats": [
+    {
+      "narration": "Si te despiden sin una causa justificada, te toca liquidación. Y un recorte de personal no es culpa tuya: no es una causa de despido justificado.",
+      "scene": "sad man holding cardboard box in office",
+      "scene2": "manager talking with employee in office"
+    },
+    {
+      "narration": "La liquidación incluye 3 meses de salario, una prima de antigüedad de 12 días por cada año trabajado y tu finiquito. En algunos casos, también 20 días por año.",
+      "scene": "person using calculator at desk",
+      "scene2": "person reviewing documents at table"
+    },
+    {
+      "narration": "La empresa debe darte por escrito el motivo del despido. Si no te lo da, la ley presume que el despido fue injustificado.",
+      "scene": "woman reading letter at desk"
+    },
+    {
+      "narration": "No firmes una renuncia voluntaria: si renuncias, pierdes la indemnización. ¿Y si no firmas? No pierdes nada: el finiquito te lo deben de todos modos y puedes reclamar lo demás.",
+      "scene": "hand holding pen over contract"
+    },
+    {
+      "narration": "Para reclamar tienes 2 meses, contados desde el día siguiente al despido. Se empieza en el Centro de Conciliación Laboral y es gratis. La Profedet o la Procuraduría del Trabajo de tu estado te revisan la cuenta sin costo.",
+      "scene": "people waiting in government office",
+      "scene2": "lawyer talking with client in office"
+    },
+    {
+      "narration": "Y ojo: si firmas un convenio ante el Centro de Conciliación, después es muy difícil reclamar. Revisa la cuenta antes de firmar y compártelo con quien lo necesite.",
+      "scene": "man talking on phone at home",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "LIQUIDACIÓN",
+      "small": "3 meses + 12 días por año + finiquito",
+      "beat": 2
+    },
+    {
+      "big": "2 MESES",
+      "small": "para reclamar en el Centro de Conciliación",
+      "beat": 5
+    }
+  ],
+  "graphics": [],
+  "title": "¿Te despidieron? Qué te toca y qué no debes firmar",
+  "caption": "Qué hacer si te despiden o te sacan por recorte de personal\n\nSi te despiden sin causa justificada (y un recorte de personal no es culpa tuya), te toca liquidación: 3 meses de salario, prima de antigüedad de 12 días por año trabajado y tu finiquito. En algunos casos, también 20 días por año.\n\n✅ La empresa debe darte por escrito el motivo del despido. Si no, la ley presume que fue injustificado.\n❌ No firmes una renuncia voluntaria ni hojas en blanco.\n✅ Si no firmas, no pierdes nada: el finiquito te lo deben de todos modos.\n⏰ Tienes 2 meses, desde el día siguiente al despido, para reclamar en el Centro de Conciliación Laboral (es gratis).\n⚠️ Un convenio firmado ante el Centro de Conciliación es muy difícil de reclamar después: revisa la cuenta antes.\n\nAsesoría gratis: Profedet 800 911 7877 o la Procuraduría de la Defensa del Trabajo de tu estado.\n\nGuárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #despido #liquidacion #derechoslaborales",
+  "concepto": "qué hacer si te despiden",
+  "topic": "despido-injustificado-que-hacer-liquidacion",
+  "broll_keywords": "office job dismissal",
+  "categoria": "trabajo",
+  "formato": "Configuración explicada (paso a paso)",
+  "tema_fraude": false
+}
