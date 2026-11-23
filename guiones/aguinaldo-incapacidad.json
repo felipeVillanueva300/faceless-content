@@ -5,16 +5,16 @@
   "beats": [
     {
       "narration": "Tu aguinaldo es de mínimo 15 días de salario, y se calcula con los días que la ley cuenta como trabajados.",
-      "scene": "woman reviewing paycheck at kitchen table"
+      "scene": "woman reviewing bills at table"
     },
     {
       "narration": "Si tu incapacidad fue por maternidad o por un riesgo de trabajo, como un accidente en el trabajo o de camino a él, esos días cuentan como trabajados y no te pueden descontar nada.",
-      "scene": "pregnant woman resting at home",
+      "scene": "pregnant woman sitting on sofa holding belly",
       "scene2": "construction worker with injured arm"
     },
     {
       "narration": "Si fue por enfermedad general, como una gripa o una operación que no viene de tu trabajo, esos días sí te los pueden descontar, salvo que tu contrato diga algo mejor.",
-      "scene": "sick man with flu resting on sofa",
+      "scene": "sick man in bed with thermometer",
       "scene2": "doctor talking with patient in clinic"
     },
     {
