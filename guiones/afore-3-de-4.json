@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO de 'Tu Afore sin misterio' (3/4). Lo usa sola la miniserie (serie.json -> episodio 3 -> 'guion'). Verificado el 24 nov 2026: CONSAR, 92% de las cuentas no hace aportaciones voluntarias; se puede aportar desde $50 (AforeMóvil con tarjeta de débito o CLABE; tiendas de conveniencia en efectivo con la CURP); el ahorro de corto plazo no es deducible; las aportaciones complementarias y de largo plazo sí (declaración anual). $200 x 12 = $2,400, sin rendimientos.",
+  "hook": "9 de cada 10 cuentas de Afore no reciben ni un peso extra aparte de lo obligatorio.",
+  "hook_card": "¿LE METES EXTRA A TU AFORE?",
+  "beats": [
+    {
+      "narration": "Parte 3 de 4 de Tu Afore sin misterio. Ya viste qué es tu Afore y cómo comparar la tuya. Hoy: las aportaciones voluntarias, dinero extra que tú le metes cuando quieras.",
+      "scene": "young woman using phone app at home",
+      "scene2": "man looking at phone on sofa"
+    },
+    {
+      "narration": "Por ejemplo, 200 pesos al mes son 2,400 pesos al año, sin contar rendimientos, y todo se va sumando a tu cuenta para el retiro.",
+      "scene": "hands using calculator on desk"
+    },
+    {
+      "narration": "Y no tiene que ser tanto: se puede desde 50 pesos. En AforeMóvil lo haces con tu tarjeta de débito o tu cuenta CLABE, y en tiendas de conveniencia, en efectivo, solo con tu CURP.",
+      "scene": "woman paying at convenience store counter",
+      "scene2": "man using banking app on phone"
+    },
+    {
+      "narration": "Ojo: el ahorro de corto plazo lo puedes sacar cuando quieras. El de largo plazo y las aportaciones complementarias se quedan para tu retiro, y esas sí se pueden deducir en tu declaración anual.",
+      "scene": "senior couple walking in park",
+      "scene2": "woman reviewing documents at desk"
+    },
+    {
+      "narration": "Mañana, la última parte: tus semanas cotizadas del IMSS, de las que depende tu pensión. Sígueme para no perdértela.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "$200 AL MES",
+      "small": "son $2,400 al año (ejemplo, sin rendimientos)",
+      "beat": 2
+    },
+    {
+      "big": "DESDE $50",
+      "small": "en AforeMóvil o en tiendas, con tu CURP",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Tu Afore sin misterio (3/4): Aportaciones voluntarias desde $50",
+  "caption": "Aportaciones voluntarias a tu Afore: cómo hacerlas\n\n9 de cada 10 cuentas de Afore no reciben nada aparte de lo obligatorio. Puedes aportar desde $50: en AforeMóvil con tu tarjeta de débito o tu CLABE, o en tiendas de conveniencia en efectivo con tu CURP. Ejemplo: $200 al mes son $2,400 al año, sin contar rendimientos.\n\nOjo: el ahorro de corto plazo lo puedes sacar cuando quieras; el de largo plazo y las aportaciones complementarias se quedan para tu retiro y se pueden deducir en tu declaración anual.\n\n¿Ya le has metido algo extra a tu Afore?\n\n📚 Parte 3 de 4 de la serie «Tu Afore sin misterio». Sígueme para no perderte la última parte.\n\n#finanzaspersonales #dineromexico #afore #retiro #TuAforeSinMisterio",
+  "concepto": "aportaciones voluntarias",
+  "topic": "aportaciones-voluntarias-afore-desde-50",
+  "broll_keywords": "saving money phone",
+  "formato": "Dato que sorprende",
+  "serie": {
+    "nombre": "Tu Afore sin misterio",
+    "parte": "3",
+    "total": "4"
+  },
+  "categoria": "serie",
+  "tema_fraude": false
+}

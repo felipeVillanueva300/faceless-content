@@ -20,13 +20,15 @@
       "concepto": "aportaciones voluntarias",
       "subtema": "aportaciones voluntarias: cómo hacerlas desde AforeMóvil o en tiendas y por qué poco cada mes cuenta, con un ejemplo de $200 al mes marcado claramente como ejemplo (sin prometer rendimientos); en UNA frase, que algunas aportaciones se pueden deducir en la declaración anual",
       "anterior": "Partes 1-2: qué es la Afore, comparar y cambiar de Afore",
-      "formato": "dato"
+      "formato": "dato",
+      "guion": "guiones/afore-3-de-4.json"
     },
     {
       "concepto": "semanas cotizadas",
       "subtema": "semanas cotizadas: qué son, por qué de ellas depende tu pensión del IMSS y cómo pedir gratis tu constancia de semanas cotizadas en la página del IMSS con tu CURP y un correo",
       "anterior": "Partes 1-3: qué es la Afore, comparar y cambiar de Afore, aportaciones voluntarias",
-      "formato": "howto"
+      "formato": "howto",
+      "guion": "guiones/afore-4-de-4.json"
     }
   ]
 }
