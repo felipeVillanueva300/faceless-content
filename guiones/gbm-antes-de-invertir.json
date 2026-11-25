@@ -1,0 +1,51 @@
+{
+  "_como_usar": "Guion FIJO suelto. Verificado el 25 nov 2026 (gbm.com y sus FAQ): Grupo Bursátil Mexicano, Casa de Bolsa, regulada por la CNBV; nivel Plus sin monto mínimo; Smart Cash en pesos: sin comisiones, invierte en reporto de CETES (bajo riesgo), rinde todos los días y no pierdes acceso a tu dinero, tasa variable; Smart Cash Dólares: 1.5% anual + IVA y depende del tipo de cambio; Trading USA: 0.25% por compra o venta (Trading MX y fondos de renta variable: 0.10% a 0.25%). El IPAB no cubre casas de bolsa; los valores se custodian en el Indeval a nombre del cliente, lo que no protege contra bajas de precio. No es patrocinio ni recomendación personal. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/gbm-antes-de-invertir.json",
+  "hook": "Si acabas de bajar GBM para invertir, antes de meter tu primer peso revisa esto.",
+  "hook_card": "ANTES DE INVERTIR EN GBM",
+  "beats": [
+    {
+      "narration": "GBM es una casa de bolsa regulada por la Comisión Nacional Bancaria y de Valores, y la cuenta básica no pide monto mínimo. Pero no es una cuenta de banco: lo que compras son inversiones.",
+      "scene": "young man using investment app on phone",
+      "scene2": "woman looking at stock chart on laptop"
+    },
+    {
+      "narration": "Lo más tranquilo para empezar es Smart Cash en pesos: invierte en reporto de CETES, no cobra comisión, te paga rendimiento todos los días y no pierdes acceso a tu dinero. Ojo, la tasa cambia; revísala en la app.",
+      "scene": "woman smiling at phone at home"
+    },
+    {
+      "narration": "Smart Cash Dólares es distinto: cobra 1.5% al año más IVA, y lo que ganes o pierdas también depende del tipo de cambio.",
+      "scene": "hands using calculator on desk"
+    },
+    {
+      "narration": "Comprar acciones o fondos que cotizan en bolsa es otra cosa: pueden subir o bajar, y cada compra o venta cobra comisión. En acciones de Estados Unidos es de 0.25%. Mete ahí solo dinero que no vas a necesitar pronto.",
+      "scene": "stock market chart on computer screen",
+      "scene2": "man thinking while looking at laptop"
+    },
+    {
+      "narration": "Y ojo: el IPAB no cubre a las casas de bolsa como a los bancos. Tus valores quedan registrados a tu nombre en el Indeval, pero eso no te protege de que bajen de precio. Sígueme, mañana va otro.",
+      "scene": "man reading phone at office desk",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "SMART CASH",
+      "small": "CETES, sin comisión y rinde diario",
+      "beat": 2
+    },
+    {
+      "big": "SIN IPAB",
+      "small": "pero tus valores están a tu nombre",
+      "beat": 5
+    }
+  ],
+  "graphics": [],
+  "title": "GBM: lo que debes saber antes de invertir tu primer peso",
+  "caption": "GBM: lo que debes saber antes de invertir\n\n✅ Es una casa de bolsa regulada por la CNBV y la cuenta básica no pide monto mínimo.\n💵 Smart Cash en pesos: invierte en reporto de CETES, no cobra comisión, rinde todos los días y no pierdes acceso a tu dinero. La tasa cambia: revísala en la app.\n💲 Smart Cash Dólares: cobra 1.5% anual + IVA y depende del tipo de cambio.\n📈 Acciones y ETFs: pueden subir o bajar y cada compra o venta cobra comisión (0.25% en acciones de EE.UU.). Usa solo dinero que no vas a necesitar pronto.\n⚠️ El IPAB no cubre casas de bolsa; tus valores quedan a tu nombre en el Indeval, pero eso no evita que bajen de precio.\n\nNo es patrocinio ni recomendación de inversión: revisa siempre las condiciones en la app.\n\n¿Ya invertiste alguna vez en la bolsa?\n\n#finanzaspersonales #dineromexico #inversiones #gbm #cetes",
+  "concepto": "GBM para principiantes",
+  "topic": "gbm-antes-de-invertir-smart-cash-ipab",
+  "broll_keywords": "investment app phone",
+  "categoria": "inversion",
+  "formato": "Lo que debes saber",
+  "tema_fraude": false
+}

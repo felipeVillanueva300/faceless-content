@@ -1,0 +1,56 @@
+{
+  "_como_usar": "Guion FIJO suelto (sustituye al de solo REUS, que a Felipe no le pareció interesante). Verificado el 25 nov 2026: REPEP de Profeco (ventas de comercio, telecomunicaciones y turismo): gratis, por internet en repep.profeco.gob.mx o llamando desde el número a registrar (96 28 00 00 en CDMX, Guadalajara y Monterrey; 800 962 8000 resto del país); surte efecto a los 30 días naturales; vigencia indefinida; si siguen, denuncia ante Profeco. REUS de CONDUSEF (publicidad de financieras): 45 días, dura 2 años. Ninguno frena la cobranza. Reglas de cobranza (CONDUSEF/REDECO): solo de 7:00 a 22:00 (hora del deudor); identificarse (nombre, despacho e institución); no llamar desde números privados u ocultos ni distintos a los registrados en el REDECO; prohibido amenazar, ofender o intimidar al deudor, a su familia o a terceros ajenos a la deuda; los acuerdos deben ser por escrito; el pago solo se hace a la entidad financiera que dio el crédito; queja gratis en el REDECO. Celular: iPhone, Configuración > Teléfono > Silenciar números desconocidos; Android, app Teléfono > filtro de llamadas de spam. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/llamadas-spam-cobranza.json",
+  "hook": "Si te llaman a cada rato para venderte algo o para cobrarte, esto es lo que sí funciona para frenarlas.",
+  "hook_card": "¿TE LLAMAN A CADA RATO?",
+  "beats": [
+    {
+      "narration": "Las de ventas de tiendas, telefonía y viajes se frenan con el REPEP de la Profeco. Te registras gratis en su página o llamando desde ese mismo teléfono. Surte efecto en 30 días y no vence.",
+      "scene": "annoyed woman rejecting phone call at home",
+      "scene2": "woman typing on laptop at kitchen table"
+    },
+    {
+      "narration": "Las de bancos y financieras van en otro registro, el REUS de la CONDUSEF: tarda 45 días y dura 2 años. Si después de esos plazos te siguen llamando para venderte, pon tu queja.",
+      "scene": "man looking at ringing smartphone at desk"
+    },
+    {
+      "narration": "Ninguno de los dos frena la cobranza, pero los cobradores de bancos y financieras tienen reglas: solo pueden llamarte de 7 de la mañana a 10 de la noche, deben decirte quiénes son y para qué institución cobran, y no pueden marcarte desde números ocultos.",
+      "scene": "worried man on phone call at home",
+      "scene2": "clock on wall at night"
+    },
+    {
+      "narration": "Tampoco pueden amenazarte, insultarte ni cobrarle a tu familia o a gente que no tiene que ver con la deuda. Si lo hacen, o si te buscan por la deuda de otra persona, quéjate gratis en el REDECO de la CONDUSEF.",
+      "scene": "stressed woman holding phone at kitchen table",
+      "scene2": "woman typing on laptop at home"
+    },
+    {
+      "narration": "Si sí debes, negocia directo con el banco, pide el acuerdo por escrito y nunca le deposites a la cuenta de un cobrador: el pago va directo a la institución.",
+      "scene": "man reviewing documents at desk"
+    },
+    {
+      "narration": "Y para lo demás, usa tu celular: en iPhone activa silenciar números desconocidos y solo te sonarán tus contactos; en Android, el filtro de llamadas de spam. Guárdalo y compártelo con quien no lo dejan en paz.",
+      "scene": "hand holding smartphone settings screen",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "REPEP Y REUS",
+      "small": "ventas: Profeco · bancos: CONDUSEF",
+      "beat": 1
+    },
+    {
+      "big": "7:00 A 22:00",
+      "small": "único horario en que te pueden cobrar",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Cómo frenar las llamadas de spam y de cobranza (lo que sí funciona)",
+  "caption": "Cómo frenar las llamadas de spam y de cobranza\n\n📵 Ventas de tiendas, telefonía y viajes: regístrate gratis en el REPEP de la Profeco (repep.profeco.gob.mx, o llama desde ese teléfono al 96 28 00 00 en CDMX, Guadalajara y Monterrey, o al 800 962 8000). Surte efecto en 30 días y no vence.\n🏦 Bancos y financieras: REUS de la CONDUSEF. Tarda 45 días y dura 2 años.\n\n📞 Cobranza: ningún registro la frena, pero los cobradores de bancos y financieras solo pueden llamarte de 7:00 a 22:00, deben identificarse y decirte para qué institución cobran, y no pueden usar números ocultos. Tampoco pueden amenazarte ni cobrarle a tu familia o a terceros. Si lo hacen, o te buscan por la deuda de otra persona, queja gratis en el REDECO de la CONDUSEF.\n\n✅ Si sí debes: negocia directo con el banco, pide el acuerdo por escrito y nunca deposites a la cuenta de un cobrador.\n📱 En iPhone: Configuración > Teléfono > Silenciar números desconocidos. En Android: app Teléfono > filtro de llamadas de spam.\n\n¿Cuántas llamadas de estas te hacen al día?\n\nGuárdalo y compártelo con quien no lo dejan en paz.\n\n#finanzaspersonales #dineromexico #profeco #condusef #cobranza",
+  "concepto": "frenar llamadas de spam y cobranza",
+  "topic": "frenar-llamadas-spam-cobranza-repep-redeco",
+  "broll_keywords": "annoyed phone call",
+  "categoria": "deudas",
+  "formato": "Configuración explicada (paso a paso)",
+  "tema_fraude": false
+}
