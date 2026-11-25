@@ -1,0 +1,47 @@
+{
+  "_como_usar": "Guion FIJO suelto (corrige el borrador daily-20261124-182441, que decía que el REUS 'no aplica si tienes una deuda pendiente o si diste permiso en otra app' y traía el enlace del SIPRES). Verificado el 24 nov 2026: el REUS (Registro Público de Usuarios) de la CONDUSEF frena la publicidad de bancos, aseguradoras, Afores y otras financieras por teléfono y correo; inscripción gratis en línea (sin documentos: nombre, estado, teléfonos y correo), por teléfono (800 999 8080) o en oficinas; surte efecto 45 días naturales después y dura 2 años (se renueva); no frena las llamadas de cobranza; si siguen llamando para venderte, se presenta queja ante la CONDUSEF. Actions -> Publicar Reel diario -> Run workflow -> rehacer_id: guiones/reus-llamadas.json",
+  "hook": "Las llamadas del banco ofreciendo tarjetas a cada rato no se quitan solas.",
+  "hook_card": "BLOQUEA LLAMADAS DE BANCOS",
+  "beats": [
+    {
+      "narration": "La CONDUSEF tiene un registro oficial y gratuito, el REUS, para que bancos, aseguradoras y otras financieras dejen de mandarte publicidad.",
+      "scene": "annoyed woman rejecting phone call at home",
+      "scene2": "woman looking at ringing smartphone on table"
+    },
+    {
+      "narration": "Te registras en línea en la página de la CONDUSEF, sin documentos: pones tu nombre, tu estado y los teléfonos y el correo que quieres proteger. También se puede por teléfono.",
+      "scene": "woman typing on laptop at kitchen table"
+    },
+    {
+      "narration": "Ojo: surte efecto 45 días después y dura 2 años; luego lo renuevas. Y solo frena la publicidad: las llamadas de cobranza no.",
+      "scene": "calendar on desk with pen",
+      "scene2": "man reading phone at office desk"
+    },
+    {
+      "narration": "Si pasado ese plazo te siguen llamando para venderte, puedes poner una queja en la CONDUSEF. Sígueme, mañana va otro.",
+      "scene": "man talking on phone at desk",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "REUS",
+      "small": "gratis, en línea y sin documentos",
+      "beat": 2
+    },
+    {
+      "big": "45 DÍAS",
+      "small": "para que surta efecto; dura 2 años",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Cómo frenar las llamadas de los bancos para venderte tarjetas",
+  "caption": "Cómo dejar de recibir llamadas de bancos y financieras con el REUS de la CONDUSEF\n\nEl REUS (Registro Público de Usuarios) es gratis y frena la publicidad de bancos, aseguradoras, Afores y otras financieras en tu teléfono y tu correo. Te registras en línea sin documentos (nombre, estado, teléfonos y correo), por teléfono al 800 999 8080 o en una oficina de la CONDUSEF.\n\n⏰ Surte efecto 45 días después y dura 2 años; después lo renuevas.\n⚠️ No frena las llamadas de cobranza, solo la publicidad.\n\nSi te siguen llamando para venderte después de ese plazo, puedes poner una queja en la CONDUSEF.\n\n🔗 Página oficial: www.condusef.gob.mx (busca «REUS»)\n\n¿A ti te marcan muy seguido para ofrecerte créditos que no pediste?\n\nSi te sirvió, guárdalo y compártelo con quien lo necesite.\n\n#finanzaspersonales #dineromexico #condusef #reus #llamadasdebanco",
+  "concepto": "registro REUS CONDUSEF",
+  "topic": "bloquear-llamadas-bancos-reus",
+  "broll_keywords": "phone call annoyed",
+  "categoria": "bancos",
+  "formato": "Tip rápido",
+  "tema_fraude": false
+}
