@@ -1,4 +1,4 @@
-"""Prueba temporal: transcribir completa la voz de los borradores del 24 nov (Afore 2/4 y REUS)
+"""Prueba temporal: transcribir la voz del REUS corregido (daily-20261125-001216). Sin Gemini.
 para buscar palabras mal pronunciadas. Sin Gemini: solo Whisper."""
 import os, subprocess, requests
 from faster_whisper import WhisperModel
@@ -7,7 +7,7 @@ OUT = "prueba_voz_out"
 os.makedirs(OUT, exist_ok=True)
 BASE = "https://github.com/felipeVillanueva300/faceless-content/releases/download/"
 model = WhisperModel("medium", device="cpu", compute_type="int8")
-for tag in ["daily-20261124-234911", "daily-20261124-182441"]:
+for tag in ["daily-20261125-001216"]:
     open(f"{OUT}/reel.mp4", "wb").write(requests.get(BASE + tag + "/reel.mp4", timeout=120).content)
     subprocess.run(["ffmpeg", "-y", "-v", "quiet", "-i", f"{OUT}/reel.mp4", "-vn", "-ac", "1",
                     "-ar", "16000", f"{OUT}/voz.wav"], check=True)
