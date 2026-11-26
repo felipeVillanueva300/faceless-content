@@ -6,24 +6,25 @@
     {
       "narration": "Parte 2 de 3 de Que no te roben el aguinaldo. El fraude más común en el cajero es el tallado: el cajero no lee tu tarjeta, alguien se acerca a ayudarte, te la cambia por otra y un cómplice ve tu NIP.",
       "scene": "person using atm machine",
-      "scene2": "stranger standing behind person at atm"
+      "scene2": "suspicious man watching on street"
     },
     {
       "narration": "Por eso no aceptes ayuda de nadie, tapa el teclado con la mano y revisa que la ranura no tenga nada raro. Si no lee tu tarjeta, inténtalo solo una vez más; si no, cancela y usa otro cajero.",
-      "scene": "hand covering keypad at atm"
+      "scene": "finger pressing atm keypad close up"
     },
     {
       "narration": "Si el cajero se queda con tu tarjeta, no te vayas con quien se ofrezca a ayudarte: bloquéala desde tu app o llama a tu banco ahí mismo.",
-      "scene": "woman calling on phone next to atm"
+      "scene": "worried woman talking on phone on street"
     },
     {
       "narration": "Para cantidades grandes, mejor no saques efectivo: paga o transfiere desde tu app. Si sí lo necesitas, ve a ventanilla acompañado, cuenta el dinero ahí mismo y no lo comentes con nadie.",
-      "scene": "man using banking app on phone",
-      "scene2": "two people walking into bank"
+      "scene": "man using phone at home",
+      "scene2": "couple walking on city street"
     },
     {
       "narration": "En la Ciudad de México y en varias ciudades, la policía te acompaña gratis a retirar tu dinero: pídelo al 911 o, en la Ciudad de México, en la app Mi Policía.",
-      "scene": "police officer on city street"
+      "scene": "police patrol car on street",
+      "scene2": "police car lights"
     },
     {
       "narration": "Y no salgas con el dinero a la vista ni vayas hablando por teléfono. Mañana, la parte 3: la terminal que acercan a tu bolsa y las compras en línea que no hiciste.",

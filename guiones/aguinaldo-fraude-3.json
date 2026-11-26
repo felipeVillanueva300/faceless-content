@@ -5,7 +5,7 @@
   "beats": [
     {
       "narration": "Parte 3 de 3, la última de Que no te roben el aguinaldo. Los pagos sin contacto piden tu NIP arriba de cierto monto, así que este fraude suele ser de cargos chicos, aunque pueden ser varios.",
-      "scene": "person paying with contactless card at terminal",
+      "scene": "woman tapping card on payment terminal in store",
       "scene2": "crowded subway car"
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "narration": "Los cargos grandes, como compras de 40 mil pesos en tiendas en línea, suelen venir de datos robados de tu tarjeta: una página falsa, un mensaje o una terminal alterada que los copia.",
-      "scene": "worried man looking at laptop at home"
+      "scene": "worried man looking at phone at home"
     },
     {
       "narration": "Para comprar en línea, usa la tarjeta digital de tu app, cuyo código cambia, y si tu banco lo permite, apaga tu tarjeta física cuando no la uses.",
@@ -27,7 +27,7 @@
     },
     {
       "narration": "Con esto cerramos la serie: qué hacer si ya te pasó, cómo cuidarte en el cajero y en ventanilla, y los fraudes sin contacto y en línea. Guárdalo y compártelo con tu familia.",
-      "scene": "family looking at phone together at home",
+      "scene": "couple looking at phone on sofa",
       "scene2": "young man holding smartphone"
     }
   ],
