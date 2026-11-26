@@ -1,0 +1,60 @@
+{
+  "_como_usar": "Verificado el 26 nov 2026. Banxico (Circular 34/2010 y 3/2012 reformada en 2018) y CONDUSEF: cargos no reconocidos se reclaman dentro de 90 días naturales; si corresponden a operaciones de las 48 horas previas al aviso, el banco debe abonar a más tardar el segundo día hábil bancario mientras investiga; no aplica si el banco prueba que se usaron dos elementos de autenticación (p. ej. chip y NIP); dictamen en 45 días naturales (180 si es internacional); si no responde, procede. CONDUSEF: queja gratis; nunca compartir NIP, claves ni códigos. Parte 1 de 3 (suelto en el horario del diario). No nombra al banco ni la sucursal del caso viral (está en investigación). rehacer_id: guiones/aguinaldo-fraude-1.json",
+  "hook": "Se han hecho virales casos de gente a la que le cambian la tarjeta o le cargan hasta 90 mil pesos. Si te pasa, los primeros minutos cuentan.",
+  "hook_card": "¿TE VACIARON LA CUENTA?",
+  "beats": [
+    {
+      "narration": "Parte 1 de 3 de Que no te roben el aguinaldo. Primero, respira y bloquea tu tarjeta desde la app o la línea de tu banco. Si te la cambiaron, no uses el número del plástico que te dieron: búscalo en la app o en la página del banco.",
+      "scene": "worried woman looking at phone at home",
+      "scene2": "man calling on phone outside bank"
+    },
+    {
+      "narration": "Luego reporta el cargo como no reconocido y pide tu número de folio. Tienes 90 días, pero no esperes: si avisas dentro de las 48 horas, el banco debe regresarte el dinero a más tardar el segundo día hábil mientras investiga.",
+      "scene": "woman talking on phone at kitchen table"
+    },
+    {
+      "narration": "Ojo: si el banco demuestra que se usaron dos elementos de seguridad, como el chip y tu NIP, puede negarse a ese abono rápido. Por eso nadie debe ver tu NIP. Aun así, reclama.",
+      "scene": "hand covering keypad at atm"
+    },
+    {
+      "narration": "Junta pruebas: capturas de las notificaciones, la hora, el lugar y el número del cajero o la sucursal. Si te robaron o te cambiaron la tarjeta, levanta tu denuncia en el Ministerio Público y pide por escrito al banco que guarde las grabaciones.",
+      "scene": "woman taking screenshot on phone",
+      "scene2": "man writing notes at desk"
+    },
+    {
+      "narration": "Si el banco te lo niega o no te contesta en 45 días, pon tu queja gratis en la CONDUSEF. Y cuidado con llamadas falsas del banco que ofrecen ayudarte: el banco nunca te pide tu NIP, contraseñas ni códigos.",
+      "scene": "woman typing on laptop at home",
+      "scene2": "man ignoring phone call at desk"
+    },
+    {
+      "narration": "Mañana, parte 2: cómo cuidarte en el cajero y en ventanilla si vas a sacar tu aguinaldo. Guárdalo y compártelo.",
+      "scene": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "48 HORAS",
+      "small": "avisa rápido: abono en 2 días hábiles",
+      "beat": 2
+    },
+    {
+      "big": "CONDUSEF",
+      "small": "queja gratis si el banco te lo niega",
+      "beat": 5
+    }
+  ],
+  "graphics": [],
+  "title": "Que no te roben el aguinaldo (1/3): Qué hacer si te hacen un cargo o te cambian la tarjeta",
+  "caption": "Qué hacer si te hacen un cargo que no reconoces o te cambian la tarjeta\n\n1️⃣ Bloquea tu tarjeta en la app o por la línea del banco (si te la cambiaron, no uses el número del plástico que te dieron).\n2️⃣ Reporta el cargo como no reconocido y pide tu folio. Tienes 90 días, pero si avisas dentro de las 48 horas, el banco debe abonarte a más tardar el segundo día hábil mientras investiga (salvo que pruebe que se usaron dos elementos de seguridad, como chip y NIP).\n3️⃣ Junta pruebas: capturas, hora, lugar y número del cajero o sucursal. Si hubo robo o cambio de tarjeta, denuncia en el Ministerio Público y pide por escrito que guarden las grabaciones.\n4️⃣ Si te lo niegan o no te contestan en 45 días: queja gratis en la CONDUSEF (condusef.gob.mx).\n⚠️ El banco nunca te pide NIP, contraseñas ni códigos por teléfono.\n\n📚 Parte 1 de 3 de «Que no te roben el aguinaldo». Sígueme para la parte 2.\n\n#finanzaspersonales #dineromexico #fraude #aguinaldo #QueNoTeRobenElAguinaldo",
+  "concepto": "qué hacer ante un cargo no reconocido o cambio de tarjeta",
+  "topic": "aguinaldo-fraude-que-hacer-cargo-no-reconocido",
+  "broll_keywords": "bank fraud phone",
+  "categoria": "serie",
+  "formato": "Configuración explicada (paso a paso)",
+  "serie": {
+    "nombre": "Que no te roben el aguinaldo",
+    "parte": "1",
+    "total": "3"
+  },
+  "tema_fraude": true
+}

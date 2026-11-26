@@ -1,0 +1,60 @@
+{
+  "_como_usar": "Verificado el 26 nov 2026. CONDUSEF: tallado o cambiazo de tarjeta (alteran la ranura, alguien se ofrece a ayudar, cambia el plástico y un cómplice ve el NIP); nadie debe acercarse; tapar el NIP; revisar la ranura; si no lee la tarjeta, un intento más; preferir retiro sin tarjeta sin compartir el código. Autoridades: montos grandes mejor por transferencia o en ventanilla acompañado. SSC CDMX: acompañamiento a cuentahabiente gratis por el 911 o la app Mi Policía; también lo ofrecen policías municipales (Torreón, Chihuahua, Puebla, etc.). Parte 2 de 3. rehacer_id: guiones/aguinaldo-fraude-2.json",
+  "hook": "Con el aguinaldo, los cajeros y las sucursales se llenan de rateros. Así te cuidas.",
+  "hook_card": "CAJERO Y VENTANILLA",
+  "beats": [
+    {
+      "narration": "Parte 2 de 3 de Que no te roben el aguinaldo. El fraude más común en el cajero es el tallado: el cajero no lee tu tarjeta, alguien se acerca a ayudarte, te la cambia por otra y un cómplice ve tu NIP.",
+      "scene": "person using atm machine",
+      "scene2": "stranger standing behind person at atm"
+    },
+    {
+      "narration": "Por eso no aceptes ayuda de nadie, tapa el teclado con la mano y revisa que la ranura no tenga nada raro. Si no lee tu tarjeta, inténtalo solo una vez más; si no, cancela y usa otro cajero.",
+      "scene": "hand covering keypad at atm"
+    },
+    {
+      "narration": "Si el cajero se queda con tu tarjeta, no te vayas con quien se ofrezca a ayudarte: bloquéala desde tu app o llama a tu banco ahí mismo.",
+      "scene": "woman calling on phone next to atm"
+    },
+    {
+      "narration": "Para cantidades grandes, mejor no saques efectivo: paga o transfiere desde tu app. Si sí lo necesitas, ve a ventanilla acompañado, cuenta el dinero ahí mismo y no lo comentes con nadie.",
+      "scene": "man using banking app on phone",
+      "scene2": "two people walking into bank"
+    },
+    {
+      "narration": "En la Ciudad de México y en varias ciudades, la policía te acompaña gratis a retirar tu dinero: pídelo al 911 o, en la Ciudad de México, en la app Mi Policía.",
+      "scene": "police officer on city street"
+    },
+    {
+      "narration": "Y no salgas con el dinero a la vista ni vayas hablando por teléfono. Mañana, la parte 3: la terminal que acercan a tu bolsa y las compras en línea que no hiciste.",
+      "scene": "woman walking on city street with bag",
+      "scene2": "young man holding smartphone"
+    }
+  ],
+  "cards": [
+    {
+      "big": "NADIE TE AYUDA",
+      "small": "tapa tu NIP y no prestes tu tarjeta",
+      "beat": 2
+    },
+    {
+      "big": "911",
+      "small": "acompañamiento policial gratis",
+      "beat": 5
+    }
+  ],
+  "graphics": [],
+  "title": "Que no te roben el aguinaldo (2/3): Cómo cuidarte en el cajero y en ventanilla",
+  "caption": "Cómo cuidarte en el cajero y en ventanilla esta temporada de aguinaldo\n\n🏧 Tallado o cambiazo: el cajero no lee tu tarjeta, alguien se ofrece a ayudarte, te la cambia y un cómplice ve tu NIP.\n✅ No aceptes ayuda de nadie, tapa el teclado y revisa la ranura. Si no lee tu tarjeta, un intento más y si no, otro cajero.\n✅ Si el cajero se queda con tu tarjeta, bloquéala en tu app o llama a tu banco ahí mismo.\n💸 Para montos grandes, mejor transfiere o paga desde tu app. Si necesitas efectivo: ventanilla, acompañado, cuenta el dinero ahí y no lo comentes.\n👮 En CDMX y varias ciudades la policía te acompaña gratis: 911 o, en CDMX, la app Mi Policía.\n\n📚 Parte 2 de 3 de «Que no te roben el aguinaldo». Sígueme para la parte 3.\n\n#finanzaspersonales #dineromexico #aguinaldo #cajero #QueNoTeRobenElAguinaldo",
+  "concepto": "seguridad en cajero y ventanilla",
+  "topic": "aguinaldo-fraude-cajero-tallado-ventanilla",
+  "broll_keywords": "atm cash withdrawal",
+  "categoria": "serie",
+  "formato": "Lo que debes saber",
+  "serie": {
+    "nombre": "Que no te roben el aguinaldo",
+    "parte": "2",
+    "total": "3"
+  },
+  "tema_fraude": true
+}
