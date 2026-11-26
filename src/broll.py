@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 
 PEXELS_KEY = os.environ.get("PEXELS_API_KEY", "").strip()
@@ -448,8 +449,54 @@ def _from_pixabay(keywords: str, out_path: str) -> str | None:
 
 _FETCHERS = {"pexels": _from_pexels, "pixabay": _from_pixabay}
 
+# Clip fijo en la escena: "pexels:8553604" o "pixabay:3627". Sirve para rehacer un video
+# (por ejemplo, solo para corregir la voz) con los MISMOS fondos que ya se revisaron: se baja
+# ese clip directo, sin búsqueda ni revisión con visión, y sin importar si ya se usó otro día.
+_FIJO_RE = re.compile(r"^\s*(pexels|pixabay)\s*[:#]\s*(\d+)\s*$", re.IGNORECASE)
+_FIJOS_BAJADOS = set()   # cada clip fijo se baja una vez por video; repetirlo = acercamiento
+
+
+def _fetch_fijo(fuente: str, cid: str, out_path: str) -> str | None:
+    clave = _clave(fuente, cid)
+    if clave in _FIJOS_BAJADOS:
+        return None
+    if fuente == "pexels":
+        if not PEXELS_KEY:
+            return None
+        r = requests.get(f"https://api.pexels.com/videos/videos/{cid}",
+                         headers={"Authorization": PEXELS_KEY}, timeout=30)
+        r.raise_for_status()
+        files = [{"link": f["link"], "width": f.get("width"), "height": f.get("height")}
+                 for f in r.json().get("video_files", []) if f.get("file_type") == "video/mp4"]
+    else:
+        if not PIXABAY_KEY:
+            return None
+        r = requests.get("https://pixabay.com/api/videos/",
+                         params={"key": PIXABAY_KEY, "id": cid}, timeout=30)
+        r.raise_for_status()
+        hits = r.json().get("hits", [])
+        vids = (hits[0].get("videos") or {}) if hits else {}
+        files = [{"link": v.get("url"), "width": v.get("width"), "height": v.get("height")}
+                 for v in vids.values() if v.get("url")]
+    link = _best_vertical(files)
+    if not link:
+        return None
+    _download(link, out_path)
+    _FIJOS_BAJADOS.add(clave)
+    _USADOS.add(clave)
+    print(f"    b-roll fijo ({fuente} #{cid})")
+    return out_path
+
 
 def fetch_broll(keywords: str, out_path: str) -> str | None:
+    fijo = _FIJO_RE.match(keywords or "")
+    if fijo:
+        try:
+            return _fetch_fijo(fijo.group(1).lower(), fijo.group(2), out_path)
+        except Exception as e:
+            print(f"    (clip fijo {keywords} falló: {e})")
+            return None
+
     fuentes = [s for s in SOURCES if s in _FETCHERS] or list(_FETCHERS)
     algun_key = PEXELS_KEY or PIXABAY_KEY
     if not algun_key:

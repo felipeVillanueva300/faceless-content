@@ -5,29 +5,31 @@
   "beats": [
     {
       "narration": "Parte 2 de 3 de Que no te roben el aguinaldo. El fraude más común en el cajero es el tallado: el cajero no lee tu tarjeta, alguien se acerca a ayudarte, te la cambia por otra y un cómplice ve tu NIP.",
-      "scene": "person using atm machine"
+      "scene": "pexels:5975280"
     },
     {
       "narration": "Por eso no aceptes ayuda de nadie, tapa el teclado con la mano y revisa que la ranura no tenga nada raro. Si no lee tu tarjeta, inténtalo solo una vez más; si no, cancela y usa otro cajero.",
-      "scene": "man using atm machine on street"
+      "scene": "pexels:5975280"
     },
     {
       "narration": "Si el cajero se queda con tu tarjeta, no te vayas con quien se ofrezca a ayudarte: bloquéala desde tu app o llama a tu banco ahí mismo.",
-      "scene": "worried woman talking on phone on street"
+      "scene": "pexels:7681926",
+      "scene2": "pexels:10040744"
     },
     {
       "narration": "Para cantidades grandes, mejor no saques efectivo: paga o transfiere desde tu app. Si sí lo necesitas, ve a ventanilla acompañado, cuenta el dinero ahí mismo y no lo comentes con nadie.",
-      "scene": "man using phone at home",
-      "scene2": "couple walking on city street"
+      "scene": "pexels:7326652",
+      "scene2": "pixabay:3627"
     },
     {
       "narration": "En la Ciudad de México y en varias ciudades, la policía te acompaña gratis a retirar tu dinero: pídelo al 911 o, en la Ciudad de México, en la app Mi Policía.",
-      "scene": "woman making phone call on city street"
+      "scene": "pexels:10040737",
+      "scene2": "pexels:5974550"
     },
     {
       "narration": "Y no salgas con el dinero a la vista ni vayas hablando por teléfono. Mañana, la parte 3: la terminal que acercan a tu bolsa y las compras en línea que no hiciste.",
-      "scene": "woman walking on city street with bag",
-      "scene2": "young man holding smartphone"
+      "scene": "pexels:34302929",
+      "scene2": "pexels:6998329"
     }
   ],
   "cards": [
