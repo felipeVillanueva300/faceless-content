@@ -5,12 +5,11 @@
   "beats": [
     {
       "narration": "Parte 2 de 3 de Que no te roben el aguinaldo. El fraude más común en el cajero es el tallado: el cajero no lee tu tarjeta, alguien se acerca a ayudarte, te la cambia por otra y un cómplice ve tu NIP.",
-      "scene": "person using atm machine",
-      "scene2": "suspicious man watching on street"
+      "scene": "person using atm machine"
     },
     {
       "narration": "Por eso no aceptes ayuda de nadie, tapa el teclado con la mano y revisa que la ranura no tenga nada raro. Si no lee tu tarjeta, inténtalo solo una vez más; si no, cancela y usa otro cajero.",
-      "scene": "finger pressing atm keypad close up"
+      "scene": "man using atm machine on street"
     },
     {
       "narration": "Si el cajero se queda con tu tarjeta, no te vayas con quien se ofrezca a ayudarte: bloquéala desde tu app o llama a tu banco ahí mismo.",
@@ -23,8 +22,7 @@
     },
     {
       "narration": "En la Ciudad de México y en varias ciudades, la policía te acompaña gratis a retirar tu dinero: pídelo al 911 o, en la Ciudad de México, en la app Mi Policía.",
-      "scene": "police patrol car on street",
-      "scene2": "police car lights"
+      "scene": "police officers patrolling street"
     },
     {
       "narration": "Y no salgas con el dinero a la vista ni vayas hablando por teléfono. Mañana, la parte 3: la terminal que acercan a tu bolsa y las compras en línea que no hiciste.",
