@@ -59,17 +59,32 @@
     "condusef": {
       "nombre": "CONDUSEF",
       "claves": [
-        "condusef",
+        "condusef"
+      ],
+      "link": "https://www.condusef.gob.mx",
+      "datos": [
+        "Quejas contra bancos y financieras: gratis, en línea en condusef.gob.mx o por teléfono al 55 5340 0999 (CCAMER). Con el folio del banco ya se puede presentar.",
+        "Para revisar si una empresa financiera está autorizada: el SIPRES de CONDUSEF (buscador gratuito en su página).",
+        "Para ver quejas, multas y cómo califican a una institución: el Buró de Entidades Financieras (buro.gob.mx)."
+      ],
+      "fuente": "CONDUSEF (condusef.gob.mx, gob.mx/condusef, webapps.condusef.gob.mx/SIPRES)",
+      "verificado": "2026-11-26"
+    },
+    "sipres": {
+      "nombre": "SIPRES de CONDUSEF",
+      "claves": [
         "sipres",
         "buro de entidades financieras"
       ],
       "link": "https://webapps.condusef.gob.mx/SIPRES/jsp/pub/index.jsp",
       "datos": [
-        "Para revisar si una empresa financiera está autorizada: el SIPRES de CONDUSEF (buscador gratuito en su página).",
-        "Para ver quejas, multas y cómo califican a una institución: el Buró de Entidades Financieras (buro.gob.mx)."
+        "Buscador gratuito de CONDUSEF para revisar si una empresa financiera está registrada y autorizada."
       ],
-      "fuente": "CONDUSEF (gob.mx/condusef, webapps.condusef.gob.mx/SIPRES)",
-      "verificado": "2026-09-29"
+      "reemplaza": [
+        "condusef"
+      ],
+      "fuente": "CONDUSEF (webapps.condusef.gob.mx/SIPRES)",
+      "verificado": "2026-11-26"
     },
     "redeco": {
       "nombre": "REDECO de CONDUSEF",
