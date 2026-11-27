@@ -1,0 +1,58 @@
+{
+  "_como_usar": "Copia de afore-4-de-4.json para VOLVER A SUBIR A YOUTUBE el Short que bloqueó Content ID por la música (bg3.mp3). Mismos fondos que daily-20261126-233914 (escenas fijas por ID) y sin música. rehacer_id: guiones/afore-4-de-4-youtube.json ; luego publicar_id: <ID nuevo> youtube",
+  "hook": "Tu pensión del IMSS no depende solo de tu edad: también de tus semanas cotizadas.",
+  "hook_card": "¿CUÁNTAS SEMANAS TIENES?",
+  "beats": [
+    {
+      "narration": "Parte 4 de 4, la última de Tu Afore sin misterio. Una semana cotizada es cada semana que estuviste dado de alta en el IMSS con tus cuotas pagadas.",
+      "scene": "pexels:12909006",
+      "scene2": "pexels:40005831"
+    },
+    {
+      "narration": "Si empezaste a cotizar antes del 1 de julio de 1997, eres Ley 73 y necesitas 500 semanas. Si empezaste después, eres Ley 97: en 2026 piden 875, y suben 25 cada año hasta llegar a 1,000 en 2031.",
+      "scene": "pexels:8123987",
+      "scene2": "pixabay:12040"
+    },
+    {
+      "narration": "Para saber cuántas tienes, pide gratis tu constancia de semanas cotizadas en la página del IMSS o en la app IMSS Digital, con tu CURP, tu número de seguridad social y un correo. Te llega al correo.",
+      "scene": "pexels:7382291",
+      "scene2": "pexels:7652957"
+    },
+    {
+      "narration": "Si ves que te faltan semanas de algún trabajo donde sí estuviste dado de alta, pide una aclaración al IMSS.",
+      "scene": "pexels:36058905"
+    },
+    {
+      "narration": "Con esto cerramos la serie: qué es tu Afore, cómo comparar la tuya, las aportaciones voluntarias y tus semanas cotizadas. Sígueme: mañana empieza una serie nueva.",
+      "scene": "pexels:6998329",
+      "scene2": "pixabay:9490"
+    }
+  ],
+  "cards": [
+    {
+      "big": "LEY 97: 875",
+      "small": "semanas en 2026; 1,000 en 2031",
+      "beat": 2
+    },
+    {
+      "big": "IMSS DIGITAL",
+      "small": "tu CURP, tu NSS y un correo",
+      "beat": 3
+    }
+  ],
+  "graphics": [],
+  "title": "Tu Afore sin misterio (4/4): Cuántas semanas cotizadas necesitas para pensionarte",
+  "caption": "Semanas cotizadas del IMSS: cuántas necesitas y cómo consultarlas\n\nSi empezaste a cotizar antes del 1 de julio de 1997 eres Ley 73 y necesitas 500 semanas. Si empezaste después eres Ley 97: en 2026 piden 875 y suben 25 cada año hasta 1,000 en 2031.\n\nPide gratis tu constancia de semanas cotizadas en la página del IMSS o en la app IMSS Digital con tu CURP, tu número de seguridad social y un correo. Si te faltan semanas de algún trabajo, pide una aclaración al IMSS.\n\n¿Ya sabes cuántas semanas tienes?\n\n📚 Última parte de la serie «Tu Afore sin misterio». Ve las 4 partes en mi perfil y sígueme para la próxima serie.\n\n#finanzaspersonales #dineromexico #afore #imss #pension #TuAforeSinMisterio",
+  "concepto": "semanas cotizadas",
+  "topic": "semanas-cotizadas-imss-ley73-ley97",
+  "broll_keywords": "retirement documents",
+  "formato": "Configuración explicada (paso a paso)",
+  "serie": {
+    "nombre": "Tu Afore sin misterio",
+    "parte": "4",
+    "total": "4"
+  },
+  "categoria": "serie",
+  "tema_fraude": false,
+  "sin_musica": true
+}

@@ -212,6 +212,9 @@ def _pick_music():
     Si no hay carpeta o está vacía, devuelve None (video solo con voz)."""
     import glob
     import datetime
+    if os.environ.get("MUSICA", "1").strip().lower() in ("0", "false", "no"):
+        print("    (sin música de fondo)")
+        return None
     if not os.path.isdir(MUSIC_DIR):
         return None
     files = []

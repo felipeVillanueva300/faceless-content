@@ -239,7 +239,10 @@ def _write_summary(url, titulo, caption, publicado, errores=None):
 def _publicar_ig_youtube(url, caption, titulo):
     results, errores = {}, {}
 
-    ig = os.environ.get("IG_USER_ID")
+    solo = os.environ.get("PUBLICAR_EN", "").strip().lower()   # "", "youtube" o "instagram"
+    ig = os.environ.get("IG_USER_ID") if solo in ("", "instagram") else None
+    if solo:
+        print(f"    (solo se publica en: {solo})")
     if ig:
         try:
             results["instagram"] = publisher.publish_instagram(ig, url, caption)
@@ -248,7 +251,7 @@ def _publicar_ig_youtube(url, caption, titulo):
             errores["instagram"] = str(e)
             print("    Instagram FALLÓ:", e)
 
-    if os.environ.get("YT_REFRESH_TOKEN"):
+    if os.environ.get("YT_REFRESH_TOKEN") and solo in ("", "youtube"):
         try:
             from src import youtube_upload
             vid = youtube_upload.upload_short_from_url(url, titulo, description=caption)
@@ -264,7 +267,28 @@ def _publicar_ig_youtube(url, caption, titulo):
     return results, errores
 
 
+def _leer_publish_id(texto: str):
+    """El campo 'publicar_id' a veces llega con algo pegado (ej. 'daily-20261126-185432 🎬'
+    copiado de Telegram) y el release no se encuentra. Saca solo el ID y, si además dice
+    'youtube'/'yt' o 'instagram'/'ig', publica solo en esa red (ej. para volver a subir a
+    YouTube un video que bloquearon por la música)."""
+    import re
+    t = (texto or "").strip()
+    m = re.search(r"\b((?:daily|img)-\d{8}-\d{6})\b", t)
+    pid = m.group(1) if m else t
+    resto = (t.replace(pid, " ") if m else "").lower()
+    solo = ""
+    if re.search(r"\b(youtube|yt)\b", resto):
+        solo = "youtube"
+    elif re.search(r"\b(instagram|ig)\b", resto):
+        solo = "instagram"
+    return pid, solo
+
+
 def publicar_por_id(publish_id: str):
+    publish_id, solo = _leer_publish_id(publish_id)
+    if solo:
+        os.environ["PUBLICAR_EN"] = solo
     repo = os.environ["GITHUB_REPOSITORY"]
     print(f"[Publicar por ID] Buscando video del release: {publish_id}")
     url, caption, titulo = uploader.get_release_info(repo, publish_id)
@@ -277,7 +301,8 @@ def publicar_por_id(publish_id: str):
 
     print("    URL:", url)
     print("    Caption:", (caption[:80] + "…") if len(caption) > 80 else caption or "(vacío)")
-    print("[Publicar por ID] Publicando en Instagram y YouTube (Facebook es manual)")
+    donde = {"youtube": "YouTube", "instagram": "Instagram"}.get(solo, "Instagram y YouTube")
+    print(f"[Publicar por ID] Publicando en {donde} (Facebook es manual)")
     results, errores = _publicar_ig_youtube(url, caption, titulo)
     _write_summary(url, titulo, caption, publicado=bool(results), errores=errores)
     notify.notify_telegram(titulo, caption or "(sin caption)", url, publicado=bool(results))
@@ -517,6 +542,8 @@ def generar_borrador():
                  os.environ.get("OUTRO_SUB_FRAUDE", "mándaselo a tu familia"))
 
     out = os.path.join(BUILD, "reel.mp4")
+    if data.get("sin_musica"):
+        os.environ["MUSICA"] = "0"     # guion con "sin_musica": true -> solo voz
     video.build_video(audio, ass, out, bg_video=bg, cards=cards,
                       graphics=graphic_overlays, duration=dur, hook=hook_card, outro=outro)
 

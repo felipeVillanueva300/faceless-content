@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       publicar_id:
-        description: "ID del video a PUBLICAR (ej: daily-20260907-025109). Vacío = generar un borrador nuevo."
+        description: "ID del video a PUBLICAR (ej: daily-20260907-025109). Agrega youtube o instagram para publicar solo ahí (ej: daily-20260907-025109 youtube). Vacío = generar un borrador nuevo."
         type: string
         default: ""
       rehacer_id:
