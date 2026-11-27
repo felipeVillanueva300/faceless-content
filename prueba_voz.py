@@ -1,4 +1,4 @@
-"""Prueba temporal: transcribir con tiempos por palabra la parte 2/3 rehecha (daily-20261127-171046)
+"""Prueba temporal: transcribir con tiempos por palabra la parte 2/3 rehecha (daily-20261127-171735)
 para revisar 'NIP', '911' y la frase del policía. Sin Gemini: solo Whisper."""
 import os, subprocess, requests
 from faster_whisper import WhisperModel
@@ -6,7 +6,7 @@ from faster_whisper import WhisperModel
 OUT = "prueba_voz_out"
 os.makedirs(OUT, exist_ok=True)
 URL = ("https://github.com/felipeVillanueva300/faceless-content/releases/download/"
-       "daily-20261127-171046/reel.mp4")
+       "daily-20261127-171735/reel.mp4")
 open(f"{OUT}/reel.mp4", "wb").write(requests.get(URL, timeout=120).content)
 subprocess.run(["ffmpeg", "-y", "-v", "quiet", "-i", f"{OUT}/reel.mp4", "-vn", "-ac", "1",
                 "-ar", "16000", f"{OUT}/voz.wav"], check=True)
